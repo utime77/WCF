@@ -12,10 +12,10 @@ use wcf\data\DatabaseObject;
  * @subpackage	data.acl.option.category
  * @category	Community Framework
  *
- * @property-read	integer		$categoryID
- * @property-read	integer		$packageID
- * @property-read	integer		$objectTypeID
- * @property-read	string		$categoryName
+ * @property-read	integer		$categoryID		unique id of the acl option category
+ * @property-read	integer		$packageID		id of the package which delivers the acl option category
+ * @property-read	integer		$objectTypeID		id of the associated acl object type
+ * @property-read	string		$categoryName		name and textual identifier of the acl option category
  */
 class ACLOptionCategory extends DatabaseObject {
 	/**
