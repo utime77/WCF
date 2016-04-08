@@ -13,13 +13,13 @@ use wcf\system\WCF;
  * @subpackage	data.like
  * @category	Community Framework
  *
- * @property-read	integer		$likeID
- * @property-read	integer		$objectID
- * @property-read	integer		$objectTypeID
- * @property-read	integer|null	$objectUserID
- * @property-read	integer		$userID
- * @property-read	integer		$time
- * @property-read	integer		$likeValue
+ * @property-read	integer		$likeID			unique id of the like
+ * @property-read	integer		$objectID		id of the liked object
+ * @property-read	integer		$objectTypeID		id of the object type of the liked object
+ * @property-read	integer|null	$objectUserID		id of the user who created the liked object or null if user has been deleted or object was created by guest
+ * @property-read	integer		$userID			id of the user who created the like
+ * @property-read	integer		$time			timestamp at which the like has been created
+ * @property-read	integer		$likeValue		value of the like (+1 = like, -1 = dislike)
  */
 class Like extends DatabaseObject {
 	/**

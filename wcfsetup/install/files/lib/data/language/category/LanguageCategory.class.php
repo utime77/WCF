@@ -12,8 +12,8 @@ use wcf\data\DatabaseObject;
  * @subpackage	data.language.category
  * @category	Community Framework
  *
- * @property-read	integer		$languageCategoryID
- * @property-read	string		$languageCategory
+ * @property-read	integer		$languageCategoryID	unique id of the language category
+ * @property-read	string		$languageCategory	name and textual identifier of the language category
  */
 class LanguageCategory extends DatabaseObject {
 	/**
