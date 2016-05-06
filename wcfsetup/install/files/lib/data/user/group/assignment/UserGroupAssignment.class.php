@@ -7,7 +7,7 @@ use wcf\system\condition\ConditionHandler;
 use wcf\system\request\IRouteController;
 
 /**
- * Represents an automatic assignement to a user group.
+ * Represents an automatic assignment to a user group.
  * 
  * @author	Matthias Schmidt
  * @copyright	2001-2015 WoltLab GmbH
@@ -16,10 +16,10 @@ use wcf\system\request\IRouteController;
  * @subpackage	data.user.group.assignment
  * @category	Community Framework
  *
- * @property-read	integer		$assignmentID
- * @property-read	integer		$groupID
- * @property-read	string		$title
- * @property-read	integer		$isDisabled
+ * @property-read	integer		$assignmentID		unique id of the automatic user group assignment
+ * @property-read	integer		$groupID		id of the user group to which users are automatically assigned
+ * @property-read	string		$title			title of the automatic user group assignment
+ * @property-read	integer		$isDisabled		is 1 if the isDisabled
  */
 class UserGroupAssignment extends DatabaseObject implements IRouteController {
 	/**

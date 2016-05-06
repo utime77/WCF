@@ -14,15 +14,15 @@ use wcf\system\WCF;
  * @subpackage	data.user.avatar
  * @category	Community Framework
  *
- * @property-read	integer		$avatarID
- * @property-read	string		$avatarName
- * @property-read	string		$avatarExtension
- * @property-read	integer		$width
- * @property-read	integer		$height
- * @property-read	integer|null	$userID
- * @property-read	string		$fileHash
- * @property-read	integer		$cropX
- * @property-read	integer		$cropY
+ * @property-read	integer		$avatarID		unique id of the user avatar
+ * @property-read	string		$avatarName		name of the original avatar file
+ * @property-read	string		$avatarExtension	extension of the avatar file
+ * @property-read	integer		$width			width of the user avatar image
+ * @property-read	integer		$height			height of the user avatar image
+ * @property-read	integer|null	$userID			id of the user to which the user avatar belongs or null if TODO
+ * @property-read	string		$fileHash		SHA1 hash of the original avatar file
+ * @property-read	integer		$cropX			x coordinate used to crop the original image for the largest thumbnail
+ * @property-read	integer		$cropY			y coordinate used to crop the original image for the largest thumbnail
  */
 class UserAvatar extends DatabaseObject implements IUserAvatar {
 	/**

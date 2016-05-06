@@ -18,7 +18,7 @@ use wcf\system\WCF;
  *
  * @property-read	integer		$menuID			unique id of the menu
  * @property-read	string		$identifier		textual identifier of the menu
- * @property-read	string		$title			title of the menu or name of language item which contains title
+ * @property-read	string		$title			title of the menu or name of language item which contains the title
  * @property-read	integer		$originIsSystem		is 1 if the menu has been delivered by a package, otherwise 0 (if the menu has been created by an admin in the ACP)
  * @property-read	integer		$packageID		id of the package the which delivers the menu or with which the menu is associated
  */

@@ -12,7 +12,7 @@ use wcf\data\option\Option;
  * @subpackage	data.user.group.option
  * @category	Community Framework
  * 
- * @property-read	integer		$usersOnly
+ * @property-read	integer		$usersOnly		is 1 if the option only applies to user groups for registered users, otherwise 1
  */
 class UserGroupOption extends Option {
 	/**

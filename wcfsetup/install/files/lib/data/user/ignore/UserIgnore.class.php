@@ -13,10 +13,10 @@ use wcf\system\WCF;
  * @subpackage	data.user.ignore
  * @category	Community Framework
  *
- * @property-read	integer		$ignoreID
- * @property-read	integer		$userID
- * @property-read	integer		$ignoreUserID
- * @property-read	integer		$time
+ * @property-read	integer		$ignoreID		unique id of the ignore relation
+ * @property-read	integer		$userID			id of the ignoring user
+ * @property-read	integer		$ignoreUserID		id of the ignored user
+ * @property-read	integer		$time			time at which ignore relation has been established
  */
 class UserIgnore extends DatabaseObject {
 	/**
