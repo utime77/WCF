@@ -2,7 +2,7 @@
  * Modal dialog handler.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
  * @module	WoltLab/WCF/Ui/Dialog
  */
@@ -31,7 +31,7 @@ define(
 	/**
 	 * @exports	WoltLab/WCF/Ui/Dialog
 	 */
-	var UiDialog = {
+	return {
 		/**
 		 * Sets up global container and internal variables.
 		 */
@@ -121,6 +121,10 @@ define(
 				
 				setupData.source = document.createDocumentFragment();
 				setupData.source.appendChild(dialogElement);
+				
+				// remove id and `display: none` from dialog element
+				dialogElement.removeAttribute('id');
+				elShow(dialogElement);
 			}
 			else if (setupData.source === null) {
 				// `null` means there is no static markup and `html` should be used instead
@@ -389,6 +393,12 @@ define(
 				
 				this.rebuild(id);
 				
+				// set focus on first applicable element
+				var focusElement = elBySel('.jsDialogAutoFocus', data.dialog);
+				if (focusElement !== null && focusElement.offsetParent !== null) {
+					focusElement.focus();
+				}
+				
 				if (typeof data.onShow === 'function') {
 					data.onShow(id);
 				}
@@ -541,6 +551,4 @@ define(
 			return {};
 		}
 	};
-	
-	return UiDialog;
 });

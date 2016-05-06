@@ -1,32 +1,10 @@
-{include file='documentHeader'}
+{capture assign='pageTitle'}{lang}wcf.user.avatar.edit{/lang} - {lang}wcf.user.usercp{/lang}{/capture}
 
-<head>
-	<title>{lang}wcf.user.avatar.edit{/lang} - {lang}wcf.user.usercp{/lang} - {PAGE_TITLE|language}</title>
-	
-	{include file='headInclude'}
-</head>
-
-<body id="tpl{$templateName|ucfirst}" data-template="{$templateName}" data-application="{$templateNameApplication}">
+{capture assign='contentTitle'}{lang}wcf.user.avatar.edit{/lang}{/capture}
 
 {include file='userMenuSidebar'}
 
 {include file='header'}
-
-<header class="contentHeader">
-	<div class="contentHeaderTitle">
-		<h1 class="contentTitle">{lang}wcf.user.avatar.edit{/lang}</h1>
-	</div>
-	
-	{hascontent}
-		<nav class="contentHeaderNavigation">
-			<ul>
-				{content}{event name='contentHeaderNavigation'}{/content}
-			</ul>
-		</nav>
-	{/hascontent}
-</header>
-
-{include file='userNotice'}
 
 {if $__wcf->user->disableAvatar}
 	<p class="error">{lang}wcf.user.avatar.error.disabled{/lang}</p>
@@ -105,8 +83,6 @@
 	{/if}
 </form>
 
-{include file='footer'}
-
 {if $__wcf->getSession()->getPermission('user.profile.avatar.canUploadAvatar')}
 	<script data-relocate="true">
 		//<![CDATA[
@@ -133,5 +109,4 @@
 	</script>
 {/if}
 
-</body>
-</html>
+{include file='footer'}

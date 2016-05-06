@@ -17,6 +17,7 @@ define(['Dictionary', 'EventHandler', 'Dom/Traverse', 'Dom/Util'], function(Dict
 		this._container = container;
 		this._containers = new Dictionary();
 		this._isLegacy = null;
+		this._store = null;
 		this._tabs = new Dictionary();
 	}
 	
@@ -53,8 +54,8 @@ define(['Dictionary', 'EventHandler', 'Dom/Traverse', 'Dom/Util'], function(Dict
 				return false;
 			}
 			
-			var container, containers = DomTraverse.childrenByTag(this._container, 'DIV'), name;
-			for (var i = 0, length = containers.length; i < length; i++) {
+			var container, containers = DomTraverse.childrenByTag(this._container, 'DIV'), name, i, length;
+			for (i = 0, length = containers.length; i < length; i++) {
 				container = containers[i];
 				name = elData(container, 'name');
 				
@@ -67,7 +68,7 @@ define(['Dictionary', 'EventHandler', 'Dom/Traverse', 'Dom/Util'], function(Dict
 			}
 			
 			var containerId = this._container.id, tab;
-			for (var i = 0, length = tabs.length; i < length; i++) {
+			for (i = 0, length = tabs.length; i < length; i++) {
 				tab = tabs[i];
 				name = this._getTabName(tab);
 				
@@ -107,9 +108,6 @@ define(['Dictionary', 'EventHandler', 'Dom/Traverse', 'Dom/Util'], function(Dict
 				});
 			}
 			
-			// create pointer element
-			nav.appendChild(elCreate('span'));
-			
 			return true;
 		},
 		
@@ -142,7 +140,7 @@ define(['Dictionary', 'EventHandler', 'Dom/Traverse', 'Dom/Util'], function(Dict
 				}
 				
 				if (!selectTab) {
-					var preselect = elData(this._container, 'preselect');
+					var preselect = elData(this._container, 'preselect') || elData(this._container, 'active');
 					if (preselect === "true" || !preselect) preselect = true;
 					
 					if (preselect === true) {
@@ -163,6 +161,17 @@ define(['Dictionary', 'EventHandler', 'Dom/Traverse', 'Dom/Util'], function(Dict
 					});
 					
 					this.select(null, selectTab, true);
+				}
+				
+				var store = elData(this._container, 'store');
+				if (store) {
+					var input = elCreate('input');
+					input.type = 'hidden';
+					input.name = store;
+					
+					this._container.appendChild(input);
+					
+					this._store = input;
 				}
 			}
 			
@@ -231,25 +240,8 @@ define(['Dictionary', 'EventHandler', 'Dom/Traverse', 'Dom/Util'], function(Dict
 				newContent.classList.remove('hidden');
 			}
 			
-			var menu = tab.parentNode.parentNode;
-			
-			// set pointer position
-			var span = DomTraverse.childByTag(menu, 'SPAN');
-			
-			// make sure that the tab is (temporarily) visible so that offsetLeft has the proper value
-			var toggleHidden = false;
-			if (menu.classList.contains('menu') && menu.parentNode.classList.contains('hidden')) {
-				toggleHidden = true;
-				menu.parentNode.classList.remove('hidden');
-			}
-			
-			if (span !== null) {
-				span.style.setProperty('transform', 'translateX(' + tab.offsetLeft + 'px)', '');
-				span.style.setProperty('width', tab.clientWidth + 'px', '');
-			}
-			
-			if (toggleHidden) {
-				menu.parentNode.classList.add('hidden');
+			if (this._store) {
+				this._store.value = name;
 			}
 			
 			if (!disableEvent) {

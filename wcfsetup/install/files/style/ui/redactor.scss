@@ -1,6 +1,10 @@
 .redactor-box {
 	position: relative;
 	
+	&:not(:first-child) {
+		margin-top: 20px;
+	}
+	
 	& + .messageTabMenu {
 		padding: 0;
 	}
@@ -191,7 +195,7 @@
 }
 
 /* disable auto zoom in mobile safari */
-@include small-screen-only {
+@include screen-sm-down {
 	.redactor-editor + textarea {
 		font-size: 16px;
 		max-height: 500px;

@@ -11,7 +11,7 @@ use wcf\system\WCF;
  * Shows the page add form.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
  * @package	com.woltlab.wcf
  * @subpackage	acp.form
@@ -34,10 +34,12 @@ class PageEditForm extends PageAddForm {
 	 * page object
 	 * @var	Page
 	 */
-	public $page = null;
+	public $page;
 	
 	/**
 	 * @inheritDoc
+	 * 
+	 * @throws      IllegalLinkException
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -53,14 +55,20 @@ class PageEditForm extends PageAddForm {
 	/**
 	 * @inheritDoc
 	 */
+	protected function readPageType() {
+		// not required for editing
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
 	public function readFormParameters() {
 		parent::readFormParameters();
 		
 		$this->pageType = $this->page->pageType;
 		if ($this->page->originIsSystem) {
 			$this->parentPageID = $this->page->parentPageID;
-			$this->packageID = $this->page->packageID;
-			$this->controller = $this->page->controller;
+			$this->applicationPackageID = $this->page->applicationPackageID;
 		}
 		
 		if ($this->page->requireObjectID) {
@@ -81,46 +89,60 @@ class PageEditForm extends PageAddForm {
 	/**
 	 * @inheritDoc
 	 */
+	protected function validatePageType() {
+		// type is immutable
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
 	public function save() {
 		AbstractForm::save();
 		
-		$data = array(
+		$data = [
 			'name' => $this->name,
 			'isDisabled' => ($this->isDisabled) ? 1 : 0,
 			'lastUpdateTime' => TIME_NOW,
 			'parentPageID' => ($this->parentPageID ?: null),
-			'packageID' => $this->packageID
-		);
+			'applicationPackageID' => $this->applicationPackageID
+		];
 		
 		if ($this->pageType == 'system') {
 			$data['controllerCustomURL'] = (!empty($_POST['customURL'][0]) ? $_POST['customURL'][0] : '');
-			$this->objectAction = new PageAction(array($this->page), 'update', array('data' => array_merge($this->additionalFields, $data)));
+			$this->objectAction = new PageAction([$this->page], 'update', [
+				'data' => array_merge($this->additionalFields, $data),
+				'boxToPage' => $this->getBoxToPage()
+			]);
 			$this->objectAction->executeAction();
 		}
 		else {
-			$content = array();
+			$content = [];
 			if ($this->page->isMultilingual) {
 				foreach (LanguageFactory::getInstance()->getLanguages() as $language) {
-					$content[$language->languageID] = array(
+					$content[$language->languageID] = [
 						'customURL' => (!empty($_POST['customURL'][$language->languageID]) ? $_POST['customURL'][$language->languageID] : ''),
 						'title' => (!empty($_POST['title'][$language->languageID]) ? $_POST['title'][$language->languageID] : ''),
 						'content' => (!empty($_POST['content'][$language->languageID]) ? $_POST['content'][$language->languageID] : ''),
 						'metaDescription' => (!empty($_POST['metaDescription'][$language->languageID]) ? $_POST['metaDescription'][$language->languageID] : ''),
 						'metaKeywords' => (!empty($_POST['metaKeywords'][$language->languageID]) ? $_POST['metaKeywords'][$language->languageID] : '')
-					);
+					];
 				}
 			}
 			else {
-				$content[0] = array(
+				$content[0] = [
 					'customURL' => (!empty($_POST['customURL'][0]) ? $_POST['customURL'][0] : ''),
 					'title' => (!empty($_POST['title'][0]) ? $_POST['title'][0] : ''),
 					'content' => (!empty($_POST['content'][0]) ? $_POST['content'][0] : ''),
 					'metaDescription' => (!empty($_POST['metaDescription'][0]) ? $_POST['metaDescription'][0] : ''),
 					'metaKeywords' => (!empty($_POST['metaKeywords'][0]) ? $_POST['metaKeywords'][0] : '')
-				);
+				];
 			}
 			
-			$this->objectAction = new PageAction(array($this->page), 'update', array('data' => array_merge($this->additionalFields, $data), 'content' => $content));
+			$this->objectAction = new PageAction([$this->page], 'update', [
+				'data' => array_merge($this->additionalFields, $data),
+				'content' => $content,
+				'boxToPage' => $this->getBoxToPage()
+			]);
 			$this->objectAction->executeAction();
 		}
 		
@@ -145,8 +167,7 @@ class PageEditForm extends PageAddForm {
 			$this->name = $this->page->name;
 			$this->parentPageID = $this->page->parentPageID;
 			$this->pageType = $this->page->pageType;
-			$this->packageID = $this->page->packageID;
-			$this->controller = $this->page->controller;
+			$this->applicationPackageID = $this->page->applicationPackageID;
 			if ($this->page->controllerCustomURL) $this->customURL[0] = $this->page->controllerCustomURL;
 			if ($this->page->isLandingPage) $this->isLandingPage = 1;
 			if ($this->page->isDiabled) $this->isDisabled = 1;
@@ -158,19 +179,33 @@ class PageEditForm extends PageAddForm {
 				$this->metaKeywords[$languageID] = $content['metaKeywords'];
 				$this->customURL[$languageID] = $content['customURL'];
 			}
+			
+			$this->boxIDs = [];
+			foreach ($this->availableBoxes as $box) {
+				if ($box->visibleEverywhere) {
+					if (!in_array($box->boxID, $this->page->getBoxIDs())) {
+						$this->boxIDs[] = $box->boxID;
+					}
+				}
+				else {
+					if (in_array($box->boxID, $this->page->getBoxIDs())) {
+						$this->boxIDs[] = $box->boxID;
+					}
+				}
+			}
 		}
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'action' => 'edit',
 			'pageID' => $this->pageID,
 			'page' => $this->page
-		));
+		]);
 	}
 }

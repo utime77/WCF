@@ -109,8 +109,24 @@ select {
 		margin-top: 30px;
 	}
 	
-	> :not(:first-child) {
-		margin-left: 10px;
+	@include screen-xs {
+		> .button,
+		> button,
+		> input {
+			display: block;
+			padding: 7px 10px;
+			width: 100%;
+			
+			&:not(:first-child) {
+				margin-top: 10px;
+			}
+		}
+	}
+	
+	@include screen-sm-up {
+		> :not(:first-child) {
+			margin-left: 10px;
+		}
 	}
 }
 
@@ -189,6 +205,30 @@ input {
 	
 	&.long {
 		min-width: 150px;
+		width: 100%;
+	}
+}
+
+.formError {
+	dt {
+		color: rgba(204, 0, 1, 1) !important;
+	}
+	
+	input,
+	select,
+	textarea {
+		border-color: rgba(204, 0, 1, 1) !important;
+	}
+}
+
+/* grid-based form controls */
+.formGrid {
+	dt {
+		display: none;
+	}
+	
+	.selectDropdown,
+	select {
 		width: 100%;
 	}
 }

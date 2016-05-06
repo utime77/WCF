@@ -1,12 +1,4 @@
-{include file='documentHeader'}
-
-<head>
-	<title>{lang}wcf.moderation.deletedContent.objectType.{@$objectType}{/lang} - {PAGE_TITLE|language}</title>
-	
-	{include file='headInclude'}
-</head>
-
-<body id="tpl{$templateName|ucfirst}" data-template="{$templateName}" data-application="{$templateNameApplication}">
+{capture assign='pageTitle'}{lang}wcf.moderation.deletedContent.objectType.{@$objectType}{/lang}{/capture}
 
 {capture assign='sidebarLeft'}
 	<section class="box">
@@ -14,9 +6,9 @@
 		
 		<div class="boxContent">
 			<nav>
-				<ul>
+				<ul class="boxMenu">
 					{foreach from=$availableObjectTypes item=availableObjectType}
-						<li{if $objectType == $availableObjectType->objectType} class="active"{/if}><a href="{link controller='DeletedContentList'}objectType={@$availableObjectType->objectType}{/link}">{lang}wcf.moderation.deletedContent.objectType.{@$availableObjectType->objectType}{/lang}</a></li>
+						<li{if $objectType == $availableObjectType->objectType} class="active"{/if}><a class="boxMenuLink" href="{link controller='DeletedContentList'}objectType={@$availableObjectType->objectType}{/link}">{lang}wcf.moderation.deletedContent.objectType.{@$availableObjectType->objectType}{/lang}</a></li>
 					{/foreach}
 				</ul>
 			</nav>
@@ -24,23 +16,23 @@
 	</section>
 {/capture}
 
+{capture assign='contentHeader'}
+	<header class="contentHeader">
+		<div class="contentHeaderTitle">
+			<h1 class="contentTitle">{lang}wcf.moderation.deletedContent.{@$objectType}{/lang}</h1>
+		</div>
+		
+		{hascontent}
+			<nav class="contentHeaderNavigation">
+				<ul>
+					{content}{event name='contentHeaderNavigation'}{/content}
+				</ul>
+			</nav>
+		{/hascontent}
+	</header>
+{/capture}
+
 {include file='header'}
-
-<header class="contentHeader">
-	<div class="contentHeaderTitle">
-		<h1 class="contentTitle">{lang}wcf.moderation.deletedContent.{@$objectType}{/lang}</h1>
-	</div>
-	
-	{hascontent}
-		<nav class="contentHeaderNavigation">
-			<ul>
-				{content}{event name='contentHeaderNavigation'}{/content}
-			</ul>
-		</nav>
-	{/hascontent}
-</header>
-
-{include file='userNotice'}
 
 {hascontent}
 	<div class="paginationTop">
@@ -71,6 +63,3 @@
 </footer>
 
 {include file='footer'}
-
-</body>
-</html>

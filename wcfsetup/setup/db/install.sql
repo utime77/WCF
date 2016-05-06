@@ -226,6 +226,7 @@ CREATE TABLE wcf1_bbcode_media_provider (
 DROP TABLE IF EXISTS wcf1_box;
 CREATE TABLE wcf1_box (
 	boxID INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	objectTypeID INT(10),
 	identifier VARCHAR(255) NOT NULL,
 	name VARCHAR(255) NOT NULL,
 	boxType VARCHAR(255) NOT NULL,
@@ -237,8 +238,11 @@ CREATE TABLE wcf1_box (
 	showHeader TINYINT(1) NOT NULL DEFAULT 1,
 	originIsSystem TINYINT(1) NOT NULL DEFAULT 0,
 	packageID INT(10) NOT NULL,
-	className VARCHAR(255) NOT NULL DEFAULT '',
-	menuID INT(10) NULL
+	menuID INT(10) NULL,
+	linkPageID INT(10),
+	linkPageObjectID INT(10) NOT NULL DEFAULT 0,
+	externalURL VARCHAR(255) NOT NULL DEFAULT '',
+	additionalData TEXT
 );
 
 DROP TABLE IF EXISTS wcf1_box_content;
@@ -250,6 +254,16 @@ CREATE TABLE wcf1_box_content (
 	imageID INT(10),
 	
 	KEY (boxID, languageID)
+);
+
+DROP TABLE IF EXISTS wcf1_box_to_page;
+CREATE TABLE wcf1_box_to_page (
+	boxID INT(10) NOT NULL,
+	pageID INT(10) NOT NULL,
+	visible TINYINT(1) NOT NULL DEFAULT 1,
+	
+	UNIQUE KEY (pageID, boxID),
+	KEY (pageID, visible)
 );
 
 DROP TABLE IF EXISTS wcf1_captcha_question;
@@ -383,23 +397,6 @@ CREATE TABLE wcf1_cronjob_log (
 	execTime INT(10) NOT NULL DEFAULT 0,
 	success TINYINT(1) NOT NULL DEFAULT 0,
 	error TEXT
-);
-
-DROP TABLE IF EXISTS wcf1_dashboard_box;
-CREATE TABLE wcf1_dashboard_box (
-	boxID INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	packageID INT(10) NOT NULL,
-	boxName VARCHAR(255) NOT NULL DEFAULT '',
-	boxType VARCHAR(30) NOT NULL DEFAULT 'sidebar', -- can be 'content' or 'sidebar'
-	className VARCHAR(255) NOT NULL DEFAULT ''
-);
-
-DROP TABLE IF EXISTS wcf1_dashboard_option;
-CREATE TABLE wcf1_dashboard_option (
-	objectTypeID INT(10) NOT NULL,
-	boxID INT(10) NOT NULL,
-	showOrder INT(10) NOT NULL,
-	UNIQUE KEY dashboardOption (objectTypeID, boxID)
 );
 
 DROP TABLE IF EXISTS wcf1_edit_history_entry;
@@ -915,6 +912,7 @@ CREATE TABLE wcf1_page (
 	isMultilingual TINYINT(1) NOT NULL DEFAULT 0,
 	originIsSystem TINYINT(1) NOT NULL DEFAULT 0,
 	packageID INT(10) NOT NULL,
+	applicationPackageID INT(10),
 	controller VARCHAR(255) NOT NULL DEFAULT '',
 	handler VARCHAR(255) NOT NULL DEFAULT '',
 	controllerCustomURL VARCHAR(255) NOT NULL DEFAULT '',
@@ -1643,12 +1641,17 @@ ALTER TABLE wcf1_bbcode ADD FOREIGN KEY (packageID) REFERENCES wcf1_package (pac
 
 ALTER TABLE wcf1_bbcode_attribute ADD FOREIGN KEY (bbcodeID) REFERENCES wcf1_bbcode (bbcodeID) ON DELETE CASCADE;
 
+ALTER TABLE wcf1_box ADD FOREIGN KEY (objectTypeID) REFERENCES wcf1_object_type (objectTypeID) ON DELETE CASCADE;
 ALTER TABLE wcf1_box ADD FOREIGN KEY (packageID) REFERENCES wcf1_package (packageID) ON DELETE CASCADE;
 ALTER TABLE wcf1_box ADD FOREIGN KEY (menuID) REFERENCES wcf1_menu (menuID) ON DELETE CASCADE;
+ALTER TABLE wcf1_box ADD FOREIGN KEY (linkPageID) REFERENCES wcf1_page (pageID) ON DELETE SET NULL;
 
 ALTER TABLE wcf1_box_content ADD FOREIGN KEY (boxID) REFERENCES wcf1_box (boxID) ON DELETE CASCADE;
 ALTER TABLE wcf1_box_content ADD FOREIGN KEY (languageID) REFERENCES wcf1_language (languageID) ON DELETE CASCADE;
 ALTER TABLE wcf1_box_content ADD FOREIGN KEY (imageID) REFERENCES wcf1_media (mediaID) ON DELETE SET NULL;
+
+ALTER TABLE wcf1_box_to_page ADD FOREIGN KEY (boxID) REFERENCES wcf1_box (boxID) ON DELETE CASCADE;
+ALTER TABLE wcf1_box_to_page ADD FOREIGN KEY (pageID) REFERENCES wcf1_page (pageID) ON DELETE CASCADE;
 
 ALTER TABLE wcf1_category ADD FOREIGN KEY (objectTypeID) REFERENCES wcf1_object_type (objectTypeID) ON DELETE CASCADE;
 
@@ -1746,6 +1749,7 @@ ALTER TABLE wcf1_paid_subscription_transaction_log ADD FOREIGN KEY (paymentMetho
 
 ALTER TABLE wcf1_page ADD FOREIGN KEY (parentPageID) REFERENCES wcf1_page (pageID) ON DELETE SET NULL;
 ALTER TABLE wcf1_page ADD FOREIGN KEY (packageID) REFERENCES wcf1_package (packageID) ON DELETE CASCADE;
+ALTER TABLE wcf1_page ADD FOREIGN KEY (applicationPackageID) REFERENCES wcf1_package (packageID) ON DELETE SET NULL;
 
 ALTER TABLE wcf1_page_content ADD FOREIGN KEY (pageID) REFERENCES wcf1_page (pageID) ON DELETE CASCADE;
 ALTER TABLE wcf1_page_content ADD FOREIGN KEY (languageID) REFERENCES wcf1_language (languageID) ON DELETE CASCADE;
@@ -1801,11 +1805,6 @@ ALTER TABLE wcf1_user_to_group ADD FOREIGN KEY (groupID) REFERENCES wcf1_user_gr
 
 ALTER TABLE wcf1_user_to_language ADD FOREIGN KEY (userID) REFERENCES wcf1_user (userID) ON DELETE CASCADE;
 ALTER TABLE wcf1_user_to_language ADD FOREIGN KEY (languageID) REFERENCES wcf1_language (languageID) ON DELETE CASCADE;
-
-ALTER TABLE wcf1_dashboard_box ADD FOREIGN KEY (packageID) REFERENCES wcf1_package (packageID) ON DELETE CASCADE;
-
-ALTER TABLE wcf1_dashboard_option ADD FOREIGN KEY (objectTypeID) REFERENCES wcf1_object_type (objectTypeID) ON DELETE CASCADE;
-ALTER TABLE wcf1_dashboard_option ADD FOREIGN KEY (boxID) REFERENCES wcf1_dashboard_box (boxID) ON DELETE CASCADE;
 
 ALTER TABLE wcf1_import_mapping ADD FOREIGN KEY (objectTypeID) REFERENCES wcf1_object_type (objectTypeID) ON DELETE CASCADE;
 
@@ -1953,21 +1952,21 @@ INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('overrideSc
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('pageLogo', '');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('useFluidLayout', '1');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('useGoogleFont', '1');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonBackground', 'rgba(255, 255, 255, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonBackgroundActive', 'rgba(52, 73, 94, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonBorder', 'rgba(127, 140, 141, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonBorderActive', 'rgba(52, 73, 94, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonDisabledBackground', 'rgba(255, 255, 255, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonBackground', 'rgba(224, 224, 224, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonBackgroundActive', 'rgba(213, 213, 213, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonBorder', 'rgba(127, 140, 141, 1)'); -- no longer in use (ACP style editor needs to be updated first)
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonBorderActive', 'rgba(52, 73, 94, 1)'); -- no longer in use (ACP style editor needs to be updated first)
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonDisabledBackground', 'rgba(223, 223, 223, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonDisabledBorder', 'rgba(173, 176, 179, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonDisabledText', 'rgba(173, 176, 179, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonPrimaryBackground', 'rgba(255, 255, 255, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonPrimaryBackgroundActive', 'rgba(79, 129, 189, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonPrimaryBorder', 'rgba(79, 129, 189, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonPrimaryBorderActive', 'rgba(79, 129, 189, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonPrimaryText', 'rgba(79, 129, 189, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonDisabledText', 'rgba(165, 165, 165, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonPrimaryBackground', 'rgba(33, 150, 243, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonPrimaryBackgroundActive', 'rgba(26, 119, 201, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonPrimaryBorder', 'rgba(79, 129, 189, 1)'); -- no longer in use (ACP style editor needs to be updated first)
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonPrimaryBorderActive', 'rgba(79, 129, 189, 1)'); -- no longer in use (ACP style editor needs to be updated first)
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonPrimaryText', 'rgba(255, 255, 255, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonPrimaryTextActive', 'rgba(255, 255, 255, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonText', 'rgba(127, 140, 141, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonTextActive', 'rgba(255, 255, 255, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonText', 'rgba(33, 33, 33, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfButtonTextActive', 'rgba(33, 33, 33, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfContentBackground', 'rgba(255, 255, 255, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfContentBorder', 'rgba(79, 129, 189, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfContentBorderInner', 'rgba(238, 238, 238, 1)');
@@ -1982,12 +1981,12 @@ INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfContent
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfContentLinkActive', 'rgba(192, 57, 43, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfContentText', 'rgba(44, 62, 80, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownBackground', 'rgba(255, 255, 255, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownBackgroundActive', 'rgba(55, 73, 95, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownBorder', 'rgba(55, 73, 95, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownBackgroundActive', 'rgba(238, 238, 238, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownBorder', 'rgba(55, 73, 95, 1)'); -- no longer in use (ACP style editor needs to be updated first)
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownBorderInner', 'rgba(238, 238, 238, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownLink', 'rgba(55, 73, 95, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownLinkActive', 'rgba(255, 255, 255, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownText', 'rgba(55, 73, 95, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownLink', 'rgba(33, 33, 33, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownLinkActive', 'rgba(33, 33, 33, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownText', 'rgba(33, 33, 33, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFontFamilyFallback', '"Segoe UI", "Lucida Grande", "Helveltica", sans-serif');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFontFamilyGoogle', 'Open Sans');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFontLineHeight', '1.48');
@@ -1996,14 +1995,18 @@ INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFontSiz
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFontSizeSection', '23px');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFontSizeSmall', '12px');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFontSizeTitle', '28px');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBackground', 'rgba(52, 73, 94, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxBackground', 'rgba(44, 62, 80, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxHeadlineLink', 'rgba(255, 255, 255, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxHeadlineLinkActive', 'rgba(255, 255, 255, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxHeadlineText', 'rgba(189, 195, 199, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxLink', 'rgba(255, 255, 255, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxLinkActive', 'rgba(255, 255, 255, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxText', 'rgba(189, 195, 199, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBackground', 'rgba(44, 62, 80, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxBackground', 'rgba(247, 248, 250, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxHeadlineLink', 'rgba(44, 62, 80, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxHeadlineLinkActive', 'rgba(44, 62, 80, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxHeadlineText', 'rgba(44, 62, 80, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxLink', 'rgba(231, 76, 60, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxLinkActive', 'rgba(192, 57, 43, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterBoxText', 'rgba(44, 62, 80, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterCopyrightBackground', 'rgba(52, 73, 94, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterCopyrightLink', 'rgba(255, 255, 255, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterCopyrightLinkActive', 'rgba(255, 255, 255, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterCopyrightText', 'rgba(189, 195, 199, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterHeadlineLink', 'rgba(255, 255, 255, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterHeadlineLinkActive', 'rgba(255, 255, 255, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFooterHeadlineText', 'rgba(189, 195, 199, 1)');

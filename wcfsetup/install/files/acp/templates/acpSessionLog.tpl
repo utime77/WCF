@@ -1,22 +1,26 @@
 {include file='header' pageTitle='wcf.acp.sessionLog.access.list'}
 
 <header class="contentHeader">
-	<h1 class="contentTitle">{lang}wcf.acp.sessionLog.access.list{/lang}</h1>
-</header>
-
-<div class="contentNavigation">
-	{pages print=true assign=pagesLinks controller='ACPSessionLog' id=$sessionLogID link="pageNo=%d&sortField=$sortField&sortOrder=$sortOrder"}
+	<div class="contentHeaderTitle">
+		<h1 class="contentTitle">{lang}wcf.acp.sessionLog.access.list{/lang}</h1>
+	</div>
 	
-	<nav>
+	<nav class="contentHeaderNavigation">
 		<ul>
 			<li><a href="{link controller='ACPSessionLogList'}{/link}" class="button"><span class="icon icon16 fa-list"></span> <span>{lang}wcf.acp.sessionLog.list{/lang}</span></a></li>
 			
-			{event name='contentNavigationButtonsTop'}
+			{event name='contentHeaderNavigation'}
 		</ul>
 	</nav>
-</div>
+</header>
 
 {hascontent}
+	<div class="paginationTop">
+		{content}{pages print=true assign=pagesLinks controller='ACPSessionLog' id=$sessionLogID link="pageNo=%d&sortField=$sortField&sortOrder=$sortOrder"}{/content}
+	</div>
+{/hascontent}
+
+{if $objects|count}
 	<div class="section tabularBox">
 		<table class="table">
 			<thead>
@@ -33,35 +37,37 @@
 			</thead>
 			
 			<tbody>
-				{content}
-					{foreach from=$objects item=sessionAccessLog}
-						<tr>
-							<td class="columnID columnSessionAccessLogID">{@$sessionAccessLog->sessionAccessLogID}</td>
-							<td class="columnURL columnIpAddress{if $sessionAccessLog->ipAddress != $sessionLog->ipAddress} hot{/if}">{$sessionAccessLog->getIpAddress()}</td>
-							<td class="columnDate columnTime">{@$sessionAccessLog->time|time}</td>
-							<td class="columnText columnClassName">{$sessionAccessLog->className}</td>
-							<td class="columnURL columnRequestURI" title="{$sessionAccessLog->requestURI}">{if !$sessionAccessLog->hasProtectedURI()}<a href="{$sessionAccessLog->requestURI}{@SID_ARG_2ND}">{$sessionAccessLog->requestURI|truncate:50|tableWordwrap}</a>{else}{$sessionAccessLog->requestURI|truncate:50|tableWordwrap}{/if}</td>
-							<td class="columnText columnRequestMethod">{$sessionAccessLog->requestMethod}</td>
-							
-							{event name='columns'}
-						</tr>
-					{/foreach}
-				{/content}
+				{foreach from=$objects item=sessionAccessLog}
+					<tr>
+						<td class="columnID columnSessionAccessLogID">{@$sessionAccessLog->sessionAccessLogID}</td>
+						<td class="columnURL columnIpAddress{if $sessionAccessLog->ipAddress != $sessionLog->ipAddress} hot{/if}">{$sessionAccessLog->getIpAddress()}</td>
+						<td class="columnDate columnTime">{@$sessionAccessLog->time|time}</td>
+						<td class="columnText columnClassName">{$sessionAccessLog->className}</td>
+						<td class="columnURL columnRequestURI" title="{$sessionAccessLog->requestURI}">{if !$sessionAccessLog->hasProtectedURI()}<a href="{$sessionAccessLog->requestURI}{@SID_ARG_2ND}">{$sessionAccessLog->requestURI|truncate:50|tableWordwrap}</a>{else}{$sessionAccessLog->requestURI|truncate:50|tableWordwrap}{/if}</td>
+						<td class="columnText columnRequestMethod">{$sessionAccessLog->requestMethod}</td>
+						
+						{event name='columns'}
+					</tr>
+				{/foreach}
 			</tbody>
 		</table>
 	</div>
 	
-	<div class="contentNavigation">
-		{@$pagesLinks}
+	<footer class="contentFooter">
+		{hascontent}
+			<div class="paginationBottom">
+				{content}{@$pagesLinks}{/content}
+			</div>
+		{/hascontent}
 		
-		<nav>
+		<nav class="contentFooterNavigation">
 			<ul>
 				<li><a href="{link controller='ACPSessionLogList'}{/link}" class="button"><span class="icon icon16 fa-list"></span> <span>{lang}wcf.acp.sessionLog.list{/lang}</span></a></li>
 				
-				{event name='contentNavigationButtonsBottom'}
+				{event name='contentFooterNavigation'}
 			</ul>
 		</nav>
-	</div>
-{/hascontent}
+	</footer>
+{/if}
 
 {include file='footer'}

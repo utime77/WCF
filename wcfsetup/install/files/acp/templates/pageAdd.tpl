@@ -25,7 +25,20 @@
 </script>
 
 <header class="contentHeader">
-	<h1 class="contentTitle">{if $action == 'add'}{if $isMultilingual}{lang}wcf.acp.page.addMultilingual{/lang}{else}{lang}wcf.acp.page.add{/lang}{/if}{else}{lang}wcf.acp.page.edit{/lang}{/if}</h1>
+	<div class="contentHeaderTitle">
+		<h1 class="contentTitle">{if $action == 'add'}{if $isMultilingual}{lang}wcf.acp.page.addMultilingual{/lang}{else}{lang}wcf.acp.page.add{/lang}{/if}{else}{lang}wcf.acp.page.edit{/lang}{/if}</h1>
+	</div>
+	
+	<nav class="contentHeaderNavigation">
+		<ul>
+			{if $action == 'edit' && !$page->requireObjectID}
+				<li><a href="{$page->getLink()}" class="button"><span class="icon icon16 fa-search"></span> <span>{lang}wcf.acp.page.button.viewPage{/lang}</span></a></li>
+			{/if}
+			<li><a href="{link controller='PageList'}{/link}" class="button"><span class="icon icon16 fa-list"></span> <span>{lang}wcf.acp.menu.link.cms.page.list{/lang}</span></a></li>
+			
+			{event name='contentHeaderNavigation'}
+		</ul>
+	</nav>
 </header>
 
 {include file='formError'}
@@ -33,16 +46,6 @@
 {if $success|isset}
 	<p class="success">{lang}wcf.global.success.{$action}{/lang}</p>
 {/if}
-
-<div class="contentNavigation">
-	<nav>
-		<ul>
-			<li><a href="{link controller='PageList'}{/link}" class="button"><span class="icon icon16 fa-list"></span> <span>{lang}wcf.acp.menu.link.cms.page.list{/lang}</span></a></li>
-				
-			{event name='contentNavigationButtons'}
-		</ul>
-	</nav>
-</div>
 
 <form method="post" action="{if $action == 'add'}{link controller='PageAdd'}{/link}{else}{link controller='PageEdit' id=$pageID}{/link}{/if}">
 	<div class="section">
@@ -62,27 +65,6 @@
 			</dd>
 		</dl>
 		
-		<dl{if $errorField == 'pageType'} class="formError"{/if}>
-			<dt><label for="pageType">{lang}wcf.acp.page.pageType{/lang}</label></dt>
-			<dd>
-				<select name="pageType" id="pageType"{if $action == 'edit'} disabled="disabled"{/if}>
-					{foreach from=$availablePageTypes item=availablePageType}
-						<option value="{@$availablePageType}"{if $availablePageType == $pageType} selected="selected"{/if}>{lang}wcf.acp.page.pageType.{@$availablePageType}{/lang}</option>
-					{/foreach}
-				</select>
-				
-				{if $errorField == 'pageType'}
-					<small class="innerError">
-						{if $errorType == 'empty'}
-							{lang}wcf.global.form.error.empty{/lang}
-						{else}
-							{lang}wcf.acp.page.pageType.error.{@$errorType}{/lang}
-						{/if}
-					</small>
-				{/if}
-			</dd>
-		</dl>
-	
 		<dl{if $errorField == 'parentPageID'} class="formError"{/if}>
 			<dt><label for="parentPageID">{lang}wcf.acp.page.parentPageID{/lang}</label></dt>
 			<dd>
@@ -105,36 +87,20 @@
 			</dd>
 		</dl>
 		
-		<dl{if $errorField == 'packageID'} class="formError"{/if}>
-			<dt><label for="packageID">{lang}wcf.acp.page.packageID{/lang}</label></dt>
+		<dl{if $errorField == 'applicationPackageID'} class="formError"{/if}>
+			<dt><label for="applicationPackageID">{lang}wcf.acp.page.applicationPackageID{/lang}</label></dt>
 			<dd>
-				<select name="packageID" id="packageID"{if $action == 'edit' && $page->originIsSystem} disabled="disabled"{/if}>
+				<select name="applicationPackageID" id="applicationPackageID"{if $action == 'edit' && $page->originIsSystem} disabled="disabled"{/if}>
 					{foreach from=$availableApplications item=availableApplication}
-						<option value="{@$availableApplication->packageID}"{if $availableApplication->packageID == $packageID} selected="selected"{/if}>{$availableApplication->getAbbreviation()}: {$availableApplication->domainName}{$availableApplication->domainPath}</option>
+						<option value="{@$availableApplication->packageID}"{if $availableApplication->packageID == $applicationPackageID} selected="selected"{/if}>{$availableApplication->getAbbreviation()}: {$availableApplication->domainName}{$availableApplication->domainPath}</option>
 					{/foreach}
 				</select>
-				{if $errorField == 'parentPageID'}
+				{if $errorField == 'applicationPackageID'}
 					<small class="innerError">
 						{if $errorType == 'empty'}
 							{lang}wcf.global.form.error.empty{/lang}
 						{else}
-							{lang}wcf.acp.page.packageID.error.{@$errorType}{/lang}
-						{/if}
-					</small>
-				{/if}
-			</dd>
-		</dl>
-		
-		<dl{if $errorField == 'controller'} class="formError"{/if}>
-			<dt><label for="controller">{lang}wcf.acp.page.controller{/lang}</label></dt>
-			<dd>
-				<input type="text" id="controller" name="controller" value="{$controller}" class="long"{if $action == 'edit' && $page->originIsSystem} readonly="readonly"{/if} />
-				{if $errorField == 'controller'}
-					<small class="innerError">
-						{if $errorType == 'empty'}
-							{lang}wcf.global.form.error.empty{/lang}
-						{else}
-							{lang}wcf.acp.page.controller.error.{@$errorType}{/lang}
+							{lang}wcf.acp.page.applicationPackageID.error.{@$errorType}{/lang}
 						{/if}
 					</small>
 				{/if}
@@ -175,6 +141,28 @@
 			</dd>
 		</dl>
 		
+		<dl{if $errorField == 'boxIDs'} class="formError"{/if}>
+			<dt>{lang}wcf.acp.page.boxIDs{/lang}</dt>
+			<dd>
+				<ul class="scrollableCheckboxList">
+					{foreach from=$availableBoxes item=availableBox}
+						<li>
+							<label><input type="checkbox" name="boxIDs[]" value="{@$availableBox->boxID}"{if $availableBox->boxID|in_array:$boxIDs} checked="checked"{/if} /> {$availableBox->name}</label>
+						</li>
+					{/foreach}
+				</ul>
+				{if $errorField == 'boxIDs'}
+					<small class="innerError">
+						{if $errorType == 'empty'}
+							{lang}wcf.global.form.error.empty{/lang}
+						{else}
+							{lang}wcf.acp.page.boxIDs.error.{@$errorType}{/lang}
+						{/if}
+					</small>
+				{/if}
+			</dd>
+		</dl>
+		
 		{event name='dataFields'}
 	</div>
 	
@@ -202,7 +190,8 @@
 				<dl{if $errorField == 'content'} class="formError"{/if}>
 					<dt><label for="content0">{lang}wcf.acp.page.content{/lang}</label></dt>
 					<dd>
-						<textarea name="content[0]" id="content0">{if !$content[0]|empty}{$content[0]}{/if}</textarea>
+						{include file='__pageAddContent' languageID=0}
+						
 						{if $errorField == 'content'}
 							<small class="innerError">
 								{if $errorType == 'empty'}
@@ -296,7 +285,8 @@
 							<dl{if $errorField == 'content'} class="formError"{/if}>
 								<dt><label for="content{@$availableLanguage->languageID}">{lang}wcf.acp.page.content{/lang}</label></dt>
 								<dd>
-									<textarea name="content[{@$availableLanguage->languageID}]" id="content{@$availableLanguage->languageID}">{if !$content[$availableLanguage->languageID]|empty}{$content[$availableLanguage->languageID]}{/if}</textarea>
+									{include file='__pageAddContent' languageID=$availableLanguage->languageID}
+									
 									{if $errorField == 'content'}
 										<small class="innerError">
 											{if $errorType == 'empty'}
@@ -352,6 +342,7 @@
 	<div class="formSubmit">
 		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s">
 		<input type="hidden" name="isMultilingual" value="{@$isMultilingual}">
+		<input type="hidden" name="pageType" value="{$pageType}">
 		{@SECURITY_TOKEN_INPUT_TAG}
 	</div>
 </form>

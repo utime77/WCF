@@ -12,8 +12,18 @@
 </script>
 
 <header class="contentHeader">
-	<h1 class="contentTitle">{lang}wcf.acp.attachment.list{/lang}</h1>
-	<p class="contentHeaderDescription">{lang}wcf.acp.attachment.stats{/lang}</p>
+	<div class="contentHeaderTitle">
+		<h1 class="contentTitle">{lang}wcf.acp.attachment.list{/lang}</h1>
+		<p class="contentHeaderDescription">{lang}wcf.acp.attachment.stats{/lang}</p>
+	</div>
+	
+	{hascontent}
+		<nav class="contentHeaderNavigation">
+			<ul>
+				{content}{event name='contentHeaderNavigation'}{/content}
+			</ul>
+		</nav>
+	{/hascontent}
 </header>
 
 {include file='formError'}
@@ -22,59 +32,55 @@
 	<section class="section">
 		<h2 class="sectionTitle">{lang}wcf.global.filter{/lang}</h2>
 		
-		<div class="row rowColGap">
+		<div class="row rowColGap formGrid">
 			<dl class="col-xs-12 col-md-4">
-				<dt><label for="username">{lang}wcf.user.username{/lang}</label></dt>
+				<dt></dt>
 				<dd>
-					<input type="text" id="username" name="username" value="{$username}" class="long" />
+					<input type="text" id="username" name="username" value="{$username}" placeholder="{lang}wcf.user.username{/lang}" class="long" />
 				</dd>
 			</dl>
 			
 			<dl class="col-xs-12 col-md-4">
-				<dt><label for="filename">{lang}wcf.attachment.filename{/lang}</label></dt>
+				<dt></dt>
 				<dd>
-					<input type="text" id="filename" name="filename" value="{$filename}" class="long" />
+					<input type="text" id="filename" name="filename" value="{$filename}" placeholder="{lang}wcf.attachment.filename{/lang}" class="long" />
 				</dd>
 			</dl>
 			
-			<dl class="col-xs-12 col-md-4">
-				<dt><label for="fileType">{lang}wcf.attachment.fileType{/lang}</label></dt>
-				<dd>
-					<select name="fileType" id="fileType">
-						<option value="">{lang}wcf.global.noSelection{/lang}</option>
-						{htmlOptions options=$availableFileTypes selected=$fileType}
-					</select>
-				</dd>
-			</dl>
+			{if $availableFileTypes|count > 1}
+				<dl class="col-xs-12 col-md-4">
+					<dt></dt>
+					<dd>
+						<select name="fileType" id="fileType">
+							<option value="">{lang}wcf.attachment.fileType{/lang}</option>
+							{htmlOptions options=$availableFileTypes selected=$fileType}
+						</select>
+					</dd>
+				</dl>
+			{/if}
 			
 			{event name='filterFields'}
-		</div>	
+		</div>
+		
+		<div class="formSubmit">
+			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+			{@SECURITY_TOKEN_INPUT_TAG}
+		</div>
 	</section>
-	
-	<div class="formSubmit">
-		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
-		{@SECURITY_TOKEN_INPUT_TAG}
-	</div>
 </form>
 
-<div class="contentNavigation">
-	{assign var='linkParameters' value=''}
-	{if $username}{capture append=linkParameters}&username={@$username|rawurlencode}{/capture}{/if}
-	{if $filename}{capture append=linkParameters}&filename={@$filename|rawurlencode}{/capture}{/if}
-	{if $fileType}{capture append=linkParameters}&fileType={@$fileType|rawurlencode}{/capture}{/if}
-	
-	{pages print=true assign=pagesLinks controller="AttachmentList" link="pageNo=%d&sortField=$sortField&sortOrder=$sortOrder$linkParameters"}
-	
-	{hascontent}
-		<nav>
-			{content}
-				<ul>
-					{event name='contentNavigationButtonsTop'}
-				</ul>
-			{/content}
-		</nav>
-	{/hascontent}
-</div>
+{hascontent}
+	<div class="paginationTop">
+		{content}
+			{assign var='linkParameters' value=''}
+			{if $username}{capture append=linkParameters}&username={@$username|rawurlencode}{/capture}{/if}
+			{if $filename}{capture append=linkParameters}&filename={@$filename|rawurlencode}{/capture}{/if}
+			{if $fileType}{capture append=linkParameters}&fileType={@$fileType|rawurlencode}{/capture}{/if}
+			
+			{pages print=true assign=pagesLinks controller="AttachmentList" link="pageNo=%d&sortField=$sortField&sortOrder=$sortOrder$linkParameters"}
+		{/content}
+	</div>
+{/hascontent}
 
 {if $objects|count}
 	<div class="section tabularBox">
@@ -130,19 +136,21 @@
 		</table>
 	</div>
 	
-	<div class="contentNavigation">
-		{@$pagesLinks}
+	<footer class="contentFooter">
+		{hascontent}
+			<div class="paginationBottom">
+				{content}{@$pagesLinks}{/content}
+			</div>
+		{/hascontent}
 		
 		{hascontent}
-			<nav>
-				{content}
-					<ul>
-						{event name='contentNavigationButtonsBottom'}
-					</ul>
-				{/content}
+			<nav class="contentFooterNavigation">
+				<ul>
+					{content}{event name='contentFooterNavigation'}{/content}
+				</ul>
 			</nav>
 		{/hascontent}
-	</div>
+	</footer>
 {else}
 	<p class="info">{lang}wcf.global.noItems{/lang}</p>
 {/if}

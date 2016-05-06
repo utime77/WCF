@@ -10,34 +10,44 @@
 </script>
 
 <header class="contentHeader">
-	<h1 class="contentTitle">{lang}wcf.acp.paidSubscription.transactionLog.list{/lang}</h1>
+	<div class="contentHeaderTitle">
+		<h1 class="contentTitle">{lang}wcf.acp.paidSubscription.transactionLog.list{/lang}</h1>
+	</div>
+	
+	{hascontent}
+		<nav class="contentHeaderNavigation">
+			<ul>
+				{content}{event name='contentHeaderNavigation'}{/content}
+			</ul>
+		</nav>
+	{/hascontent}
 </header>
 
 <form method="post" action="{link controller='PaidSubscriptionTransactionLogList'}{/link}">
 	<section class="section">
 		<h2 class="sectionTitle">{lang}wcf.global.filter{/lang}</h2>
 		
-		<div class="row rowColGap">
+		<div class="row rowColGap formGrid">
 			<dl class="col-xs-12 col-md-4">
-				<dt><label for="transactionID">{lang}wcf.acp.paidSubscription.transactionLog.transactionID{/lang}</label></dt>
+				<dt></dt>
 				<dd>
-					<input type="text" id="transactionID" name="transactionID" value="{$transactionID}" class="long" />
+					<input type="text" id="transactionID" name="transactionID" value="{$transactionID}" placeholder="{lang}wcf.acp.paidSubscription.transactionLog.transactionID{/lang}" class="long" />
 				</dd>
 			</dl>
 			
 			<dl class="col-xs-12 col-md-4">
-				<dt><label for="username">{lang}wcf.user.username{/lang}</label></dt>
+				<dt></dt>
 				<dd>
-					<input type="text" id="username" name="username" value="{$username}" class="long" />
+					<input type="text" id="username" name="username" value="{$username}" placeholder="{lang}wcf.user.username{/lang}" class="long" />
 				</dd>
 			</dl>
 			
-			{if $availableSubscriptions|count}
+			{if $availableSubscriptions|count > 1}
 				<dl class="col-xs-12 col-md-4">
-					<dt><label for="subscriptionID">{lang}wcf.acp.paidSubscription.subscription{/lang}</label></dt>
+					<dt></dt>
 					<dd>
 						<select name="subscriptionID" id="subscriptionID">
-							<option value="0">{lang}wcf.global.noSelection{/lang}</option>
+							<option value="0">{lang}wcf.acp.paidSubscription.subscription{/lang}</option>
 							{foreach from=$availableSubscriptions item=availableSubscription}
 								<option value="{@$availableSubscription->subscriptionID}"{if $availableSubscription->subscriptionID == $subscriptionID} selected="selected"{/if}>{$availableSubscription->title|language}</option>
 							{/foreach}
@@ -48,32 +58,26 @@
 			
 			{event name='filterFields'}
 		</div>
+		
+		<div class="formSubmit">
+			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+			{@SECURITY_TOKEN_INPUT_TAG}
+		</div>
 	</section>
-	
-	<div class="formSubmit">
-		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
-		{@SECURITY_TOKEN_INPUT_TAG}
-	</div>
 </form>
 
-<div class="contentNavigation">
-	{assign var='linkParameters' value=''}
-	{if $transactionID}{capture append=linkParameters}&transactionID={@$transactionID|rawurlencode}{/capture}{/if}
-	{if $username}{capture append=linkParameters}&username={@$username|rawurlencode}{/capture}{/if}
-	{if $subscriptionID}{capture append=linkParameters}&subscriptionID={@$subscriptionID}{/capture}{/if}
-	
-	{pages print=true assign=pagesLinks controller='PaidSubscriptionTransactionLogList' link="pageNo=%d&sortField=$sortField&sortOrder=$sortOrder$linkParameters"}
-	
-	{hascontent}
-		<nav>
-			<ul>
-				{content}
-					{event name='contentNavigationButtonsTop'}
-				{/content}
-			</ul>
-		</nav>
-	{/hascontent}
-</div>
+{hascontent}
+	<div class="paginationTop">
+		{content}
+			{assign var='linkParameters' value=''}
+			{if $transactionID}{capture append=linkParameters}&transactionID={@$transactionID|rawurlencode}{/capture}{/if}
+			{if $username}{capture append=linkParameters}&username={@$username|rawurlencode}{/capture}{/if}
+			{if $subscriptionID}{capture append=linkParameters}&subscriptionID={@$subscriptionID}{/capture}{/if}
+			
+			{pages print=true assign=pagesLinks controller='PaidSubscriptionTransactionLogList' link="pageNo=%d&sortField=$sortField&sortOrder=$sortOrder$linkParameters"}
+		{/content}
+	</div>
+{/hascontent}
 
 {if $objects|count}
 	<div class="section tabularBox">
@@ -111,19 +115,21 @@
 		
 	</div>
 	
-	<div class="contentNavigation">
-		{@$pagesLinks}
+	<footer class="contentFooter">
+		{hascontent}
+			<div class="paginationBottom">
+				{content}{@$pagesLinks}{/content}
+			</div>
+		{/hascontent}
 		
 		{hascontent}
-			<nav>
+			<nav class="contentFooterNavigation">
 				<ul>
-					{content}
-						{event name='contentNavigationButtonsBottom'}
-					{/content}
+					{content}{event name='contentFooterNavigation'}{/content}
 				</ul>
 			</nav>
 		{/hascontent}
-	</div>
+	</footer>
 {else}
 	<p class="info">{lang}wcf.global.noItems{/lang}</p>
 {/if}

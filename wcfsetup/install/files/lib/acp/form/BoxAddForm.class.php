@@ -5,9 +5,16 @@ use wcf\data\box\BoxAction;
 use wcf\data\box\BoxEditor;
 use wcf\data\media\Media;
 use wcf\data\media\ViewableMediaList;
+use wcf\data\object\type\ObjectType;
+use wcf\data\object\type\ObjectTypeCache;
+use wcf\data\page\Page;
+use wcf\data\page\PageNodeTree;
 use wcf\form\AbstractForm;
+use wcf\system\box\IConditionBoxController;
+use wcf\system\database\util\PreparedStatementConditionBuilder;
 use wcf\system\exception\UserInputException;
 use wcf\system\language\LanguageFactory;
+use wcf\system\page\handler\ILookupPageHandler;
 use wcf\system\WCF;
 use wcf\util\ArrayUtil;
 use wcf\util\StringUtil;
@@ -77,12 +84,6 @@ class BoxAddForm extends AbstractForm {
 	public $showHeader = 1;
 	
 	/**
-	 * php class name
-	 * @var	string
-	 */
-	public $className = '';
-	
-	/**
 	 * box name
 	 * @var	string
 	 */
@@ -113,12 +114,78 @@ class BoxAddForm extends AbstractForm {
 	public $images = [];
 	
 	/**
+	 * page ids
+	 * @var	integer[]
+	 */
+	public $pageIDs = [];
+	
+	/**
+	 * object type id of the selected box controller
+	 * @var	integer
+	 */
+	public $boxControllerID = 0;
+	
+	/**
+	 * selected box controller object type 
+	 * @var	ObjectType
+	 */
+	public $boxController;
+	
+	/**
+	 * link type
+	 * @var string
+	 */
+	public $linkType = 'none';
+	
+	/**
+	 * link page id
+	 * @var int
+	 */
+	public $linkPageID = 0;
+	
+	/**
+	 * link page object id
+	 * @var int
+	 */
+	public $linkPageObjectID = 0;
+	
+	/**
+	 * link external URL
+	 * @var string
+	 */
+	public $externalURL = '';
+	
+	/**
+	 * list of page handlers by page id
+	 * @var	\wcf\system\page\handler\IMenuPageHandler[]
+	 */
+	public $pageHandlers = [];
+	
+	/**
+	 * nested list of page nodes
+	 * @var	\RecursiveIteratorIterator
+	 */
+	public $pageNodeList;
+	
+	/**
 	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
 	
 		if (!empty($_REQUEST['isMultilingual'])) $this->isMultilingual = 1;
+		
+		$this->pageNodeList = (new PageNodeTree())->getNodeList();
+		
+		// fetch page handlers
+		foreach ($this->pageNodeList as $pageNode) {
+			$handler = $pageNode->getPage()->getHandler();
+			if ($handler !== null) {
+				if ($handler instanceof ILookupPageHandler) {
+					$this->pageHandlers[$pageNode->getPage()->pageID] = $pageNode->getPage()->requireObjectID;
+				}
+			}
+		}
 	}
 	
 	/**
@@ -127,7 +194,7 @@ class BoxAddForm extends AbstractForm {
 	public function readFormParameters() {
 		parent::readFormParameters();
 		
-		$this->visibleEverywhere = $this->showOrder = 0;
+		$this->visibleEverywhere = $this->showHeader = $this->showOrder = 0;
 		if (isset($_POST['name'])) $this->name = StringUtil::trim($_POST['name']);
 		if (isset($_POST['boxType'])) $this->boxType = $_POST['boxType'];
 		if (isset($_POST['position'])) $this->position = $_POST['position'];
@@ -135,10 +202,16 @@ class BoxAddForm extends AbstractForm {
 		if (isset($_POST['visibleEverywhere'])) $this->visibleEverywhere = intval($_POST['visibleEverywhere']);
 		if (isset($_POST['cssClassName'])) $this->cssClassName = StringUtil::trim($_POST['cssClassName']);
 		if (isset($_POST['showHeader'])) $this->showHeader = intval($_POST['showHeader']);
-		if (isset($_POST['className'])) $this->className = StringUtil::trim($_POST['className']);
+		if (isset($_POST['pageIDs']) && is_array($_POST['pageIDs'])) $this->pageIDs = ArrayUtil::toIntegerArray($_POST['pageIDs']);
+		
+		if (isset($_POST['linkType'])) $this->linkType = $_POST['linkType'];
+		if (!empty($_POST['linkPageID'])) $this->linkPageID = intval($_POST['linkPageID']);
+		if (!empty($_POST['linkPageObjectID'])) $this->linkPageObjectID = intval($_POST['linkPageObjectID']);
+		if (isset($_POST['externalURL'])) $this->externalURL = StringUtil::trim($_POST['externalURL']);
 		
 		if (isset($_POST['title']) && is_array($_POST['title'])) $this->title = ArrayUtil::trim($_POST['title']);
 		if (isset($_POST['content']) && is_array($_POST['content'])) $this->content = ArrayUtil::trim($_POST['content']);
+		if (isset($_POST['boxControllerID'])) $this->boxControllerID = intval($_POST['boxControllerID']);
 		
 		if (WCF::getSession()->getPermission('admin.content.cms.canUseMedia')) {
 			if (isset($_POST['imageID']) && is_array($_POST['imageID'])) $this->imageID = ArrayUtil::toIntegerArray($_POST['imageID']);
@@ -179,18 +252,75 @@ class BoxAddForm extends AbstractForm {
 			throw new UserInputException('boxType');
 		}
 		
+		if ($this->boxType === 'system') {
+			$this->boxController = ObjectTypeCache::getInstance()->getObjectType($this->boxControllerID);
+			if ($this->boxController === null || $this->boxController->getDefinition()->definitionName != 'com.woltlab.wcf.boxController') {
+				throw new UserInputException('boxController');
+			}
+			
+			if ($this->boxController && $this->boxController->getProcessor() instanceof IConditionBoxController) {
+				$this->boxController->getProcessor()->readConditions();
+			}
+		}
+		else {
+			$this->boxControllerID = 0;
+		}
+		
 		// validate box position
 		if (!in_array($this->position, Box::$availablePositions)) {
 			throw new UserInputException('position');
 		}
 		
-		// validate class name
-		if ($this->boxType == 'system') {
-			if (empty($this->className)) {
-				throw new UserInputException('className');
+		// validate link
+		if ($this->linkType == 'internal') {
+			$this->externalURL = '';
+			
+			if (!$this->linkPageID) {
+				throw new UserInputException('linkPageID');
+			}
+			$page = new Page($this->linkPageID);
+			if (!$page->pageID) {
+				throw new UserInputException('linkPageID', 'invalid');
 			}
 			
-			// @todo check class
+			// validate page object id
+			if (isset($this->pageHandlers[$page->pageID])) {
+				if ($this->pageHandlers[$page->pageID] && !$this->linkPageObjectID) {
+					throw new UserInputException('linkPageObjectID');
+				}
+				
+				/** @var ILookupPageHandler $handler */
+				$handler = $page->getHandler();
+				if ($this->linkPageObjectID && !$handler->isValid($this->linkPageObjectID)) {
+					throw new UserInputException('linkPageObjectID', 'invalid');
+				}
+			}
+		}
+		else if ($this->linkType == 'external') {
+			$this->linkPageID = $this->linkPageObjectID = null;
+			
+			if (empty($this->externalURL)) {
+				throw new UserInputException('externalURL');
+			}
+		}
+		else {
+			$this->linkPageID = $this->linkPageObjectID = null;
+			$this->externalURL = '';
+		}
+		
+		// validate page ids
+		if (!empty($this->pageIDs)) {
+			$conditionBuilder = new PreparedStatementConditionBuilder();
+			$conditionBuilder->add('pageID IN (?)', [$this->pageIDs]);
+			$sql = "SELECT  pageID
+				FROM    wcf".WCF_N."_page
+				" . $conditionBuilder;
+			$statement = WCF::getDB()->prepareStatement($sql);
+			$statement->execute($conditionBuilder->getParameters());
+			$this->pageIDs = [];
+			while ($row = $statement->fetchArray()) {
+				$this->pageIDs[] = $row['pageID'];
+			}
 		}
 		
 		// validate images
@@ -200,6 +330,10 @@ class BoxAddForm extends AbstractForm {
 					throw new UserInputException('imageID' . $languageID);
 				}
 			}
+		}
+		
+		if ($this->boxController && $this->boxController->getProcessor() instanceof IConditionBoxController) {
+			$this->boxController->getProcessor()->validateConditions();
 		}
 	}
 	
@@ -239,7 +373,7 @@ class BoxAddForm extends AbstractForm {
 			];
 		}
 		
-		$this->objectAction = new BoxAction([], 'create', ['data' => array_merge($this->additionalFields, [
+		$data = [
 			'name' => $this->name,
 			'packageID' => 1,
 			'isMultilingual' => $this->isMultilingual,
@@ -249,16 +383,28 @@ class BoxAddForm extends AbstractForm {
 			'visibleEverywhere' => $this->visibleEverywhere,
 			'cssClassName' => $this->cssClassName,
 			'showHeader' => $this->showHeader,
-			'className' => $this->className,
+			'linkPageID' => $this->linkPageID,
+			'linkPageObjectID' => ($this->linkPageObjectID ?: 0),
+			'externalURL' => $this->externalURL,
 			'identifier' => ''
-		]), 'content' => $content]);
-		$returnValues = $this->objectAction->executeAction();
+		];
+		if ($this->boxControllerID) {
+			$data['objectTypeID'] = $this->boxControllerID;
+		}
+		
+		$this->objectAction = new BoxAction([], 'create', ['data' => array_merge($this->additionalFields, $data), 'content' => $content, 'pageIDs' => $this->pageIDs ]);
+		$box = $this->objectAction->executeAction()['returnValues'];
 		
 		// set generic box identifier
-		$boxEditor = new BoxEditor($returnValues['returnValues']);
+		$boxEditor = new BoxEditor($box);
 		$boxEditor->update([
 			'identifier' => 'com.woltlab.wcf.genericBox'.$boxEditor->boxID
 		]);
+		
+		if ($this->boxController && $this->boxController->getProcessor() instanceof IConditionBoxController) {
+			$this->boxController->getProcessor()->setBox($box, false);
+			$this->boxController->getProcessor()->saveConditions();
+		}
 		
 		// call saved event
 		$this->saved();
@@ -267,10 +413,11 @@ class BoxAddForm extends AbstractForm {
 		WCF::getTPL()->assign('success', true);
 		
 		// reset variables
-		$this->boxType = $this->position = $this->cssClassName = $this->className = $this->name = '';
-		$this->showOrder = 0;
+		$this->boxType = $this->position = $this->cssClassName = $this->name = '';
+		$this->showOrder = $this->boxControllerID = 0;
 		$this->visibleEverywhere = $this->showHeader = 1;
 		$this->title = $this->content = $this->images = $this->imageID = [];
+		$this->boxController = null;
 	}
 	
 	/**
@@ -286,7 +433,6 @@ class BoxAddForm extends AbstractForm {
 			'boxType' => $this->boxType,
 			'position' => $this->position,
 			'cssClassName' => $this->cssClassName,
-			'className' => $this->className,
 			'showOrder' => $this->showOrder,
 			'visibleEverywhere' => $this->visibleEverywhere,
 			'showHeader' => $this->showHeader,
@@ -294,9 +440,18 @@ class BoxAddForm extends AbstractForm {
 			'content' => $this->content,
 			'imageID' => $this->imageID,
 			'images' => $this->images,
+			'pageIDs' => $this->pageIDs,
+			'linkType' => $this->linkType,
+			'linkPageID' => $this->linkPageID,
+			'linkPageObjectID' => $this->linkPageObjectID,
+			'externalURL' => $this->externalURL,
 			'availableLanguages' => LanguageFactory::getInstance()->getLanguages(),
 			'availableBoxTypes' => Box::$availableBoxTypes,
-			'availablePositions' => Box::$availablePositions
+			'availablePositions' => Box::$availablePositions,
+			'availableBoxControllers' => ObjectTypeCache::getInstance()->getObjectTypes('com.woltlab.wcf.boxController'),
+			'boxController' => $this->boxController,
+			'pageNodeList' => $this->pageNodeList,
+			'pageHandlers' => $this->pageHandlers
 		]);
 	}
 }

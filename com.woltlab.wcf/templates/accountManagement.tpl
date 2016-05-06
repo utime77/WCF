@@ -1,32 +1,10 @@
-{include file='documentHeader'}
+{capture assign='pageTitle'}{lang}wcf.user.accountManagement{/lang} - {lang}wcf.user.usercp{/lang}{/capture}
 
-<head>
-	<title>{lang}wcf.user.accountManagement{/lang} - {lang}wcf.user.usercp{/lang} - {PAGE_TITLE|language}</title>
-	
-	{include file='headInclude'}
-</head>
-
-<body id="tpl{$templateName|ucfirst}" data-template="{$templateName}" data-application="{$templateNameApplication}">
+{capture assign='contentTitle'}{lang}wcf.user.accountManagement{/lang}{/capture}
 
 {include file='userMenuSidebar'}
 
 {include file='header'}
-
-<header class="contentHeader">
-	<div class="contentHeaderTitle">
-		<h1 class="contentTitle">{lang}wcf.user.accountManagement{/lang}</h1>
-	</div>
-	
-	{hascontent}
-		<nav class="contentHeaderNavigation">
-			<ul>
-				{content}{event name='contentHeaderNavigation'}{/content}
-			</ul>
-		</nav>
-	{/hascontent}
-</header>
-
-{include file='userNotice'}
 
 {include file='formError'}
 
@@ -58,15 +36,7 @@
 						</small>
 					{/if}
 					<small>{lang}wcf.user.accountManagement.password.description{/lang}</small>
-				</dd>
-			</dl>
-			
-			<dl>
-				<dt></dt>
-				<dd>
-					<ul class="buttonList smallButtons">
-						<li><a class="button small" href="{link controller='LostPassword'}{/link}"><span>{lang}wcf.user.lostPassword{/lang}</span></a></li>
-					</ul>
+					<small><a href="{link controller='LostPassword'}{/link}">{lang}wcf.user.lostPassword{/lang}</a></small>
 				</dd>
 			</dl>
 			
@@ -290,6 +260,3 @@
 </form>
 
 {include file='footer'}
-
-</body>
-</html>

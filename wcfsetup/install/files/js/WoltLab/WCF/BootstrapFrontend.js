@@ -8,12 +8,12 @@
  */
 define(
 	[
-	 	'Ajax',                           'WoltLab/WCF/Bootstrap',         'WoltLab/WCF/Controller/Sitemap', 'WoltLab/WCF/Controller/Style/Changer',
-	 	'WoltLab/WCF/Controller/Popover', 'WoltLab/WCF/Ui/Page/JumpToTop'
+	 	'Ajax',                           'WoltLab/WCF/Bootstrap',      'WoltLab/WCF/Controller/Sitemap', 'WoltLab/WCF/Controller/Style/Changer',
+	 	'WoltLab/WCF/Controller/Popover', 'WoltLab/WCF/Ui/User/Ignore'
 	],
 	function(
-		Ajax,                              Bootstrap,                       ControllerSitemap,                ControllerStyleChanger,
-		ControllerPopover,                 UiPageJumpToTop
+		Ajax,                              Bootstrap,                    ControllerSitemap,                ControllerStyleChanger,
+		ControllerPopover,                 UiUserIgnore
 	)
 {
 	"use strict";
@@ -41,7 +41,7 @@ define(
 			this._initUserPopover();
 			this._invokeBackgroundQueue(options.backgroundQueue.url, options.backgroundQueue.force);
 			
-			new UiPageJumpToTop();
+			UiUserIgnore.init();
 		},
 		
 		/**

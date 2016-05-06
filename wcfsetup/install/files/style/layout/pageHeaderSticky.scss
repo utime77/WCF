@@ -3,7 +3,7 @@
 	will-change: transform;
 }
 
-@include large-screen-only {
+@include screen-lg {
 	.pageHeaderContainer.stickyPageHeader {
 		z-index: 300;
 	}
@@ -83,12 +83,14 @@
 		}
 		
 		.pageHeaderSearch {
-			flex: 0 0 auto;
+			align-self: stretch;
+			flex: 0 0 50px;
 			margin-bottom: 0;
 			margin-left: 10px;
 			order: 3;
 			
 			.pageHeaderSearchInput {
+				border-radius: 0 0 2px 2px;
 				height: 100%;
 				width: 100%;
 			}
@@ -121,11 +123,6 @@
 		}
 		
 		&:not(.searchBarOpen) {
-			.pageHeaderSearch {
-				font-size: 0;
-				width: 50px;
-			}
-			
 			.pageHeaderSearchInput,
 			.pageHeaderSearchInputButton {
 				display: none;
@@ -134,30 +131,39 @@
 		
 		&.searchBarOpen {
 			.pageHeaderSearchInputContainer {
-				bottom: 0;
-				left: 0;
+				height: 100%;
 				position: absolute;
-				right: 0;
-				top: 0;
+				top: 100%;
+				transform: translateX(-50px);
 				z-index: 100; 
 			}
 			
 			.pageHeaderSearchLabel {
-				position: static;
-				visibility: hidden;
+				background-color: $wcfHeaderSearchBoxBackgroundActive;
 				width: 50px;
 			}
 		}
 	}
 }
 
-// force sticky header on handheld devices, there is no difference when scrolled
-// all the way up and it might flicker when scrolling due to the inconsistent
-// scroll event being fired
-@include small-screen-only {
+@include screen-xs {
 	.pageHeaderContainer {
 		height: 50px;
 		z-index: 300;
+	}
+}
+
+// force sticky header on tablets, there is no difference when scrolled
+// all the way up and it might flicker when scrolling due to the inconsistent
+// scroll event being fired
+@include screen-sm-md {
+	.pageHeaderContainer {
+		height: 50px;
+		z-index: 300;
+		
+		// touch browser allow to scroll past the page top before they bounce back,
+		// but in that case the original background color is visible
+		background-color: transparent;
 	}
 	
 	.pageHeader {

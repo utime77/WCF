@@ -1,6 +1,5 @@
 <?php
 namespace wcf\form;
-use wcf\system\exception\UserInputException;
 use wcf\system\request\LinkHandler;
 use wcf\system\user\authentication\UserAuthenticationFactory;
 use wcf\system\WCF;
@@ -11,7 +10,7 @@ use wcf\util\UserUtil;
  * Shows the user login form.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
  * @package	com.woltlab.wcf
  * @subpackage	form
@@ -21,7 +20,7 @@ class LoginForm extends \wcf\acp\form\LoginForm {
 	const AVAILABLE_DURING_OFFLINE_MODE = true;
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$enableTracking
+	 * @inheritDoc
 	 */
 	public $enableTracking = true;
 	
@@ -32,30 +31,17 @@ class LoginForm extends \wcf\acp\form\LoginForm {
 	public $useCookies = 1;
 	
 	/**
-	 * @see	\wcf\form\IForm::readFormParameters()
+	 * @inheritDoc
 	 */
 	public function readFormParameters() {
 		parent::readFormParameters();
-		
-		if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'register') {
-			// if the username field is an email, save it as email for the registration
-			if (UserUtil::isValidEmail($this->username)) {
-				WCF::getSession()->register('__email', $this->username);
-			}
-			else {
-				WCF::getSession()->register('__username', $this->username);
-			}
-			WCF::getSession()->update();
-			HeaderUtil::redirect(LinkHandler::getInstance()->getLink('Register'));
-			exit;
-		}
 		
 		$this->useCookies = 0;
 		if (isset($_POST['useCookies'])) $this->useCookies = intval($_POST['useCookies']);
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		AbstractForm::save();
@@ -74,21 +60,21 @@ class LoginForm extends \wcf\acp\form\LoginForm {
 		
 		// redirect to url
 		WCF::getTPL()->assign('__hideUserMenu', true);
-		HeaderUtil::delayedRedirect($this->url, WCF::getLanguage()->get('wcf.user.login.redirect'));
+		HeaderUtil::redirect($this->url);
 		exit;
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'useCookies' => $this->useCookies,
 			'supportsPersistentLogins' => UserAuthenticationFactory::getInstance()->getUserAuthentication()->supportsPersistentLogins(),
 			'loginController' => LinkHandler::getInstance()->getLink('Login')
-		));
+		]);
 	}
 	
 	/**
@@ -97,11 +83,6 @@ class LoginForm extends \wcf\acp\form\LoginForm {
 	protected function checkURL() {
 		if (empty($this->url) || mb_stripos($this->url, '?Login/') !== false) {
 			$this->url = LinkHandler::getInstance()->getLink();
-		}
-		// append missing session id
-		else if (SID_ARG_1ST != '' && !preg_match('/(?:&|\?)s=[a-z0-9]{40}/', $this->url)) {
-			if (mb_strpos($this->url, '?') !== false) $this->url .= SID_ARG_2ND_NOT_ENCODED;
-			else $this->url .= SID_ARG_1ST;
 		}
 		
 		// drop index.php

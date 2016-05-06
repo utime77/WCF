@@ -10,7 +10,17 @@
 </script>
 
 <header class="contentHeader">
-	<h1 class="contentTitle">{lang}wcf.acp.language.item.list{/lang}</h1>
+	<div class="contentHeaderTitle">
+		<h1 class="contentTitle">{lang}wcf.acp.language.item.list{/lang}</h1>
+	</div>
+	
+	{hascontent}
+		<nav class="contentHeaderNavigation">
+			<ul>
+				{content}{event name='contentHeaderNavigation'}{/content}
+			</ul>
+		</nav>
+	{/hascontent}
 </header>
 
 {include file='formError'}
@@ -19,11 +29,12 @@
 	<section class="section">
 		<h2 class="sectionTitle">{lang}wcf.global.filter{/lang}</h2>
 		
-		<div class="row rowColGap">
+		<div class="row rowColGap formGrid">
 			<dl class="col-xs-12 col-md-4">
-				<dt><label for="languageID">{lang}wcf.user.language{/lang}</label></dt>
+				<dt></dt>
 				<dd>
 					<select name="id" id="languageID">
+						<option value="0">{lang}wcf.user.language{/lang}</option>
 						{foreach from=$availableLanguages item=availableLanguage}
 							<option value="{@$availableLanguage->languageID}"{if $availableLanguage->languageID == $languageID} selected="selected"{/if}>{$availableLanguage->languageName} ({$availableLanguage->languageCode})</option>
 						{/foreach}
@@ -32,10 +43,10 @@
 			</dl>
 			
 			<dl class="col-xs-12 col-md-4">
-				<dt><label for="languageCategoryID">{lang}wcf.acp.language.category{/lang}</label></dt>
+				<dt></dt>
 				<dd>
 					<select name="languageCategoryID" id="languageCategoryID">
-						<option value="0">{lang}wcf.global.noSelection{/lang}</option>
+						<option value="0">{lang}wcf.acp.language.category{/lang}</option>
 						{foreach from=$availableLanguageCategories item=availableLanguageCategory}
 							<option value="{@$availableLanguageCategory->languageCategoryID}"{if $availableLanguageCategory->languageCategoryID == $languageCategoryID} selected="selected"{/if}>{$availableLanguageCategory->languageCategory}</option>
 						{/foreach}
@@ -44,41 +55,29 @@
 			</dl>
 			
 			<dl class="col-xs-12 col-md-4">
-				<dt><label for="languageItem">{lang}wcf.global.name{/lang}</label></dt>
+				<dt></dt>
 				<dd>
-					<input type="text" id="languageItem" name="languageItem" value="{$languageItem}" class="long" />
+					<input type="text" id="languageItem" name="languageItem" value="{$languageItem}" placeholder="{lang}wcf.global.name{/lang}" class="long" />
 				</dd>
 			</dl>
 			
 			<dl class="col-xs-12 col-md-4">
-				<dt><label for="languageItemValue">{lang}wcf.acp.language.item.value{/lang}</label></dt>
+				<dt></dt>
 				<dd>
-					<input type="text" id="languageItemValue" name="languageItemValue" value="{$languageItemValue}" class="long" />
+					<input type="text" id="languageItemValue" name="languageItemValue" value="{$languageItemValue}" placeholder="{lang}wcf.acp.language.item.value{/lang}" class="long" />
 					<label><input type="checkbox" name="hasCustomValue" value="1" {if $hasCustomValue == 1}checked="checked" {/if}/> {lang}wcf.acp.language.item.customValues{/lang}</label>
 				</dd>
 			</dl>
 			
 			{event name='filterFields'}
 		</div>
+		
+		<div class="formSubmit">
+			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+			{@SECURITY_TOKEN_INPUT_TAG}
+		</div>
 	</section>
-	
-	<div class="formSubmit">
-		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
-		{@SECURITY_TOKEN_INPUT_TAG}
-	</div>
 </form>
-
-<div class="contentNavigation">
-	{hascontent}
-		<nav>
-			{content}
-				<ul>
-					{event name='contentNavigationButtonsTop'}
-				</ul>
-			{/content}
-		</nav>
-	{/hascontent}
-</div>
 
 {if $objects|count}
 	<div class="section sectionContainerList">
@@ -99,17 +98,19 @@
 		</ol>
 	</div>
 	
-	<div class="contentNavigation">
+	<footer class="contentFooter">
 		{hascontent}
-			<nav>
-				{content}
-					<ul>
-						{event name='contentNavigationButtonsBottom'}
-					</ul>
-				{/content}
+			<nav class="contentFooterNavigation">
+				<ul>
+					{content}
+					
+					
+					{event name='contentFooterNavigation'}
+					{/content}
+				</ul>
 			</nav>
 		{/hascontent}
-	</div>
+	</footer>
 {else}
 	<p class="info">{lang}wcf.global.noItems{/lang}</p>
 {/if}

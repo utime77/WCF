@@ -4,7 +4,9 @@
 	<script data-relocate="true">
 		{include file='mediaJavaScript'}
 		
-		require(['WoltLab/WCF/Media/Manager/Select'], function(MediaManagerSelect) {
+		require(['WoltLab/WCF/Acp/Ui/Box/Controller/Handler', 'WoltLab/WCF/Media/Manager/Select'], function(AcpUiBoxControllerHandler, MediaManagerSelect) {
+			AcpUiBoxControllerHandler.init({if $boxController}{@$boxController->objectTypeID}{/if});
+			
 			new MediaManagerSelect({
 				dialogTitle: '{lang}wcf.acp.box.image.dialog.title{/lang}',
 				fileTypeFilters: {
@@ -12,11 +14,38 @@
 				}
 			});
 		});
+		
+		require(['Dictionary', 'Language', 'WoltLab/WCF/Acp/Ui/Box/Handler'], function(Dictionary, Language, AcpUiBoxHandler) {
+			Language.addObject({
+				'wcf.page.pageObjectID.search.noResults': '{lang}wcf.page.pageObjectID.search.noResults{/lang}',
+				'wcf.page.pageObjectID.search.results': '{lang}wcf.page.pageObjectID.search.results{/lang}',
+				'wcf.page.pageObjectID.search.results.description': '{lang}wcf.page.pageObjectID.search.results.description{/lang}',
+				'wcf.page.pageObjectID.search.terms': '{lang}wcf.page.pageObjectID.search.terms{/lang}',
+				'wcf.page.pageObjectID.search.terms.description': '{lang}wcf.page.pageObjectID.search.terms.description{/lang}'
+			});
+			
+			var handlers = new Dictionary();
+			{foreach from=$pageHandlers key=handlerPageID item=requireObjectID}
+				handlers.set({@$handlerPageID}, {if $requireObjectID}true{else}false{/if});
+			{/foreach}
+			
+			AcpUiBoxHandler.init(handlers);
+		});
 	</script>
 {/if}
 
 <header class="contentHeader">
-	<h1 class="contentTitle">{if $action == 'add'}{if $isMultilingual}{lang}wcf.acp.box.addMultilingual{/lang}{else}{lang}wcf.acp.box.add{/lang}{/if}{else}{lang}wcf.acp.box.edit{/lang}{/if}</h1>
+	<div class="contentHeaderTitle">
+		<h1 class="contentTitle">{if $action == 'add'}{if $isMultilingual}{lang}wcf.acp.box.addMultilingual{/lang}{else}{lang}wcf.acp.box.add{/lang}{/if}{else}{lang}wcf.acp.box.edit{/lang}{/if}</h1>
+	</div>
+	
+	<nav class="contentHeaderNavigation">
+		<ul>
+			<li><a href="{link controller='BoxList'}{/link}" class="button"><span class="icon icon16 fa-list"></span> <span>{lang}wcf.acp.menu.link.cms.box.list{/lang}</span></a></li>
+			
+			{event name='contentHeaderNavigation'}
+		</ul>
+	</nav>
 </header>
 
 {include file='formError'}
@@ -24,16 +53,6 @@
 {if $success|isset}
 	<p class="success">{lang}wcf.global.success.{$action}{/lang}</p>
 {/if}
-
-<div class="contentNavigation">
-	<nav>
-		<ul>
-			<li><a href="{link controller='BoxList'}{/link}" class="button"><span class="icon icon16 fa-list"></span> <span>{lang}wcf.acp.menu.link.cms.box.list{/lang}</span></a></li>
-			
-			{event name='contentNavigationButtons'}
-		</ul>
-	</nav>
-</div>
 
 <form method="post" action="{if $action == 'add'}{link controller='BoxAdd'}{/link}{else}{link controller='BoxEdit' id=$boxID}{/link}{/if}">
 	<section class="section">
@@ -70,6 +89,27 @@
 							{lang}wcf.global.form.error.empty{/lang}
 						{else}
 							{lang}wcf.acp.box.boxType.error.{@$errorType}{/lang}
+						{/if}
+					</small>
+				{/if}
+			</dd>
+		</dl>
+		
+		<dl id="boxControllerContainer"{if $errorField == 'boxControllerID'} class="formError"{/if}{if !$boxController} style="display: none;"{/if}>
+			<dt><label for="boxControllerID">{lang}wcf.acp.box.boxController{/lang}</label></dt>
+			<dd>
+				<select name="boxControllerID" id="boxControllerID">
+					{foreach from=$availableBoxControllers item=availableBoxController}
+						<option value="{@$availableBoxController->objectTypeID}"{if $boxController && $availableBoxController->objectTypeID == $boxController->objectTypeID} selected="selected"{/if}>{lang}wcf.acp.box.boxController.{@$availableBoxController->objectType}{/lang}</option>
+					{/foreach}
+				</select>
+				
+				{if $errorField == 'boxType'}
+					<small class="innerError">
+						{if $errorType == 'empty'}
+							{lang}wcf.global.form.error.empty{/lang}
+						{else}
+							{lang}wcf.acp.box.boxController.error.{@$errorType}{/lang}
 						{/if}
 					</small>
 				{/if}
@@ -120,22 +160,6 @@
 			</dd>
 		</dl>
 		
-		<dl{if $errorField == 'className'} class="formError"{/if}>
-			<dt><label for="className">{lang}wcf.acp.box.className{/lang}</label></dt>
-			<dd>
-				<input type="text" id="className" name="className" value="{$className}" class="long" />
-				{if $errorField == 'className'}
-					<small class="innerError">
-						{if $errorType == 'empty'}
-							{lang}wcf.global.form.error.empty{/lang}
-						{else}
-							{lang}wcf.acp.box.className.error.{@$errorType}{/lang}
-						{/if}
-					</small>
-				{/if}
-			</dd>
-		</dl>
-		
 		<dl>
 			<dt></dt>
 			<dd>
@@ -150,12 +174,103 @@
 			</dd>
 		</dl>
 		
+		<dl>
+			<dt>{lang}wcf.acp.box.pageIDs{/lang}</dt>
+			<dd>
+				<ul class="scrollableCheckboxList">
+					{foreach from=$pageNodeList item=pageNode}
+						<li{if $pageNode->getDepth() > 1} style="padding-left: {$pageNode->getDepth()*20-20}px"{/if}>
+							<label><input type="checkbox" name="pageIDs[]" value="{@$pageNode->getPage()->pageID}"{if $pageNode->getPage()->pageID|in_array:$pageIDs} checked="checked"{/if} /> {$pageNode->getPage()->name}</label>
+						</li>
+					{/foreach}
+				</ul>
+			</dd>
+		</dl>
+		
 		{event name='dataFields'}
 	</section>
 	
+	<section class="section">
+		<h2 class="sectionTitle">{lang}wcf.acp.box.link{/lang}</h2>
+		
+		<dl>
+			<dt></dt>
+			<dd class="floated">
+				<label><input type="radio" name="linkType" value="none"{if $linkType == 'none'} checked="checked"{/if} /> {lang}wcf.acp.box.linkType.none{/lang}</label>
+				<label><input type="radio" name="linkType" value="internal"{if $linkType == 'internal'} checked="checked"{/if} /> {lang}wcf.acp.box.linkType.internal{/lang}</label>
+				<label><input type="radio" name="linkType" value="external"{if $linkType == 'external'} checked="checked"{/if} /> {lang}wcf.acp.box.linkType.external{/lang}</label>
+			</dd>
+		</dl>
+		
+		<dl id="linkPageIDContainer"{if $errorField == 'linkPageID'} class="formError"{/if}{if $linkType != 'internal'} style="display: none;"{/if}>
+			<dt><label for="linkPageID">{lang}wcf.acp.box.linkPageID{/lang}</label></dt>
+			<dd>
+				<select name="linkPageID" id="linkPageID">
+					<option value="0">{lang}wcf.global.noSelection{/lang}</option>
+					
+					{foreach from=$pageNodeList item=pageNode}
+						<option value="{@$pageNode->getPage()->pageID}"{if $pageNode->getPage()->pageID == $linkPageID} selected="selected"{/if}>{if $pageNode->getDepth() > 1}{@"&nbsp;&nbsp;&nbsp;&nbsp;"|str_repeat:($pageNode->getDepth() - 1)}{/if}{$pageNode->getPage()->name}</option>
+					{/foreach}
+				</select>
+				{if $errorField == 'linkPageID'}
+					<small class="innerError">
+						{if $errorType == 'empty'}
+							{lang}wcf.global.form.error.empty{/lang}
+						{else}
+							{lang}wcf.acp.box.linkPageID.error.{@$errorType}{/lang}
+						{/if}
+					</small>
+				{/if}
+			</dd>
+		</dl>
+		
+		<dl id="linkPageObjectIDContainer"{if $errorField == 'linkPageObjectID'} class="formError"{/if}{if !$linkPageID || !$pageHandler[$linkPageID]|isset} style="display: none;"{/if}>
+			<dt><label for="linkPageObjectID">{lang}wcf.acp.box.linkPageObjectID{/lang}</label></dt>
+			<dd>
+				<div class="inputAddon">
+					<input type="text" id="linkPageObjectID" name="linkPageObjectID" value="{$linkPageObjectID}" class="short">
+					<a href="#" id="searchLinkPageObjectID" class="inputSuffix button jsTooltip" title="{lang}wcf.acp.page.objectID.search{/lang}"><span class="icon icon16 fa-search"></span></a>
+				</div>
+				{if $errorField == 'linkPageObjectID'}
+					<small class="innerError">
+						{if $errorType == 'empty'}
+							{lang}wcf.global.form.error.empty{/lang}
+						{else}
+							{lang}wcf.acp.box.linkPageObjectID.error.{@$errorType}{/lang}
+						{/if}
+					</small>
+				{/if}
+			</dd>
+		</dl>
+		
+		<dl id="externalURLContainer"{if $errorField == 'externalURL'} class="formError"{/if}{if $linkType != 'external'} style="display: none;"{/if}>
+			<dt><label for="externalURL">{lang}wcf.acp.box.link.externalURL{/lang}</label></dt>
+			<dd>
+				<input type="text" name="externalURL" id="externalURL" value="{$externalURL}" class="long" />
+				{if $errorField == 'externalURL'}
+					<small class="innerError">
+						{if $errorType == 'empty'}
+							{lang}wcf.global.form.error.empty{/lang}
+						{else}
+							{lang}wcf.acp.box.link.externalURL.error.{$errorType}{/lang}
+						{/if}
+					</small>
+				{/if}
+			</dd>
+		</dl>
+		
+		{event name='linkFields'}
+	</section>
+	
+	<div id="boxConditions">
+		{if $boxController && $boxController->getProcessor()|is_subclass_of:'wcf\system\box\IConditionBoxController'}
+			{@$boxController->getProcessor()->getConditionsTemplate()}
+		{/if}
+	</div>
+	
 	{if !$isMultilingual}
 		<section class="section">
-			<h2 class="sectionTitle">content</h2>
+			<h2 class="sectionTitle">{* TODO *}content</h2>
 			
 			{if $__wcf->session->getPermission('admin.content.cms.canUseMedia')}
 				<dl{if $errorField == 'image'} class="formError"{/if}>
@@ -227,7 +342,7 @@
 			
 			{foreach from=$availableLanguages item=availableLanguage}
 				<div id="language{@$availableLanguage->languageID}" class="tabMenuContent">
-					<div>
+					<div class="section">
 						{if $__wcf->session->getPermission('admin.content.cms.canUseMedia')}
 							<dl{if $errorField == 'image'|concat:$availableLanguage->languageID} class="formError"{/if}>
 								<dt><label for="image{@$availableLanguage->languageID}">{lang}wcf.acp.box.image{/lang}</label></dt>

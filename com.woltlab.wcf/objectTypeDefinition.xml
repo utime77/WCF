@@ -52,10 +52,6 @@
 		</definition>
 		
 		<definition>
-			<name>com.woltlab.wcf.user.dashboardContainer</name>
-		</definition>
-		
-		<definition>
 			<name>com.woltlab.wcf.user.objectWatch</name>
 			<interfacename><![CDATA[wcf\system\user\object\watch\IUserObjectWatch]]></interfacename>
 		</definition>
@@ -209,6 +205,11 @@
 		<definition>
 			<name>com.woltlab.wcf.bulkProcessing.user.action</name>
 			<interfacename><![CDATA[wcf\system\bulk\processing\IBulkProcessingAction]]></interfacename>
+		</definition>
+		
+		<definition>
+			<name>com.woltlab.wcf.boxController</name>
+			<interfacename>wcf\system\box\IBoxController</interfacename>
 		</definition>
 		
 		<!-- deprecated -->

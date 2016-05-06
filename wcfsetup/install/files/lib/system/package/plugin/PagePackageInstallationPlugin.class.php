@@ -1,5 +1,7 @@
 <?php
 namespace wcf\system\package\plugin;
+use wcf\data\package\Package;
+use wcf\data\package\PackageCache;
 use wcf\data\page\PageEditor;
 use wcf\system\exception\SystemException;
 use wcf\system\language\LanguageFactory;
@@ -88,6 +90,7 @@ class PagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 	 */
 	protected function prepareImport(array $data) {
 		$isStatic = false;
+		
 		if (!empty($data['elements']['content'])) {
 			$isStatic = true;
 			
@@ -145,7 +148,7 @@ class PagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 		}
 		
 		// validate page type
-		$pageType = $data['elements']['pagetype'];
+		$pageType = $data['elements']['pageType'];
 		$controller = '';
 		$identifier = $data['attributes']['identifier'];
 		$isMultilingual = 0;
@@ -159,7 +162,7 @@ class PagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 			
 			case 'html':
 			case 'text':
-			case 'tpl':	
+			case 'tpl':
 				if (empty($data['elements']['content'])) {
 					throw new SystemException("Missing required 'content' element(s) for page '{$identifier}'");
 				}
@@ -183,6 +186,19 @@ class PagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 				break;
 		}
 		
+		// get application package id
+		$applicationPackageID = 1;
+		if ($this->installation->getPackage()->isApplication) {
+			$applicationPackageID = $this->installation->getPackageID();
+		}
+		if (!empty($data['elements']['application'])) {
+			$application = PackageCache::getInstance()->getPackageByIdentifier($data['elements']['application']);
+			if ($application === null || !$application->isApplication) {
+				throw new SystemException("Unknown application '".$data['elements']['application']."' for page '{$identifier}");
+			}
+			$applicationPackageID = $application->packageID;
+		}
+		
 		return [
 			'pageType' => $pageType,
 			'content' => ($isStatic) ? $data['elements']['content'] : [],
@@ -195,6 +211,7 @@ class PagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 			'name' => $name,
 			'originIsSystem' => 1,
 			'parentPageID' => $parentPageID,
+			'applicationPackageID' => $applicationPackageID,
 			'requireObjectID' => (!empty($data['elements']['requireObjectID'])) ? 1 : 0,
 			'options' => (isset($data['elements']['options'])) ? $data['elements']['options'] : '',
 			'permissions' => (isset($data['elements']['permissions'])) ? $data['elements']['permissions'] : ''
@@ -245,6 +262,8 @@ class PagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 		
 		// store content for later import
 		$this->content[$object->pageID] = $content;
+		
+		return $object;
 	}
 	
 	/**
@@ -260,18 +279,23 @@ class PagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 			WCF::getDB()->beginTransaction();
 			foreach ($this->content as $pageID => $contentData) {
 				foreach ($contentData as $languageCode => $content) {
-					$language = LanguageFactory::getInstance()->getLanguageByCode($languageCode);
-					if ($language !== null) {
-						$statement->execute([
-							$pageID,
-							$language->languageID,
-							$content['title'],
-							$content['content'],
-							$content['metaDescription'],
-							$content['metaKeywords'],
-							$content['customURL']
-						]);
+					$languageID = null;
+					if ($languageCode != '') {
+						$language = LanguageFactory::getInstance()->getLanguageByCode($languageCode);
+						if ($language === null) continue;
+						
+						$languageID = $language->languageID;
 					}
+					
+					$statement->execute([
+						$pageID,
+						$languageID,
+						$content['title'],
+						$content['content'],
+						$content['metaDescription'],
+						$content['metaKeywords'],
+						$content['customURL']
+					]);
 				}
 			}
 			WCF::getDB()->commitTransaction();

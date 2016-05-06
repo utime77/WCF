@@ -10,89 +10,96 @@
 </script>
 
 <header class="contentHeader">
-	<h1 class="contentTitle">{lang}wcf.acp.page.list{/lang}</h1>
-</header>
-
-<div class="contentNavigation">
-	{assign var='linkParameters' value=''}
-	{if $name}{capture append=linkParameters}&name={@$name|rawurlencode}{/capture}{/if}
-	{if $title}{capture append=linkParameters}&title={@$title|rawurlencode}{/capture}{/if}
-	{if $content}{capture append=linkParameters}&content={@$content|rawurlencode}{/capture}{/if}
-	{if $packageID}{capture append=linkParameters}&packageID={@$packageID}{/capture}{/if}
-	{if $pageType}{capture append=linkParameters}&pageType={@$pageType|rawurlencode}{/capture}{/if}
-	{pages print=true assign=pagesLinks controller="PageList" link="pageNo=%d&sortField=$sortField&sortOrder=$sortOrder$linkParameters"}
+	<div class="contentHeaderTitle">
+		<h1 class="contentTitle">{lang}wcf.acp.page.list{/lang}</h1>
+	</div>
 	
-	<nav>
+	<nav class="contentHeaderNavigation">
 		<ul>
-			<li><a href="{link controller='PageLanding'}{/link}" class="button"><span class="icon icon16 fa-home"></span> {lang}wcf.acp.page.landing{/lang}</a></li>
-			<li><a href="{link controller='PageAdd'}{/link}" class="button"><span class="icon icon16 fa-plus"></span> <span>{lang}wcf.acp.page.add{/lang}</span></a></li>
-			<li><a href="{link controller='PageAdd'}isMultilingual=1{/link}" class="button"><span class="icon icon16 fa-plus"></span> <span>{lang}wcf.acp.page.addMultilingual{/lang}</span></a></li>
+			<li><a href="#" class="button jsButtonPageAdd"><span class="icon icon16 fa-plus"></span> <span>{lang}wcf.acp.page.add{/lang}</span></a></li>
 			
-			{event name='contentNavigationButtonsTop'}
+			{event name='contentHeaderNavigation'}
 		</ul>
 	</nav>
-</div>
+</header>
 
 <form method="post" action="{link controller='PageList'}{/link}">
 	<section class="section">
 		<h2 class="sectionTitle">{lang}wcf.global.filter{/lang}</h2>
 		
-		<div class="row rowColGap">
-			<div class="row rowColGap col-xs-12 col-md-10">
-				<dl class="col-xs-12 col-md-4 wide">
-					<dt></dt>
-					<dd>
-						<input type="text" id="name" name="name" value="{$name}" placeholder="{lang}wcf.global.name{/lang}" class="long" />
-					</dd>
-				</dl>
-				
-				<dl class="col-xs-12 col-md-4 wide">
-					<dt></dt>
-					<dd>
-						<input type="text" id="pageTitle" name="title" value="{$title}" placeholder="{lang}wcf.acp.page.title{/lang}" class="long" />
-					</dd>
-				</dl>
-				
-				<dl class="col-xs-12 col-md-4 wide">
-					<dt></dt>
-					<dd>
-						<input type="text" id="pageContent" name="content" value="{$content}" placeholder="{lang}wcf.acp.page.content{/lang}" class="long" />
-					</dd>
-				</dl>
-				
-				<dl class="col-xs-12 col-md-4 wide">
-					<dt></dt>
-					<dd>
-						<select name="packageID" id="packageID">
-							<option value="0">{lang}wcf.acp.page.packageID{/lang}</option>
+		<div class="row rowColGap formGrid">
+			<dl class="col-xs-12 col-md-4">
+				<dt></dt>
+				<dd>
+					<input type="text" id="name" name="name" value="{$name}" placeholder="{lang}wcf.global.name{/lang}" class="long" />
+				</dd>
+			</dl>
+			
+			<dl class="col-xs-12 col-md-4">
+				<dt></dt>
+				<dd>
+					<input type="text" id="pageTitle" name="title" value="{$title}" placeholder="{lang}wcf.acp.page.title{/lang}" class="long" />
+				</dd>
+			</dl>
+			
+			<dl class="col-xs-12 col-md-4">
+				<dt></dt>
+				<dd>
+					<input type="text" id="pageContent" name="content" value="{$content}" placeholder="{lang}wcf.acp.page.content{/lang}" class="long" />
+				</dd>
+			</dl>
+			
+			<dl class="col-xs-12 col-md-4">
+				<dt></dt>
+				<dd>
+					<label class="selectDropdown">
+						<select name="applicationPackageID" id="applicationPackageID">
+							<option value="0">{lang}wcf.acp.page.applicationPackageID{/lang}</option>
 							{foreach from=$availableApplications item=availableApplication}
-								<option value="{@$availableApplication->packageID}"{if $availableApplication->packageID == $packageID} selected="selected"{/if}>{$availableApplication->getAbbreviation()}: {$availableApplication->domainName}{$availableApplication->domainPath}</option>
+								<option value="{@$availableApplication->packageID}"{if $availableApplication->packageID == $applicationPackageID} selected="selected"{/if}>{$availableApplication->getAbbreviation()}: {$availableApplication->domainName}{$availableApplication->domainPath}</option>
 							{/foreach}
 						</select>
-					</dd>
-				</dl>
-				
-				<dl class="col-xs-12 col-md-4 wide">
-					<dt></dt>
-					<dd>
+					</label>
+				</dd>
+			</dl>
+			
+			<dl class="col-xs-12 col-md-4">
+				<dt></dt>
+				<dd>
+					<label class="selectDropdown">
 						<select name="pageType" id="pageType">
 							<option value="">{lang}wcf.acp.page.pageType{/lang}</option>
 							<option value="static"{if $pageType == 'static'} selected="selected"{/if}>{lang}wcf.acp.page.pageType.static{/lang}</option>
 							<option value="system"{if $pageType == 'system'} selected="selected"{/if}>{lang}wcf.acp.page.pageType.system{/lang}</option>
 						</select>
-					</dd>
-				</dl>
-				
-				{event name='filterFields'}
-			</div>
+					</label>
+				</dd>
+			</dl>
 			
-			<div class="col-xs-12 col-md-2">
-				<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
-				{@SECURITY_TOKEN_INPUT_TAG}
-			</div>
+			{event name='filterFields'}
+		</div>
+		
+		<div class="formSubmit">
+			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+			{@SECURITY_TOKEN_INPUT_TAG}
 		</div>
 	</section>
 </form>
+
+{hascontent}
+	<div class="paginationTop">
+		{content}
+		{assign var='linkParameters' value=''}
+		{if $name}{capture append=linkParameters}&name={@$name|rawurlencode}{/capture}{/if}
+		{if $title}{capture append=linkParameters}&title={@$title|rawurlencode}{/capture}{/if}
+		{if $content}{capture append=linkParameters}&content={@$content|rawurlencode}{/capture}{/if}
+		{if $applicationPackageID}{capture append=linkParameters}&applicationPackageID={@$applicationPackageID}{/capture}{/if}
+		{if $pageType}{capture append=linkParameters}&pageType={@$pageType|rawurlencode}{/capture}{/if}
+		
+		{pages print=true assign=pagesLinks controller="PageList" link="pageNo=%d&sortField=$sortField&sortOrder=$sortOrder$linkParameters"}
+		{/content}
+	</div>
+{/hascontent}
 
 {if $objects|count}
 	<div class="section tabularBox">
@@ -146,20 +153,23 @@
 		</table>
 	</div>
 	
-	<div class="contentNavigation">
-		{@$pagesLinks}
+	<footer class="contentFooter">
+		{hascontent}
+			<div class="paginationBottom">
+				{content}{@$pagesLinks}{/content}
+			</div>
+		{/hascontent}
 		
-		
-		<nav>
+		<nav class="contentFooterNavigation">
 			<ul>
-				<li><a href="{link controller='PageLanding'}{/link}" class="button"><span class="icon icon16 fa-home"></span> {lang}wcf.acp.page.landing{/lang}</a></li>
-				<li><a href="{link controller='PageAdd'}{/link}" class="button"><span class="icon icon16 fa-plus"></span> <span>{lang}wcf.acp.page.add{/lang}</span></a></li>
-				<li><a href="{link controller='PageAdd'}isMultilingual=1{/link}" class="button"><span class="icon icon16 fa-plus"></span> <span>{lang}wcf.acp.page.addMultilingual{/lang}</span></a></li>
-		
-				{event name='contentNavigationButtonsBottom'}
+				<li><a href="#" class="button jsButtonPageAdd"><span class="icon icon16 fa-plus"></span> <span>{lang}wcf.acp.page.add{/lang}</span></a></li>
+				
+				{event name='contentFooterNavigation'}
 			</ul>
 		</nav>
-	</div>
+	</footer>
 {/if}
+
+{include file='pageAddDialog'}
 
 {include file='footer'}

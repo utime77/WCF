@@ -1,18 +1,21 @@
 .messageList {
-	border: 1px solid $wcfContentBorder;
-	border-width: 1px 0;
+	border-bottom: 1px solid $wcfContentBorder;
 	
-	> li {
-		@include large-screen-only {
+	@include screen-md-up {
+		border-top: 1px solid $wcfContentBorder;
+		
+		> li {
 			padding: 30px 0;
+			
+			&:not(:first-child) {
+				border-top: 1px solid $wcfContentBorder;
+			}
 		}
-		
-		@include small-screen-only {
-			padding: 20px 0;
-		}
-		
-		&:not(:first-child) {
-			border-top: 1px solid $wcfContentBorder;
+	}
+	
+	@include screen-sm-down {
+		> li {
+			padding-bottom: 20px;
 		}
 	}
 }
@@ -45,7 +48,7 @@
 .message {
 	display: flex;
 	
-	@include small-screen-only {
+	@include screen-sm-down {
 		flex-direction: column;
 	}
 	
@@ -76,7 +79,7 @@
 	color: $wcfSidebarText;
 	position: relative;
 	
-	@include large-screen-only {
+	@include screen-md-up {
 		align-self: flex-start;
 		border-radius: 3px;
 		flex: 0 0 240px;
@@ -88,7 +91,7 @@
 		}
 	}
 	
-	@include small-screen-only {
+	@include screen-sm-down {
 		flex: 0 0 auto;
 		margin: 0 -10px;
 		padding: 10px;
@@ -158,7 +161,27 @@
 		left: 0;
 		pointer-events: none;
 		position: absolute;
-		bottom: 0;
+		
+		@include screen-md-up {
+			bottom: 0;
+		}
+		
+		@include screen-sm-down {
+			color: transparent;
+			padding: 0;
+			width: 0;
+			
+			&::before {
+				background-color: inherit;
+				border: 1px solid rgba(255, 255, 255, 1);
+				border-radius: 50%;
+				content: "";
+				height: 16px;
+				left: 34px; /* 48px (avatar) - 16px (width) - 2px (border-left + border-right) */
+				position: absolute;
+				width: 16px;
+			}
+		}
 	}
 }
 
@@ -200,11 +223,7 @@
 	flex: auto;
 	flex-direction: column;
 	
-	@include large-screen-only {
-		margin: 0 20px;
-	}
-	
-	@include small-screen-only {
+	@include screen-sm-down {
 		margin-top: 20px;
 	}
 	
@@ -250,6 +269,7 @@
 }
 
 .messageHeaderBox {
+	align-items: center;
 	display: flex;
 	flex: 1 1 auto;
 	flex-wrap: wrap;
@@ -279,6 +299,8 @@
 }
 
 .messageHeaderMetaData {
+	align-items: center;
+	
 	@include inlineList;
 	@include dotSeparated;
 	@include wcfFontSmall;
@@ -293,6 +315,8 @@
 }
 
 .messageStatus {
+	align-items: center;
+	
 	@include inlineList;
 	@include wcfFontSmall;
 	
@@ -302,11 +326,11 @@
 }
 
 .messageQuickOptions {
-	@include large-screen-only {
+	@include screen-md-up {
 		@include inlineList;
 	}
 	
-	@include small-screen-only {
+	@include screen-sm-down {
 		flex: 0 0 24px;
 		height: 1.5em;
 		position: relative;
@@ -399,11 +423,11 @@
 	}
 	
 	> .messageFooterButtons {
-		@include large-screen-only {
+		@include screen-md-up {
 			flex: auto;
 		}
 		
-		@include small-screen-only {
+		@include screen-sm-down {
 			display: none;
 		}
 	}

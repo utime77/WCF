@@ -1,6 +1,8 @@
 <?php
 namespace wcf\data\page;
 use wcf\data\DatabaseObject;
+use wcf\data\ILinkableObject;
+use wcf\data\ITitledObject;
 use wcf\data\TDatabaseObjectOptions;
 use wcf\data\TDatabaseObjectPermissions;
 use wcf\system\application\ApplicationHandler;
@@ -13,7 +15,7 @@ use wcf\system\WCF;
  * Represents a page.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
  * @package	com.woltlab.wcf
  * @subpackage	data.page
@@ -24,11 +26,13 @@ use wcf\system\WCF;
  * @property-read	integer|null	$parentPageID
  * @property-read	string		$identifier
  * @property-read	string		$name
+ * @property-read	string		$pageType
  * @property-read	integer		$isDisabled
  * @property-read	integer		$isLandingPage
  * @property-read	integer		$isMultilingual
  * @property-read	integer		$originIsSystem
  * @property-read	integer		$packageID
+ * @property-read	integer		$applicationPackageID
  * @property-read	string		$controller
  * @property-read	string		$handler
  * @property-read	string		$controllerCustomURL
@@ -37,7 +41,7 @@ use wcf\system\WCF;
  * @property-read	string		$permissions
  * @property-read	string		$options
  */
-class Page extends DatabaseObject {
+class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 	use TDatabaseObjectOptions;
 	use TDatabaseObjectPermissions;
 	
@@ -61,6 +65,12 @@ class Page extends DatabaseObject {
 	 * @var	\wcf\system\page\handler\IMenuPageHandler
 	 */
 	protected $pageHandler;
+	
+	/**
+	 * box to page assignments
+	 * @var integer[]
+	 */
+	protected $boxIDs;
 	
 	/**
 	 * Returns true if the active user can delete this page.
@@ -138,9 +148,7 @@ class Page extends DatabaseObject {
 	}
 	
 	/**
-	 * Returns the page URL.
-	 * 
-	 * @return	string
+	 * @inheritDoc
 	 */
 	public function getLink() {
 		if ($this->controller) {
@@ -160,6 +168,18 @@ class Page extends DatabaseObject {
 	}
 	
 	/**
+	 * @inheritDoc
+	 */
+	public function getTitle() {
+		$title = PageCache::getInstance()->getPageTitle($this->pageID);
+		if (empty($title)) {
+			$title = $this->getGenericTitle();
+		}
+		
+		return $title;
+	}
+	
+	/**
 	 * Returns shortened link for acp page list.
 	 *
 	 * @return	string
@@ -174,7 +194,7 @@ class Page extends DatabaseObject {
 	 * @return	\wcf\data\application\Application
 	 */
 	public function getApplication() {
-		return ApplicationHandler::getInstance()->getApplicationByID($this->packageID);
+		return ApplicationHandler::getInstance()->getApplicationByID($this->applicationPackageID);
 	}
 	
 	/**
@@ -213,14 +233,13 @@ class Page extends DatabaseObject {
 			throw new SystemException('Pages requiring an object id cannot be set as landing page.');
 		}
 		
+		WCF::getDB()->beginTransaction();
 		// unmark existing landing page
 		$sql = "UPDATE  wcf".WCF_N."_page
-			SET     isLandingPage = ?
-				AND isLandingPage = ?";
+			SET     isLandingPage = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
 		$statement->execute([
-			0,
-			1
+			0
 		]);
 		
 		// set current page as landing page
@@ -232,6 +251,7 @@ class Page extends DatabaseObject {
 			1,
 			$this->pageID
 		]);
+		WCF::getDB()->commitTransaction();
 	}
 	
 	/**
@@ -241,6 +261,54 @@ class Page extends DatabaseObject {
 	 */
 	public function __toString() {
 		return $this->name;
+	}
+	
+	/**
+	 * Returns box to page assignments.
+	 *
+	 * @return      integer[]
+	 */
+	public function getBoxIDs() {
+		if ($this->boxIDs === null) {
+			$this->boxIDs = [];
+			$sql = "SELECT  boxID
+				FROM    wcf" . WCF_N . "_box_to_page
+				WHERE   pageID = ?";
+			$statement = WCF::getDB()->prepareStatement($sql);
+			$statement->execute([$this->pageID]);
+			while ($row = $statement->fetchArray()) {
+				$this->boxIDs[] = $row['boxID'];
+			}
+		}
+		
+		return $this->boxIDs;
+	}
+	
+	/**
+	 * Returns the template name of this page.
+	 * 
+	 * @param       integer         $languageID
+	 * @return      string
+	 */
+	public function getTplName($languageID = null) {
+		if ($this->pageType == 'tpl') {
+			if ($this->isMultilingual) {
+				return '__cms_page_' . $this->pageID . '_' . $languageID;
+			}
+			
+			return '__cms_page_' . $this->pageID;
+		}
+		
+		return '';
+	}
+	
+	/**
+	 * Returns the value of a generic phrase based upon a page's identifier.
+	 * 
+	 * @return      string  generic title
+	 */
+	protected function getGenericTitle() {
+		return WCF::getLanguage()->get('wcf.page.' . $this->identifier);
 	}
 	
 	/**

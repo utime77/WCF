@@ -1,45 +1,48 @@
-{include file='documentHeader'}
+{capture assign='pageTitle'}{$user->username} - {lang}wcf.user.members{/lang}{/capture}
 
-<head>
-	<title>{$user->username} - {lang}wcf.user.members{/lang} - {PAGE_TITLE|language}</title>
-	
-	{include file='headInclude'}
-	
+{capture assign='headContent'}
 	<link rel="canonical" href="{link controller='User' object=$user}{/link}" />
 	
 	{event name='javascriptInclude'}
 	<script data-relocate="true">
-		//<![CDATA[
-		$(function() {
-			{if $__wcf->getUser()->userID && $__wcf->getUser()->userID != $user->userID}
-				WCF.Language.addObject({
-					'wcf.user.activityPoint': '{lang}wcf.user.activityPoint{/lang}',
+		{if $__wcf->getUser()->userID && $__wcf->getUser()->userID != $user->userID}
+			require(['Language', 'WoltLab/WCF/Ui/User/Profile/Menu/Item/Ignore', 'WoltLab/WCF/Ui/User/Profile/Menu/Item/Follow'], function(Language, UiUserProfileMenuItemIgnore, UiUserProfileMenuItemFollow) {
+				Language.addObject({
 					'wcf.user.button.follow': '{lang}wcf.user.button.follow{/lang}',
 					'wcf.user.button.unfollow': '{lang}wcf.user.button.unfollow{/lang}',
 					'wcf.user.button.ignore': '{lang}wcf.user.button.ignore{/lang}',
 					'wcf.user.button.unignore': '{lang}wcf.user.button.unignore{/lang}'
 				});
 				
-				{if !$user->getPermission('user.profile.cannotBeIgnored')}
-					new WCF.User.Profile.IgnoreUser({@$user->userID}, {if $__wcf->getUserProfileHandler()->isIgnoredUser($user->userID)}true{else}false{/if});
+				{if !$user->isIgnoredUser($__wcf->user->userID)}
+					new UiUserProfileMenuItemFollow({@$user->userID}, {if $__wcf->getUserProfileHandler()->isFollowing($user->userID)}true{else}false{/if});
 				{/if}
 				
-				new WCF.User.Profile.Follow({@$user->userID}, {if $__wcf->getUserProfileHandler()->isFollowing($user->userID)}true{else}false{/if});
+				{if !$user->getPermission('user.profile.cannotBeIgnored')}
+					new UiUserProfileMenuItemIgnore({@$user->userID}, {if $__wcf->getUserProfileHandler()->isIgnoredUser($user->userID)}true{else}false{/if});
+				{/if}
+			});
+		{/if}
+		
+		//<![CDATA[
+		$(function() {
+			{if $__wcf->getUser()->userID && $__wcf->getUser()->userID != $user->userID}
+				WCF.Language.addObject({
+					'wcf.user.activityPoint': '{lang}wcf.user.activityPoint{/lang}'
+				});
 			{/if}
 			
 			new WCF.User.Profile.TabMenu({@$user->userID});
 			
-			WCF.TabMenu.init();
-			
 			{if $user->canEdit() || ($__wcf->getUser()->userID == $user->userID && $user->canEditOwnProfile())}
 				WCF.Language.addObject({
-					'wcf.user.editProfile': '{lang}wcf.user.editProfile{/lang}',
+					'wcf.user.editProfile': '{lang}wcf.user.editProfile{/lang}'
 				});
 				
 				new WCF.User.Profile.Editor({@$user->userID}, {if $editOnInit}true{else}false{/if});
 			{/if}
 			
-			{if $followingCount > 10}
+			{if $followingCount > 7}
 				var $followingList = null;
 				$('#followingAll').click(function() {
 					if ($followingList === null) {
@@ -49,7 +52,7 @@
 					$followingList.open();
 				});
 			{/if}
-			{if $followerCount > 10}
+			{if $followerCount > 7}
 				var $followerList = null;
 				$('#followerAll').click(function() {
 					if ($followerList === null) {
@@ -59,7 +62,7 @@
 					$followerList.open();
 				});
 			{/if}
-			{if $visitorCount > 10}
+			{if $visitorCount > 7}
 				var $visitorList = null;
 				$('#visitorAll').click(function() {
 					if ($visitorList === null) {
@@ -130,17 +133,13 @@
 			}
 		</style>
 	</noscript>
-</head>
-
-<body id="tpl{$templateName|ucfirst}" data-template="{$templateName}" data-application="{$templateNameApplication}" class="userProfile">
+{/capture}
 
 {include file='userHeader' assign='boxesTop'}
 
 {include file='userSidebar' assign='sidebarRight'}
 
 {include file='header'}
-
-{include file='userNotice'}
 
 {if !$user->isProtected()}
 	<div id="profileContent" class="section tabMenuContainer userProfileContent" data-active="{$__wcf->getUserProfileMenu()->getActiveMenuItem()->getIdentifier()}">
@@ -169,6 +168,3 @@
 {/if}
 
 {include file='footer'}
-
-</body>
-</html>

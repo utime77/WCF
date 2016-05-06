@@ -10,13 +10,13 @@ namespace {
 	use wcf\system\WCF;
 
 	// set exception handler
-	set_exception_handler([ WCF::class, 'handleException' ]);
+	set_exception_handler([WCF::class, 'handleException']);
 	// set php error handler
-	set_error_handler([ WCF::class, 'handleError' ], E_ALL);
+	set_error_handler([WCF::class, 'handleError'], E_ALL);
 	// set shutdown function
-	register_shutdown_function([ WCF::class, 'destruct' ]);
+	register_shutdown_function([WCF::class, 'destruct']);
 	// set autoload function
-	spl_autoload_register([ WCF::class, 'autoload' ]);
+	spl_autoload_register([WCF::class, 'autoload']);
 
 	// define escape string shortcut
 	function escapeString($string) {
@@ -49,7 +49,8 @@ namespace wcf\functions\exception {
 	use wcf\util\FileUtil;
 	use wcf\util\StringUtil;
 
-	function logThrowable($logFile, $e) {
+	function logThrowable($e, &$logFile = null) {
+		if ($logFile === null) $logFile = WCF_DIR . 'log/' . gmdate('Y-m-d', TIME_NOW) . '.txt';
 		touch($logFile);
 
 		// don't forget to update ExceptionLogViewPage, when changing the log file format
@@ -96,8 +97,7 @@ namespace wcf\functions\exception {
 	}
 
 	function printThrowable($e) {
-		$logFile = WCF_DIR . 'log/' . gmdate('Y-m-d', TIME_NOW) . '.txt';
-		$exceptionID = logThrowable($logFile, $e);
+		$exceptionID = logThrowable($e, $logFile);
 		
 		$exceptionTitle = $exceptionSubtitle = $exceptionExplanation = '';
 		$logFile = sanitizePath($logFile);
@@ -125,7 +125,7 @@ namespace wcf\functions\exception {
 <p class="exceptionText">&nbsp;</p> <!-- required to ensure spacing after copy & paste -->
 <p class="exceptionText">
 	The error code can be used by an administrator to lookup the full error message in the Administration Control Panel via “Logs » Errors”.
-	In addition the error has been writen to the log file located at <span class="exceptionInlineCodeWrapper"><span class="exceptionInlineCode">{$logFile}</span></span> and can be accessed with a FTP program or similar.
+	In addition the error has been written to the log file located at <span class="exceptionInlineCodeWrapper"><span class="exceptionInlineCode">{$logFile}</span></span> and can be accessed with a FTP program or similar.
 </p>
 <p class="exceptionText">&nbsp;</p> <!-- required to ensure spacing after copy & paste -->
 <p class="exceptionText">Notice: The error code was randomly generated and has no use beyond looking up the full message.</p>
@@ -395,6 +395,10 @@ EXPLANATION;
 						<?php } ?>
 						<ul class="exceptionErrorDetails">
 							<li>
+								<p class="exceptionFieldTitle">Error Type<span class="exceptionColon">:</span></p>
+								<p class="exceptionFieldValue"><?php echo StringUtil::encodeHTML(get_class($e)); ?></p>
+							</li>
+							<li>
 								<p class="exceptionFieldTitle">Error Message<span class="exceptionColon">:</span></p>
 								<p class="exceptionFieldValue"><?php echo StringUtil::encodeHTML($e->getMessage()); ?></p>
 							</li>
@@ -455,7 +459,7 @@ EXPLANATION;
 													case 'NULL':
 														return 'null';
 													case 'string':
-														return StringUtil::encodeHTML($item);
+														return "'".addcslashes(StringUtil::encodeHTML($item), "\\'")."'";
 													case 'boolean':
 														return $item ? 'true' : 'false';
 													case 'array':
@@ -494,6 +498,7 @@ EXPLANATION;
 			if (!isset($item['line'])) $item['line'] = '?';
 			if (!isset($item['class'])) $item['class'] = '';
 			if (!isset($item['type'])) $item['type'] = '';
+			if (!isset($item['args'])) $item['args'] = [];
 			
 			// strip database credentials
 			if (preg_match('~\\\\?wcf\\\\system\\\\database\\\\[a-zA-Z]*Database~', $item['class']) || $item['class'] === 'PDO') {

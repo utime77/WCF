@@ -76,6 +76,31 @@ class PageAction extends AbstractDatabaseObjectAction implements ISearchAction, 
 			}
 		}
 		
+		// save box to page assignments
+		if (!empty($this->parameters['boxToPage'])) {
+			$sql = "INSERT INTO	wcf".WCF_N."_box_to_page
+						(boxID, pageID, visible)
+				VALUES		(?, ?, ?)";
+			$statement = WCF::getDB()->prepareStatement($sql);
+			
+			foreach ($this->parameters['boxToPage'] as $boxData) {
+				$statement->execute([
+					$boxData['boxID'],
+					$page->pageID,
+					$boxData['visible']
+				]);
+			}
+		}
+		
+		// save template
+		if ($page->pageType == 'tpl') {
+			if (!empty($this->parameters['content'])) {
+				foreach ($this->parameters['content'] as $languageID => $content) {
+					file_put_contents(WCF_DIR . 'templates/' . $page->getTplName(($languageID ?: null)) . '.tpl', $content['content']);
+				}
+			}
+		}
+		
 		return $page;
 	}
 	
@@ -108,6 +133,37 @@ class PageAction extends AbstractDatabaseObjectAction implements ISearchAction, 
 						$content['metaDescription'],
 						$content['metaKeywords'],
 						$content['customURL']
+					]);
+				}
+				
+				// save template
+				if ($page->pageType == 'tpl') {
+					foreach ($this->parameters['content'] as $languageID => $content) {
+						file_put_contents(WCF_DIR . 'templates/' . $page->getTplName(($languageID ?: null)) . '.tpl', $content['content']);
+					}
+				}
+			}
+		}
+		
+		// save box to page assignments
+		if (!empty($this->parameters['boxToPage'])) {
+			$sql = "DELETE FROM	wcf".WCF_N."_box_to_page
+				WHERE		pageID = ?";
+			$deleteStatement = WCF::getDB()->prepareStatement($sql);
+			
+			$sql = "INSERT INTO	wcf".WCF_N."_box_to_page
+						(boxID, pageID, visible)
+				VALUES		(?, ?, ?)";
+			$insertStatement = WCF::getDB()->prepareStatement($sql);
+			
+			foreach ($this->objects as $page) {
+				$deleteStatement->execute([$page->pageID]);
+				
+				foreach ($this->parameters['boxToPage'] as $boxData) {
+					$insertStatement->execute([
+						$boxData['boxID'],
+						$page->pageID,
+						$boxData['visible']
 					]);
 				}
 			}
@@ -166,5 +222,23 @@ class PageAction extends AbstractDatabaseObjectAction implements ISearchAction, 
 	 */
 	public function getSearchResultList() {
 		return $this->pageEditor->getHandler()->lookup($this->parameters['data']['searchString']);
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function delete() {
+		foreach ($this->objects as $page) {
+			if ($page->pageType == 'tpl') {
+				foreach ($page->getPageContent() as $languageID => $content) {
+					$file = WCF_DIR . 'templates/' . $page->getTplName(($languageID ?: null)) . '.tpl';
+					if (file_exists($file)) {
+						@unlink($file);
+					}	
+				}
+			}
+		}
+		
+		parent::delete();
 	}
 }

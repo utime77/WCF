@@ -190,13 +190,7 @@
 		<item name="wcf.acp.cronjob.log.error.details"><![CDATA[Fehlermeldung]]></item>
 		<item name="wcf.acp.cronjob.log.noEntries"><![CDATA[Derzeit sind keine Einträge vorhanden.]]></item>
 	</category>
-	
-	<category name="wcf.acp.dashboard">
-		<item name="wcf.acp.dashboard.list"><![CDATA[Dashboard-Seiten konfigurieren]]></item>
-		<item name="wcf.acp.dashboard.option"><![CDATA[Dashboard-Boxen konfigurieren]]></item>
-		<item name="wcf.acp.dashboard.box.sort"><![CDATA[Sie können die Boxen durch Ziehen und Loslassen mit der Maus sortieren. Boxen können aktiviert bzw. deaktiviert werden, indem Sie die gewünschte Box in „Aktive Boxen“ bzw. „Deaktivierte Boxen“ verschieben.]]></item>
-	</category>
-	
+		
 	<category name="wcf.acp.dataImport">
 		<item name="wcf.acp.dataImport"><![CDATA[Datenimport]]></item>
 		<item name="wcf.acp.dataImport.cli.configure.data.alreadySelected"><![CDATA[Diese Daten werden bereits importiert.]]></item>
@@ -349,12 +343,10 @@
 		<item name="wcf.acp.group.option.user.message.canUseBBCodes"><![CDATA[Kann BBCodes benutzen]]></item>
 		<item name="wcf.acp.group.option.user.message.allowedBBCodes"><![CDATA[Erlaubte BBCodes]]></item>
 		<item name="wcf.acp.group.option.user.message.allowedBBCodes.description"><![CDATA[Die hier ausgewählten BBCodes dürfen von Mitgliedern dieser Benutzergruppe verwendet werden.]]></item>
-		<item name="wcf.acp.group.option.admin.content.dashboard.canEditDashboard"><![CDATA[Kann Dashboards konfigurieren]]></item>
 		<item name="wcf.acp.group.option.admin.user.rank.canManageRank"><![CDATA[Kann Benutzerränge verwalten]]></item>
 		<item name="wcf.acp.group.option.admin.user.canEditActivityPoints"><![CDATA[Kann Aktivitätspunkte bearbeiten]]></item>
 		<item name="wcf.acp.group.option.admin.user.canViewInvisible"><![CDATA[Kann unsichtbare Benutzer sehen]]></item>
 		<item name="wcf.acp.group.option.admin.user.canViewIpAddress"><![CDATA[Kann die IP-Adressen der Benutzer sehen]]></item>
-		<item name="wcf.acp.group.option.category.admin.content.dashboard"><![CDATA[Dashboard]]></item>
 		<item name="wcf.acp.group.option.category.user.profile"><![CDATA[Benutzerprofile]]></item>
 		<item name="wcf.acp.group.option.category.user.profile.avatar"><![CDATA[Avatare]]></item>
 		<item name="wcf.acp.group.option.category.admin.user.rank"><![CDATA[Benutzerränge]]></item>
@@ -617,8 +609,6 @@
 		<item name="wcf.acp.menu.link.smiley.list"><![CDATA[Smileys]]></item>
 		<item name="wcf.acp.menu.link.smiley.category.add"><![CDATA[Smiley-Kategorie hinzufügen]]></item>
 		<item name="wcf.acp.menu.link.smiley.category.list"><![CDATA[Smiley-Kategorien]]></item>
-		<item name="wcf.acp.menu.link.dashboard"><![CDATA[Dashboard]]></item>
-		<item name="wcf.acp.menu.link.dashboard.list"><![CDATA[Seiten konfigurieren]]></item>
 		<item name="wcf.acp.menu.link.activityPoint"><![CDATA[Aktivitätspunkte]]></item>
 		<item name="wcf.acp.menu.link.user.rank"><![CDATA[Benutzerränge]]></item>
 		<item name="wcf.acp.menu.link.user.rank.list"><![CDATA[Benutzerränge]]></item>
@@ -890,8 +880,6 @@
 		<item name="wcf.acp.option.category.dashboard"><![CDATA[Dashboard]]></item>
 		<item name="wcf.acp.option.category.dashboard.content"><![CDATA[Inhaltsbereich]]></item>
 		<item name="wcf.acp.option.category.dashboard.sidebar"><![CDATA[Seitenleiste]]></item>
-		<item name="wcf.acp.option.category.dashboard.content.recentActivities"><![CDATA[Letzte Aktivität]]></item>
-		<item name="wcf.acp.option.category.dashboard.sidebar.recentActivities"><![CDATA[Letzte Aktivität]]></item>
 		<item name="wcf.acp.option.category.user.profile"><![CDATA[Profil]]></item>
 		<item name="wcf.acp.option.category.user.avatar"><![CDATA[Avatar]]></item>
 		<item name="wcf.acp.option.category.user.signature"><![CDATA[Signatur]]></item>
@@ -912,8 +900,6 @@
 		<item name="wcf.acp.option.module_user_rank"><![CDATA[Benutzerränge]]></item>
 		<item name="wcf.acp.option.module_user_signature"><![CDATA[Signaturen]]></item>
 		<item name="wcf.acp.option.module_team_page"><![CDATA[Team-Seite]]></item>
-		<item name="wcf.acp.option.module_dashboard_page"><![CDATA[Dashboard]]></item>
-		<item name="wcf.acp.option.module_dashboard_page.description"><![CDATA[Hinweis: Falls das Dashboard als Startseite definiert ist, muss bei Deaktivierung dieser Option zusätzlich eine neue Startseite in der <a href="{link controller='PageMenuItemList'}{/link}">Hauptmenüverwaltung</a> ausgewählt werden.]]></item>
 		<item name="wcf.acp.option.register_enable_password_security_check"><![CDATA[Sicherheitsüberprüfung aktivieren]]></item>
 		<item name="wcf.acp.option.register_enable_password_security_check.description"><![CDATA[Kennwörter werden auf ihre Sicherheit geprüft. Unsichere Kennwörter werden abgelehnt.]]></item>
 		<item name="wcf.acp.option.register_password_min_length"><![CDATA[Minimale Kennwortlänge]]></item>
@@ -962,8 +948,6 @@
 		<item name="wcf.acp.option.user_cleanup_activity_event_lifetime.description"><![CDATA[Zeitraum nach dem letzte Aktivitäten automatisch verworfen werden.]]></item>
 		<item name="wcf.acp.option.user_cleanup_profile_visitor_lifetime"><![CDATA[Profil-Besucher]]></item>
 		<item name="wcf.acp.option.user_cleanup_profile_visitor_lifetime.description"><![CDATA[Zeitraum nach dem Profil-Besucher automatisch verworfen werden.]]></item>
-		<item name="wcf.acp.option.recent_activity_items"><![CDATA[Anzahl Einträge]]></item>
-		<item name="wcf.acp.option.recent_activity_sidebar_items"><![CDATA[Anzahl Einträge]]></item>
 		<item name="wcf.acp.option.category.message.general.likes"><![CDATA[Like-System]]></item>
 		<item name="wcf.acp.option.module_like"><![CDATA[Like-System]]></item>
 		<item name="wcf.acp.option.like_allow_for_own_content"><![CDATA[Benutzer können eigene Inhalte liken]]></item>
@@ -1524,7 +1508,6 @@ GmbH=Gesellschaft mit beschränkter Haftung]]></item>
 		<item name="wcf.acp.template.group"><![CDATA[Templategruppe]]></item>
 		<item name="wcf.acp.template.group.default"><![CDATA[Standardtemplates]]></item>
 		<item name="wcf.acp.template.application"><![CDATA[Anwendung]]></item>
-		<item name="wcf.acp.template.application.all"><![CDATA[Keine Filterung]]></item>
 		<item name="wcf.acp.template.add"><![CDATA[Template hinzufügen]]></item>
 		<item name="wcf.acp.template.edit"><![CDATA[Template bearbeiten]]></item>
 		<item name="wcf.acp.template.copy"><![CDATA[Template kopieren]]></item>
@@ -1826,6 +1809,7 @@ Erlaubte Dateiendungen: {', '|implode:$attachmentHandler->getFormattedAllowedExt
 		<item name="wcf.bbcode.code.tpl.title"><![CDATA[Smarty-Template]]></item>
 		<item name="wcf.bbcode.code.xml.title"><![CDATA[XML-Quellcode]]></item>
 		<item name="wcf.bbcode.image.source"><![CDATA[Bild-Link]]></item>
+		<item name="wcf.bbcode.quote.delete"><![CDATA[Zitat löschen]]></item>
 		<item name="wcf.bbcode.quote.edit"><![CDATA[Zitat bearbeiten]]></item>
 		<item name="wcf.bbcode.quote.edit.author"><![CDATA[Autor]]></item>
 		<item name="wcf.bbcode.quote.edit.link"><![CDATA[Quelle]]></item>
@@ -1942,34 +1926,6 @@ Fehler sind beispielsweise:
 		<item name="wcf.condition.timestamp.error.endBeforeStart"><![CDATA[Das Enddatum ist vor dem Startdatum.]]></item>
 		<item name="wcf.condition.timestamp.error.endNotValid"><![CDATA[Das Startdatum ist ungültig.]]></item>
 		<item name="wcf.condition.timestamp.error.startNotValid"><![CDATA[Das Enddatum ist ungültig.]]></item>
-	</category>
-	
-	<category name="wcf.dashboard">
-		<item name="wcf.dashboard.box.availableBoxes"><![CDATA[Deaktivierte Boxen]]></item>
-		<item name="wcf.dashboard.box.enabledBoxes"><![CDATA[Aktive Boxen]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.user.recentActivitySidebar"><![CDATA[Letzte Aktivität]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.user.statsSidebar"><![CDATA[Statistiken]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.user.newestMembers"><![CDATA[Neueste Mitglieder]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.user.mostActiveMembers"><![CDATA[Aktivste Mitglieder]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.user.registerButton"><![CDATA[Registrierungs-Button]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.user.signedInAs"><![CDATA[Angemeldet als]]></item>
-		<item name="wcf.dashboard.boxType.content"><![CDATA[Inhaltsbereich]]></item>
-		<item name="wcf.dashboard.boxType.sidebar"><![CDATA[Seitenleiste]]></item>
-		<item name="wcf.dashboard.objectType"><![CDATA[Seite]]></item>
-		<item name="wcf.dashboard.objectType.com.woltlab.wcf.user.DashboardPage"><![CDATA[Dashboard]]></item>
-		<item name="wcf.dashboard.objectType.com.woltlab.wcf.user.MembersListPage"><![CDATA[Mitgliederliste]]></item>
-		<item name="wcf.dashboard.objectType.com.woltlab.wcf.user.RecentActivityListPage"><![CDATA[Letzte Aktivitäten]]></item>
-		<item name="wcf.dashboard.box.mostActiveMembers.points"><![CDATA[{#$activeMember->activityPoints} Punkt{if $activeMember->activityPoints != 1}e{/if}]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.user.recentActivity"><![CDATA[Letzte Aktivität]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.like.mostLikedMembers"><![CDATA[Mitglieder mit den meisten Likes]]></item>
-		<item name="wcf.dashboard.box.mostLikedMembers.likes"><![CDATA[{#$likedMember->likesReceived} Like{if $likedMember->likesReceived != 1}s{/if}]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.user.todaysBirthdays"><![CDATA[Heutige Geburtstage]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.user.todaysFollowingBirthdays"><![CDATA[Heutige Geburtstage von Nutzern, denen Sie folgen]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.user.usersOnlineSidebar"><![CDATA[Benutzer online]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.user.followingsOnlineSidebar"><![CDATA[Benutzer online, denen Sie folgen]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.user.staffOnlineSidebar"><![CDATA[Team-Mitglieder online]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.paidSubscriptions"><![CDATA[Bezahlte Mitgliedschaften]]></item>
-		<item name="wcf.dashboard.box.com.woltlab.wcf.paidSubscriptionsSidebar"><![CDATA[Bezahlte Mitgliedschaften]]></item>
 	</category>
 	
 	<category name="wcf.date">
@@ -2167,6 +2123,7 @@ Fehler sind beispielsweise:
 		<item name="wcf.edit.revert.sure"><![CDATA[Möchten Sie die Version von {$edit->username} vom {$edit->time|plainTime} wirklich wiederherstellen?]]></item>
 		<item name="wcf.edit.reverted"><![CDATA[Wiederhergestellt auf Version von {$edit->username} vom {$edit->time|plainTime}]]></item>
 		<item name="wcf.edit.button.compare"><![CDATA[Vergleichen]]></item>
+		<item name="wcf.edit.button.goToContent"><![CDATA[Zum Inhalt gehen]]></item>
 		<item name="wcf.edit.headline.old"><![CDATA[{if $oldID == 'current'}Aktuelle {/if}Version vom {@$old->time|plainTime} ({$old->username})]]></item>
 		<item name="wcf.edit.headline.new"><![CDATA[{if $newID == 'current'}Aktuelle {/if}Version vom {@$new->time|plainTime} ({$new->username})]]></item>
 	</category>
@@ -2558,44 +2515,13 @@ Fehler sind beispielsweise:
 		<item name="wcf.page.category.com.woltlab.wcf.moderation"><![CDATA[Moderation]]></item>
 		<item name="wcf.page.category.com.woltlab.wcf.other"><![CDATA[Weitere Seiten]]></item>
 		<item name="wcf.page.category.com.woltlab.wcf.user"><![CDATA[Benutzer]]></item>
-		<item name="wcf.page.com.woltlab.wcf.AccountManagementForm"><![CDATA[Benutzerkonto-Verwaltung]]></item>
-		<item name="wcf.page.com.woltlab.wcf.AvatarEditForm"><![CDATA[Avatar-Verwaltung]]></item>
-		<item name="wcf.page.com.woltlab.wcf.DisclaimerForm"><![CDATA[Disclaimer]]></item>
-		<item name="wcf.page.com.woltlab.wcf.EmailActivationForm"><![CDATA[Aktivierung neuer E-Mail-Adresse]]></item>
-		<item name="wcf.page.com.woltlab.wcf.EmailNewActivationCodeForm"><![CDATA[E-Mail-Aktivierungscode-Anforderung]]></item>
-		<item name="wcf.page.com.woltlab.wcf.LoginForm"><![CDATA[Anmeldung]]></item>
-		<item name="wcf.page.com.woltlab.wcf.LostPasswordForm"><![CDATA[Kennwort vergessen]]></item>
-		<item name="wcf.page.com.woltlab.wcf.MailForm"><![CDATA[E-Mail-Formular]]></item>
-		<item name="wcf.page.com.woltlab.wcf.ModerationActivationForm"><![CDATA[Inhaltsfreischaltung]]></item>
-		<item name="wcf.page.com.woltlab.wcf.ModerationReportForm"><![CDATA[Inhaltsmeldung]]></item>
-		<item name="wcf.page.com.woltlab.wcf.NewPasswordForm"><![CDATA[Neues Kennwort]]></item>
-		<item name="wcf.page.com.woltlab.wcf.NotificationSettingsForm"><![CDATA[Benachrichtigungseinstellungen]]></item>
-		<item name="wcf.page.com.woltlab.wcf.RegisterActivationForm"><![CDATA[Registrierung abschließen]]></item>
-		<item name="wcf.page.com.woltlab.wcf.RegisterForm"><![CDATA[Registrierung]]></item>
-		<item name="wcf.page.com.woltlab.wcf.RegisterNewActivationCodeForm"><![CDATA[Aktivierungscode-Anforderung]]></item>
-		<item name="wcf.page.com.woltlab.wcf.SearchForm"><![CDATA[Suche]]></item>
-		<item name="wcf.page.com.woltlab.wcf.SettingsForm"><![CDATA[Einstellungen]]></item>
-		<item name="wcf.page.com.woltlab.wcf.SignatureEditForm"><![CDATA[Signatur-Verwaltung]]></item>
-		<item name="wcf.page.com.woltlab.wcf.UserSearchForm"><![CDATA[Mitgliedersuche]]></item>
-		<item name="wcf.page.com.woltlab.wcf.DashboardPage"><![CDATA[Dashboard]]></item>
-		<item name="wcf.page.com.woltlab.wcf.DeletedContentListPage"><![CDATA[Gelöschte Inhalte]]></item>
-		<item name="wcf.page.com.woltlab.wcf.FollowingPage"><![CDATA[Benutzer, denen Sie folgen]]></item>
-		<item name="wcf.page.com.woltlab.wcf.IgnoredUsersPage"><![CDATA[Blockierte Benutzer]]></item>
-		<item name="wcf.page.com.woltlab.wcf.MembersListPage"><![CDATA[Mitglieder]]></item>
-		<item name="wcf.page.com.woltlab.wcf.ModerationListPage"><![CDATA[Moderation]]></item>
-		<item name="wcf.page.com.woltlab.wcf.NotificationListPage"><![CDATA[Benachrichtigungen]]></item>
-		<item name="wcf.page.com.woltlab.wcf.PaidSubscriptionListPage"><![CDATA[Bezahlte Mitgliedschaften]]></item>
-		<item name="wcf.page.com.woltlab.wcf.RecentActivityListPage"><![CDATA[Letzte Aktivitäten]]></item>
-		<item name="wcf.page.com.woltlab.wcf.SearchResultPage"><![CDATA[Suchergebnisse]]></item>
-		<item name="wcf.page.com.woltlab.wcf.TaggedPage"><![CDATA[Inhalte mit bestimmtem Tag]]></item>
-		<item name="wcf.page.com.woltlab.wcf.TeamPage"><![CDATA[Team-Mitglieder]]></item>
-		<item name="wcf.page.com.woltlab.wcf.UserPage"><![CDATA[Benutzerprofil]]></item>
-		<item name="wcf.page.com.woltlab.wcf.UsersOnlineListPage"><![CDATA[Benutzer online]]></item>
+		<item name="wcf.page.comments"><![CDATA[Kommentare]]></item>
+		
+		<!-- TODO: these variables are mostly irrelevant, but some are still of use, such as the custom phrase for the user profile -->
 		<item name="wcf.page.onlineLocation.com.woltlab.wcf.User"><![CDATA[Benutzerprofil von <a href="{link controller='User' object=$user}{/link}" class="userLink" data-user-id="{@$user->userID}">{$user->username}</a>]]></item>
 		<item name="wcf.page.onlineLocation.com.woltlab.wcf.UsersOnlineList"><![CDATA[Benutzer-Online-Liste]]></item>
 		<item name="wcf.page.onlineLocation.com.woltlab.wcf.MembersList"><![CDATA[Mitgliederliste]]></item>
 		<item name="wcf.page.onlineLocation.com.woltlab.wcf.Team"><![CDATA[Liste der Team-Mitglieder]]></item>
-		<item name="wcf.page.onlineLocation.com.woltlab.wcf.Dashboard"><![CDATA[Dashboard]]></item>
 		<item name="wcf.page.onlineLocation.com.woltlab.wcf.Register"><![CDATA[Registrierung]]></item>
 		<item name="wcf.page.onlineLocation.com.woltlab.wcf.LostPassword"><![CDATA[Kennwort vergessen]]></item>
 		<item name="wcf.page.onlineLocation.com.woltlab.wcf.Login"><![CDATA[Anmeldung]]></item>
@@ -2603,6 +2529,41 @@ Fehler sind beispielsweise:
 		<item name="wcf.page.onlineLocation.com.woltlab.wcf.AvatarEdit"><![CDATA[Avatar-Verwaltung]]></item>
 		<item name="wcf.page.onlineLocation.com.woltlab.wcf.Settings"><![CDATA[Einstellungen]]></item>
 		<item name="wcf.page.onlineLocation.com.woltlab.wcf.SignatureEdit"><![CDATA[Signatur-Verwaltung]]></item>
+		
+		<item name="wcf.page.com.woltlab.wcf.AccountManagement"><![CDATA[Benutzerkonto-Verwaltung]]></item>
+		<item name="wcf.page.com.woltlab.wcf.AvatarEdit"><![CDATA[Avatar-Verwaltung]]></item>
+		<item name="wcf.page.com.woltlab.wcf.Dashboard"><![CDATA[Dashboard]]></item>
+		<item name="wcf.page.com.woltlab.wcf.DeletedContentList"><![CDATA[Gelöschte Inhalte]]></item>
+		<item name="wcf.page.com.woltlab.wcf.Disclaimer"><![CDATA[Disclaimer]]></item>
+		<item name="wcf.page.com.woltlab.wcf.EditHistory"><![CDATA[TODO]]></item>
+		<item name="wcf.page.com.woltlab.wcf.EmailActivation"><![CDATA[Aktivierung neuer E-Mail-Adresse]]></item>
+		<item name="wcf.page.com.woltlab.wcf.EmailNewActivationCode"><![CDATA[E-Mail-Aktivierungscode-Anforderung]]></item>
+		<item name="wcf.page.com.woltlab.wcf.Following"><![CDATA[Benutzer, denen Sie folgen]]></item>
+		<item name="wcf.page.com.woltlab.wcf.IgnoredUsers"><![CDATA[Blockierte Benutzer]]></item>
+		<item name="wcf.page.com.woltlab.wcf.Login"><![CDATA[Anmeldung]]></item>
+		<item name="wcf.page.com.woltlab.wcf.LostPassword"><![CDATA[Kennwort vergessen]]></item>
+		<item name="wcf.page.com.woltlab.wcf.Mail"><![CDATA[E-Mail-Formular]]></item>
+		<item name="wcf.page.com.woltlab.wcf.MembersList"><![CDATA[Mitglieder]]></item>
+		<item name="wcf.page.com.woltlab.wcf.ModerationActivation"><![CDATA[Inhaltsfreischaltung]]></item>
+		<item name="wcf.page.com.woltlab.wcf.ModerationList"><![CDATA[Moderation]]></item>
+		<item name="wcf.page.com.woltlab.wcf.ModerationReport"><![CDATA[Inhaltsmeldung]]></item>
+		<item name="wcf.page.com.woltlab.wcf.NewPassword"><![CDATA[Neues Kennwort]]></item>
+		<item name="wcf.page.com.woltlab.wcf.NotificationList"><![CDATA[Benachrichtigungen]]></item>
+		<item name="wcf.page.com.woltlab.wcf.NotificationSettings"><![CDATA[Benachrichtigungseinstellungen]]></item>
+		<item name="wcf.page.com.woltlab.wcf.PaidSubscriptionList"><![CDATA[Bezahlte Mitgliedschaften]]></item>
+		<item name="wcf.page.com.woltlab.wcf.RecentActivityList"><![CDATA[Letzte Aktivitäten]]></item>
+		<item name="wcf.page.com.woltlab.wcf.Register"><![CDATA[Registrierung]]></item>
+		<item name="wcf.page.com.woltlab.wcf.RegisterActivation"><![CDATA[Registrierung abschließen]]></item>
+		<item name="wcf.page.com.woltlab.wcf.RegisterNewActivationCode"><![CDATA[Aktivierungscode-Anforderung]]></item>
+		<item name="wcf.page.com.woltlab.wcf.Search"><![CDATA[Suche]]></item>
+		<item name="wcf.page.com.woltlab.wcf.SearchResult"><![CDATA[Suchergebnisse]]></item>
+		<item name="wcf.page.com.woltlab.wcf.Settings"><![CDATA[Einstellungen]]></item>
+		<item name="wcf.page.com.woltlab.wcf.SignatureEdit"><![CDATA[Signatur-Verwaltung]]></item>
+		<item name="wcf.page.com.woltlab.wcf.Tagged"><![CDATA[Inhalte mit bestimmtem Tag]]></item>
+		<item name="wcf.page.com.woltlab.wcf.Team"><![CDATA[Team]]></item>
+		<item name="wcf.page.com.woltlab.wcf.User"><![CDATA[Benutzerprofil]]></item>
+		<item name="wcf.page.com.woltlab.wcf.UserSearch"><![CDATA[Benutzer suchen]]></item>
+		<item name="wcf.page.com.woltlab.wcf.UsersOnlineList"><![CDATA[Benutzer Online]]></item>
 	</category>
 	
 	<category name="wcf.paidSubscription">
@@ -2711,6 +2672,10 @@ Fehler sind beispielsweise:
 		<item name="wcf.user.login"><![CDATA[Anmeldung]]></item>
 		<item name="wcf.user.login.data"><![CDATA[Zugangsdaten]]></item>
 		<item name="wcf.user.login.error.cookieRequired"><![CDATA[Die Anmeldung erfordert den Einsatz von Cookies, bitte aktivieren Sie diese um die Anmeldung durchzuführen.]]></item>
+		<item name="wcf.user.login.login"><![CDATA[Anmeldung]]></item>
+		<item name="wcf.user.login.register"><![CDATA[Registrierung]]></item>
+		<item name="wcf.user.login.register.teaser"><![CDATA[Sie haben noch kein Benutzerkonto auf unserer Seite? <a href="{link controller='Register'}{/link}">Melden Sie sich kostenlos an</a> und nehmen Sie an unserer Community teil!]]></item>
+		<item name="wcf.user.login.register.registerNow"><![CDATA[Benutzerkonto erstellen]]></item>
 		<item name="wcf.user.password.error.false"><![CDATA[Dieses Kennwort ist falsch.]]></item>
 		<item name="wcf.user.language"><![CDATA[Sprache]]></item>
 		<item name="wcf.user.language.description"><![CDATA[Sprache der Benutzeroberfläche]]></item>
@@ -2743,12 +2708,7 @@ Fehler sind beispielsweise:
 		<item name="wcf.user.button.register"><![CDATA[Registrieren]]></item>
 		<item name="wcf.user.button.registerNow"><![CDATA[Jetzt registrieren]]></item>
 		<item name="wcf.user.username.error.3rdParty"><![CDATA[Das Benutzerkonto ist mit einem Drittanbieter-Konto verbunden, ein Passwort kann nicht angefordert werden.]]></item>
-		<item name="wcf.user.login.action"><![CDATA[Sind Sie bereits registriert?]]></item>
-		<item name="wcf.user.login.action.login"><![CDATA[Ja, mein Kennwort lautet:]]></item>
-		<item name="wcf.user.login.action.register"><![CDATA[Nein, ich möchte mich jetzt registrieren.]]></item>
-		<item name="wcf.user.login.redirect"><![CDATA[Sie wurden erfolgreich angemeldet.]]></item>
 		<item name="wcf.user.loginOrRegister"><![CDATA[Anmelden{if !REGISTER_DISABLED} oder registrieren{/if}]]></item>
-		<item name="wcf.user.logout.redirect"><![CDATA[Sie wurden erfolgreich abgemeldet.]]></item>
 		<item name="wcf.user.useCookies"><![CDATA[Dauerhaft angemeldet bleiben]]></item>
 		<item name="wcf.user.usernameOrEmail"><![CDATA[Benutzername oder E-Mail-Adresse]]></item>
 		<item name="wcf.user.gender.male"><![CDATA[Männlich]]></item>
@@ -2887,7 +2847,6 @@ Wenn Sie Probleme mit der Aktivierung haben, wenden Sie sich bitte an den Admini
 		<item name="wcf.user.birthday.age.to"><![CDATA[bis]]></item>
 		<item name="wcf.user.search"><![CDATA[Mitgliedersuche]]></item>
 		<item name="wcf.user.search.error.noMatches"><![CDATA[Zu den angegebenen Kriterien wurde kein Mitglied gefunden.]]></item>
-		<item name="wcf.user.dashboard"><![CDATA[Dashboard]]></item>
 		<item name="wcf.user.newestMember"><![CDATA[Neuestes Mitglied]]></item>
 		<item name="wcf.user.login.3rdParty"><![CDATA[Anmeldung über Drittanbieter]]></item>
 		<item name="wcf.user.search.results"><![CDATA[Suchergebnisse]]></item>
@@ -2925,6 +2884,9 @@ Wenn Sie Probleme mit der Aktivierung haben, wenden Sie sich bitte an den Admini
 		<item name="wcf.user.panel.markAsRead"><![CDATA[Als gelesen markieren]]></item>
 		<item name="wcf.user.panel.settings"><![CDATA[Einstellungen]]></item>
 		<item name="wcf.user.panel.showAll"><![CDATA[Alle anzeigen]]></item>
+		<item name="wcf.user.boxList.description.activityPoints"><![CDATA[{#$boxUser->activityPoints} Punkt{if $boxUser->activityPoints != 1}e{/if}]]></item>
+		<item name="wcf.user.boxList.description.likesReceived"><![CDATA[{#$boxUser->likesReceived} Like{if $boxUser->likesReceived != 1}s{/if}]]></item>
+		<item name="wcf.user.boxList.description.registrationDate"><![CDATA[{@$boxUser->registrationDate|time}]]></item>
 	</category>
 	
 	<category name="wcf.user.menu">
@@ -3038,7 +3000,7 @@ Sollten Sie sich nicht auf der Website: {@PAGE_TITLE|language} angemeldet haben,
 	<category name="wcf.user.3rdparty">
 		<item name="wcf.user.3rdparty"><![CDATA[Drittanbieter]]></item>
 		<item name="wcf.user.3rdparty.github"><![CDATA[GitHub]]></item>
-		<item name="wcf.user.3rdparty.github.login"><![CDATA[GitHub]]></item>
+		<item name="wcf.user.3rdparty.github.login"><![CDATA[Mit Ihrem GitHub-Konto anmelden]]></item>
 		<item name="wcf.user.3rdparty.github.login.error.access_denied"><![CDATA[Da Sie die Berechtigungen verweigert haben, ist die Anmeldung mit GitHub nicht möglich.]]></item>
 		<item name="wcf.user.3rdparty.github.register"><![CDATA[Sie erstellen einen Account über <span class="icon icon16 fa-github"></span>&nbsp;GitHub. Der Benutzername und Ihre E-Mail-Adresse wurden daher bereits ausgefüllt.]]></item>
 		<item name="wcf.user.3rdparty.github.connect"><![CDATA[Mit GitHub-Konto {if $__wcf->session->getVar('__githubUsername')}(„<a href="https://github.com/{$__wcf->session->getVar('__githubUsername')}"{if EXTERNAL_LINK_TARGET_BLANK} target="_blank"{/if}>{$__wcf->session->getVar('__githubUsername')}</a>“){/if} verknüpfen]]></item>
@@ -3047,7 +3009,7 @@ Sollten Sie sich nicht auf der Website: {@PAGE_TITLE|language} angemeldet haben,
 		<item name="wcf.user.3rdparty.github.disconnect"><![CDATA[Verknüpfung mit GitHub trennen]]></item>
 		<item name="wcf.user.3rdparty.github.disconnect.success"><![CDATA[Die Verknüpfung mit Ihrem GitHub-Konto wurde erfolgreich getrennt.]]></item>
 		<item name="wcf.user.3rdparty.twitter"><![CDATA[Twitter]]></item>
-		<item name="wcf.user.3rdparty.twitter.login"><![CDATA[Twitter]]></item>
+		<item name="wcf.user.3rdparty.twitter.login"><![CDATA[Mit Ihrem Twitter-Konto anmelden]]></item>
 		<item name="wcf.user.3rdparty.twitter.login.error.denied"><![CDATA[Da Sie die Berechtigungen verweigert haben, ist die Anmeldung mit Twitter nicht möglich.]]></item>
 		<item name="wcf.user.3rdparty.twitter.register"><![CDATA[Sie erstellen einen Account über <span class="icon icon16 fa-twitter"></span>&nbsp;Twitter. Der Benutzername wurde daher bereits ausgefüllt. Geben Sie nun noch Ihre E-Mail-Adresse an und Sie können sofort loslegen!]]></item>
 		<item name="wcf.user.3rdparty.twitter.connect"><![CDATA[Mit Twitter-Konto {if $__wcf->session->getVar('__twitterUsername')}(„<a href="https://twitter.com/{$__wcf->session->getVar('__twitterUsername')}"{if EXTERNAL_LINK_TARGET_BLANK} target="_blank"{/if}>{$__wcf->session->getVar('__twitterUsername')}</a>“){/if} verknüpfen]]></item>
@@ -3056,7 +3018,7 @@ Sollten Sie sich nicht auf der Website: {@PAGE_TITLE|language} angemeldet haben,
 		<item name="wcf.user.3rdparty.twitter.disconnect"><![CDATA[Verknüpfung mit Twitter trennen]]></item>
 		<item name="wcf.user.3rdparty.twitter.disconnect.success"><![CDATA[Die Verknüpfung mit Ihrem Twitter-Konto wurde erfolgreich getrennt.]]></item>
 		<item name="wcf.user.3rdparty.facebook"><![CDATA[Facebook]]></item>
-		<item name="wcf.user.3rdparty.facebook.login"><![CDATA[Facebook]]></item>
+		<item name="wcf.user.3rdparty.facebook.login"><![CDATA[Mit Ihrem Facebook-Konto anmelden]]></item>
 		<item name="wcf.user.3rdparty.facebook.login.error.access_denied"><![CDATA[Da Sie die Berechtigungen verweigert haben, ist die Anmeldung mit Facebook nicht möglich.]]></item>
 		<item name="wcf.user.3rdparty.facebook.register"><![CDATA[Sie erstellen einen Account über <span class="icon icon16 fa-facebook"></span>&nbsp;Facebook. Der Benutzername und Ihre E-Mail-Adresse wurden daher bereits ausgefüllt.]]></item>
 		<item name="wcf.user.3rdparty.facebook.connect"><![CDATA[Mit Facebook-Konto {if $__wcf->session->getVar('__facebookUsername')}(„{$__wcf->session->getVar('__facebookUsername')}“){/if} verknüpfen]]></item>
@@ -3065,7 +3027,7 @@ Sollten Sie sich nicht auf der Website: {@PAGE_TITLE|language} angemeldet haben,
 		<item name="wcf.user.3rdparty.facebook.disconnect"><![CDATA[Verknüpfung mit Facebook trennen]]></item>
 		<item name="wcf.user.3rdparty.facebook.disconnect.success"><![CDATA[Die Verknüpfung mit Ihrem Facebook-Konto wurde erfolgreich getrennt.]]></item>
 		<item name="wcf.user.3rdparty.google"><![CDATA[Google]]></item>
-		<item name="wcf.user.3rdparty.google.login"><![CDATA[Google]]></item>
+		<item name="wcf.user.3rdparty.google.login"><![CDATA[Mit Ihrem Google-Konto anmelden]]></item>
 		<item name="wcf.user.3rdparty.google.login.error.access_denied"><![CDATA[Da Sie die Berechtigungen verweigert haben, ist die Anmeldung mit Google nicht möglich.]]></item>
 		<item name="wcf.user.3rdparty.google.register"><![CDATA[Sie erstellen einen Account über <span class="icon icon16 fa-google-plus"></span>&nbsp;Google. Der Benutzername und Ihre E-Mail-Adresse wurden daher bereits ausgefüllt.]]></item>
 		<item name="wcf.user.3rdparty.google.connect"><![CDATA[Mit Google-Konto {if $__wcf->session->getVar('__googleUsername')}(„{$__wcf->session->getVar('__googleUsername')}“){/if} verknüpfen]]></item>
@@ -3245,6 +3207,9 @@ Möchten Sie diese E-Mail-Benachrichtigung in Zukunft nicht mehr erhalten, könn
 		<item name="wcf.user.profile.recentActivity.profileCommentResponse"><![CDATA[Hat auf einen Kommentar von <a href="{link controller='User' object=$commentAuthor}{/link}">{$commentAuthor->username}</a> an der <a href="{link controller='User' object=$user}{/link}#wall">Pinnwand von {$user->username}</a> geantwortet.]]></item>
 		<item name="wcf.user.profile.report"><![CDATA[Benutzerprofil melden]]></item>
 		<item name="wcf.user.profile.protected"><![CDATA[Der Benutzer hat den Zugriff auf sein vollständiges Profil eingeschränkt.]]></item>
+		<item name="wcf.user.profile.user"><![CDATA[Benutzer]]></item>
+		<item name="wcf.user.profile.management"><![CDATA[Verwaltung]]></item>
+		<item name="wcf.user.profile.customization"><![CDATA[Anpassung]]></item>
 	</category>
 	
 	<category name="wcf.user.objectWatch">

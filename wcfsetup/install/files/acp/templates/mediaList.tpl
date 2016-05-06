@@ -44,8 +44,18 @@
 </script>
 
 <header class="contentHeader">
-	<h1 class="contentTitle">{lang}wcf.acp.media.list{/lang}</h1>
-	<p class="contentHeaderDescription">{lang}wcf.acp.media.stats{/lang}</p>
+	<div class="contentHeaderTitle">
+		<h1 class="contentTitle">{lang}wcf.acp.media.list{/lang}</h1>
+		<p class="contentHeaderDescription">{lang}wcf.acp.media.stats{/lang}</p>
+	</div>
+	
+	<nav class="contentHeaderNavigation">
+		<ul>
+			<li><a href="{link controller='MediaAdd'}{/link}" class="button"><span class="icon icon16 fa-plus"></span> <span>{lang}wcf.acp.media.add{/lang}</span></a></li>
+			
+			{event name='contentHeaderNavigation'}
+		</ul>
+	</nav>
 </header>
 
 {include file='formError'}
@@ -54,9 +64,9 @@
 	<section class="section">
 		<h2 class="sectionTitle">{lang}wcf.global.filter{/lang}</h2>
 		
-		<div class="row rowColGap">
+		<div class="row rowColGap formGrid">
 			<dl class="col-xs-12 col-md-4">
-				<dt><label for="filename">{lang}wcf.media.filename{/lang}</label></dt>
+				<dt></dt>
 				<dd>
 					<div class="inputAddon dropdown" id="mediaSearch">
 						<span class="button dropdownToggle inputPrefix">
@@ -71,47 +81,40 @@
 							<li class="dropdownDivider"></li>
 							<li data-file-type="all"><span>{lang}wcf.media.search.filetype.all{/lang}</span></li>
 						</ul>
-						<input type="text" id="filename" name="filename" value="{$filename}" class="long" />
+						<input type="text" id="filename" name="filename" value="{$filename}" placeholder="{lang}wcf.media.filename{/lang}" class="long" />
 					</div>
 				</dd>
 			</dl>
 			
 			<dl class="col-xs-12 col-md-4">
-				<dt><label for="username">{lang}wcf.user.username{/lang}</label></dt>
+				<dt></dt>
 				<dd>
-					<input type="text" id="username" name="username" value="{$username}" class="long" />
+					<input type="text" id="username" name="username" value="{$username}" placeholder="{lang}wcf.user.username{/lang}" class="long" />
 				</dd>
 			</dl>
 		
 			{event name='filterFields'}
-		</div>	
+		</div>
+		
+		<div class="formSubmit">
+			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+			{@SECURITY_TOKEN_INPUT_TAG}
+		</div>
 	</section>
-	
-	{event name='sections'}
-	
-	<div class="formSubmit">
-		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
-		{@SECURITY_TOKEN_INPUT_TAG}
-	</div>
 </form>
 
-<div class="contentNavigation">
-	{assign var='linkParameters' value=''}
-	
-	{if $username}{capture append=linkParameters}&username={@$username|rawurlencode}{/capture}{/if}
-	{if $filename}{capture append=linkParameters}&filename={@$filename|rawurlencode}{/capture}{/if}
-	{if $fileType}{capture append=linkParameters}&fileType={@$fileType|rawurlencode}{/capture}{/if}
-	
-	{pages print=true assign=pagesLinks controller="MediaList" link="pageNo=%d&sortField=$sortField&sortOrder=$sortOrder$linkParameters"}
-	
-	<nav>
-		<ul>
-			<li><a href="{link controller='MediaAdd'}{/link}" class="button"><span class="icon icon16 fa-plus"></span> <span>{lang}wcf.acp.media.add{/lang}</span></a></li>
-			
-			{event name='contentNavigationButtonsTop'}
-		</ul>
-	</nav>
-</div>
+{hascontent}
+	<div class="paginationTop">
+		{content}
+			{assign var='linkParameters' value=''}
+			{if $username}{capture append=linkParameters}&username={@$username|rawurlencode}{/capture}{/if}
+			{if $filename}{capture append=linkParameters}&filename={@$filename|rawurlencode}{/capture}{/if}
+			{if $fileType}{capture append=linkParameters}&fileType={@$fileType|rawurlencode}{/capture}{/if}
+				
+			{pages print=true assign=pagesLinks controller="MediaList" link="pageNo=%d&sortField=$sortField&sortOrder=$sortOrder$linkParameters"}
+		{/content}
+	</div>
+{/hascontent}
 
 {if $objects|count}
 	<div class="section tabularBox">
@@ -159,19 +162,21 @@
 		</table>
 	</div>
 	
-	<div class="contentNavigation">
-		{@$pagesLinks}
+	<footer class="contentFooter">
+		{hascontent}
+			<div class="paginationBottom">
+				{content}{@$pagesLinks}{/content}
+			</div>
+		{/hascontent}
 		
-		<nav>
+		<nav class="contentFooterNavigation">
 			<ul>
 				<li><a href="{link controller='MediaAdd'}{/link}" class="button"><span class="icon icon16 fa-plus"></span> <span>{lang}wcf.acp.media.add{/lang}</span></a></li>
 				
-				{event name='contentNavigationButtonsBottom'}
+				{event name='contentFooterNavigation'}
 			</ul>
 		</nav>
-
-		<nav class="jsClipboardEditor" data-types="[ 'com.woltlab.wcf.media' ]"></nav>
-	</div>
+	</footer>
 {else}
 	<p class="info">{lang}wcf.global.noItems{/lang}</p>
 {/if}

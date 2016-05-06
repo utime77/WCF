@@ -44,20 +44,6 @@
 		</type>
 		
 		<type>
-			<name>com.woltlab.wcf.user.DashboardPage</name>
-			<definitionname>com.woltlab.wcf.user.dashboardContainer</definitionname>
-			<allowcontent>1</allowcontent>
-			<allowsidebar>1</allowsidebar>
-		</type>
-		
-		<type>
-			<name>com.woltlab.wcf.user.MembersListPage</name>
-			<definitionname>com.woltlab.wcf.user.dashboardContainer</definitionname>
-			<allowcontent>0</allowcontent>
-			<allowsidebar>1</allowsidebar>
-		</type>
-		
-		<type>
 			<name>com.woltlab.wcf.user</name>
 			<definitionname>com.woltlab.wcf.moderation.report</definitionname>
 			<classname>wcf\system\moderation\queue\report\UserModerationQueueReportHandler</classname>
@@ -164,6 +150,12 @@
 			<definitionname>com.woltlab.wcf.notification.objectType</definitionname>
 			<classname><![CDATA[wcf\system\user\notification\object\type\ModerationQueueCommentResponseUserNotificationObjectType]]></classname>
 			<category>com.woltlab.wcf.moderation</category>
+		</type>
+		
+		<type>
+			<name>com.woltlab.wcf.page</name>
+			<definitionname>com.woltlab.wcf.comment.commentableContent</definitionname>
+			<classname><![CDATA[wcf\system\comment\manager\PageCommentManager]]></classname>
 		</type>
 		<!-- /comments -->
 		
@@ -513,13 +505,6 @@
 			<categoryname>com.woltlab.wcf.other</categoryname>
 		</type>
 		<type>
-			<name>com.woltlab.wcf.DashboardPage</name>
-			<definitionname>com.woltlab.wcf.page</definitionname>
-			<classname><![CDATA[wcf\page\DashboardPage]]></classname>
-			<options>module_dashboard_page</options>
-			<categoryname>com.woltlab.wcf.other</categoryname>
-		</type>
-		<type>
 			<name>com.woltlab.wcf.DeletedContentListPage</name>
 			<definitionname>com.woltlab.wcf.page</definitionname>
 			<classname><![CDATA[wcf\page\DeletedContentListPage]]></classname>
@@ -605,9 +590,9 @@
 		
 		<!-- notice conditions -->
 		<type>
-			<name>com.woltlab.wcf.page.controller</name>
+			<name>com.woltlab.wcf.page</name>
 			<definitionname>com.woltlab.wcf.condition.notice</definitionname>
-			<classname><![CDATA[wcf\system\condition\MultiPageControllerCondition]]></classname>
+			<classname><![CDATA[wcf\system\condition\page\MultiPageCondition]]></classname>
 			<conditionobject>com.woltlab.wcf.page</conditionobject>
 		</type>
 		
@@ -764,9 +749,9 @@
 		
 		<!-- ad conditions -->
 		<type>
-			<name>com.woltlab.wcf.page.controller</name>
+			<name>com.woltlab.wcf.page</name>
 			<definitionname>com.woltlab.wcf.condition.ad</definitionname>
-			<classname><![CDATA[wcf\system\condition\MultiPageControllerCondition]]></classname>
+			<classname><![CDATA[wcf\system\condition\page\MultiPageCondition]]></classname>
 			<conditionobject>com.woltlab.wcf.page</conditionobject>
 		</type>
 		
@@ -1117,5 +1102,83 @@
 			<conditiongroup>userOptions</conditiongroup>
 		</type>
 		<!-- /user search conditions -->
+		
+		<!-- box controllers -->
+		<type>
+			<name>com.woltlab.wcf.recentActivityList</name>
+			<definitionname>com.woltlab.wcf.boxController</definitionname>
+			<classname>wcf\system\box\RecentActivityListBoxController</classname>
+		</type>
+		<type>
+			<name>com.woltlab.wcf.paidSubscriptions</name>
+			<definitionname>com.woltlab.wcf.boxController</definitionname>
+			<classname>wcf\system\box\PaidSubscriptionsBoxController</classname>
+		</type>
+		<type>
+			<name>com.woltlab.wcf.registerButton</name>
+			<definitionname>com.woltlab.wcf.boxController</definitionname>
+			<classname>wcf\system\box\RegisterButtonBoxController</classname>
+		</type>
+		<type>
+			<name>com.woltlab.wcf.signedInAs</name>
+			<definitionname>com.woltlab.wcf.boxController</definitionname>
+			<classname>wcf\system\box\SignedInAsBoxController</classname>
+		</type>
+		<type>
+			<name>com.woltlab.wcf.statistics</name>
+			<definitionname>com.woltlab.wcf.boxController</definitionname>
+			<classname>wcf\system\box\StatisticsBoxController</classname>
+		</type>
+		<type>
+			<name>com.woltlab.wcf.userList</name>
+			<definitionname>com.woltlab.wcf.boxController</definitionname>
+			<classname>wcf\system\box\userListBoxController</classname>
+		</type>
+		<type>
+			<name>com.woltlab.wcf.userOnlineList</name>
+			<definitionname>com.woltlab.wcf.boxController</definitionname>
+			<classname>wcf\system\box\UserOnlineListBoxController</classname>
+		</type>
+		<type>
+			<name>com.woltlab.wcf.staffOnlineList</name>
+			<definitionname>com.woltlab.wcf.boxController</definitionname>
+			<classname>wcf\system\box\StaffOnlineListBoxController</classname>
+		</type>
+		<type>
+			<name>com.woltlab.wcf.todaysBirthdays</name>
+			<definitionname>com.woltlab.wcf.boxController</definitionname>
+			<classname>wcf\system\box\TodaysBirthdaysBoxController</classname>
+		</type>
+		<type>
+			<name>com.woltlab.wcf.todaysFollowingBirthdays</name>
+			<definitionname>com.woltlab.wcf.boxController</definitionname>
+			<classname>wcf\system\box\TodaysFollowingBirthdaysBoxController</classname>
+		</type>
+		<type>
+			<name>com.woltlab.wcf.followingsOnline</name>
+			<definitionname>com.woltlab.wcf.boxController</definitionname>
+			<classname>wcf\system\box\FollowingsOnlineBoxController</classname>
+		</type>
+		<type>
+			<name>com.woltlab.wcf.pageCommentList</name>
+			<definitionname>com.woltlab.wcf.boxController</definitionname>
+			<classname>wcf\system\box\PageCommentListBoxController</classname>
+		</type>
+		<!-- /box controllers -->
+		
+		<!-- deprecated -->
+		<type>
+			<name>com.woltlab.wcf.page.controller</name>
+			<definitionname>com.woltlab.wcf.condition.notice</definitionname>
+			<classname><![CDATA[wcf\system\condition\MultiPageControllerCondition]]></classname>
+			<conditionobject>com.woltlab.wcf.page</conditionobject>
+		</type>
+		<type>
+			<name>com.woltlab.wcf.page.controller</name>
+			<definitionname>com.woltlab.wcf.condition.ad</definitionname>
+			<classname><![CDATA[wcf\system\condition\MultiPageControllerCondition]]></classname>
+			<conditionobject>com.woltlab.wcf.page</conditionobject>
+		</type>
+		<!-- /deprecated -->
 	</import>
 </data>

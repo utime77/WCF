@@ -10,6 +10,8 @@
 		
 		.badge {
 			top: -2px;
+			
+			@include wcfLineHeight;
 		}
 	}
 	
@@ -47,7 +49,31 @@
 		}
 	}
 	
-	@include large-screen-only {
+	.contentTitle + .inlineDataList {
+		margin-top: 5px;
+	}
+	
+	.inlineDataList {
+		color: $wcfContentDimmedText;
+	}
+	
+	@include screen-md-down {
+		.contentHeaderIcon {
+			display: none;
+		}
+	}
+	
+	@include screen-sm {
+		.contentHeaderNavigation > ul {
+			@include inlineList;
+			
+			flex-wrap: nowrap;
+			justify-content: flex-end;
+			margin-top: 20px;
+		}
+	}
+	
+	@include screen-md-up {
 		display: flex;
 		
 		.contentHeaderIcon {
@@ -69,14 +95,6 @@
 				flex-wrap: nowrap;
 			}
 		}
-	}
-	
-	@include small-screen-only {
-		.contentHeaderIcon {
-			display: none;
-		}
-		
-		// TODO: mobile optimization for `.contentHeaderNavigation`
 	}
 }
 
@@ -257,7 +275,25 @@ fieldset {
 		margin-top: 30px;
 	}
 	
-	@include large-screen-only {
+	@include screen-sm-down {
+		ul {
+			margin-top: 30px;
+			
+			> li {
+				> .button {
+					display: block;
+					padding: 7px 10px;
+					text-align: center;
+				}
+			}
+		}
+		
+		> nav:not(.pagination) > ul > li + li {
+			margin-top: 10px;
+		}
+	}
+	
+	@include screen-md-up {
 		align-items: center;
 		display: flex;
 		
@@ -303,24 +339,6 @@ fieldset {
 			}
 		}
 	}
-	
-	@include small-screen-only {
-		ul {
-			margin-top: 30px;
-			
-			> li {
-				> .button {
-					display: block;
-					padding: 7px 10px;
-					text-align: center;
-				}
-			}
-		}
-		
-		> nav:not(.pagination) > ul > li + li {
-			margin-top: 10px;
-		}
-	}
 }
 
 .paginationTop {
@@ -332,22 +350,47 @@ fieldset {
 }
 
 .contentFooter {
-	display: flex;
-	
-	> .paginationBottom {
-		flex: 0 0 auto;
-		margin-top: 20px;
+	@include screen-sm-down {
+		> .contentFooterNavigation {
+			margin-top: 20px;
+			
+			.button {
+				display: block;
+				padding: 7px 10px;
+				text-align: center;
+				
+				&:not(:first-child) {
+					margin-top: 10px;
+				}
+			}
+		}
 	}
 	
-	> .contentFooterNavigation {
-		flex: 1 1 auto;
-		margin: 20px 0 0 20px;
-		text-align: right;
+	@include screen-md-up {
+		display: flex;
+		
+		> .paginationBottom {
+			flex: 0 0 auto;
+			margin-top: 20px;
+		}
+		
+		> .contentFooterNavigation {
+			flex: 1 1 auto;
+			margin: 20px 0 0 20px;
+			text-align: right;
+			
+			> ul {
+				@include inlineList;
+				
+				display: inline-flex;
+				flex-wrap: nowrap;
+			}
+		}
 	}
 }
 
 /* content navigation buttons */
-@include small-screen-only {
+@include screen-xs {
 	.contentHeader > .contentHeaderNavigation > ul {
 		margin-top: 30px;
 		
@@ -365,7 +408,7 @@ fieldset {
 	}
 }
 
-@include small-screen-only {
+@include screen-sm-down {
 	.paginationTop {
 		display: none;
 		

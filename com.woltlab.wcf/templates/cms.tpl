@@ -1,49 +1,45 @@
-{include file='documentHeader'}
-
-<head>
-	<title>{if !$page->isLandingPage}{$content[title]} - {/if}{PAGE_TITLE|language}</title>
-	
-	{include file='headInclude'}
-	
-	<link rel="canonical" href="{$canonicalURL}">
-</head>
-
-<body id="tpl{$templateName|ucfirst}" data-template="{$templateName}" data-application="{$templateNameApplication}">
-
-{include file='header'}
-
-{if $page->isLandingPage}
-	<header class="contentHeader">
-		<div class="contentHeaderTitle">
-			<h1 class="contentTitle">{PAGE_TITLE|language}</h1>
-			{hascontent}<p>{content}{PAGE_DESCRIPTION|language}{/content}</p>{/hascontent}
-		</div>
-		
-		{hascontent}
-			<nav class="contentHeaderNavigation">
-				<ul>
-					{content}{event name='contentHeaderNavigation'}{/content}
-				</ul>
-			</nav>
-		{/hascontent}
-	</header>
-{elseif $content[title]}
-	<header class="contentHeader">
-		<div class="contentHeaderTitle">
-			<h1 class="contentTitle">{$content[title]}</h1>
-		</div>
-		
-		{hascontent}
-			<nav class="contentHeaderNavigation">
-				<ul>
-					{content}{event name='contentHeaderNavigation'}{/content}
-				</ul>
-			</nav>
-		{/hascontent}
-	</header>
+{if !$__wcf->isLandingPage()}
+	{capture assign='pageTitle'}{$content[title]}{/capture}
 {/if}
 
-{include file='userNotice'}
+{capture assign='headContent'}
+	<link rel="canonical" href="{$canonicalURL}">
+{/capture}
+
+{capture assign='contentHeader'}
+	{if $__wcf->isLandingPage()}
+		<header class="contentHeader">
+			<div class="contentHeaderTitle">
+				<h1 class="contentTitle">{PAGE_TITLE|language}</h1>
+				{hascontent}<p class="contentHeaderDescription">{content}{PAGE_DESCRIPTION|language}{/content}</p>{/hascontent}
+			</div>
+			
+			{hascontent}
+				<nav class="contentHeaderNavigation">
+					<ul>
+						{content}{event name='contentHeaderNavigation'}{/content}
+					</ul>
+				</nav>
+			{/hascontent}
+		</header>
+	{elseif $content[title]}
+		<header class="contentHeader">
+			<div class="contentHeaderTitle">
+				<h1 class="contentTitle">{$content[title]}</h1>
+			</div>
+			
+			{hascontent}
+				<nav class="contentHeaderNavigation">
+					<ul>
+						{content}{event name='contentHeaderNavigation'}{/content}
+					</ul>
+				</nav>
+			{/hascontent}
+		</header>
+	{/if}
+{/capture}
+
+{include file='header'}
 
 {if $content[content]}
 	{if $page->pageType == 'text'}
@@ -53,7 +49,7 @@
 	{elseif $page->pageType == 'html'}
 		{@$content[content]}
 	{elseif $page->pageType == 'tpl'}
-		{*todo*}
+		{include file=$page->getTplName($contentLanguageID)}
 	{/if}
 {/if}
 
@@ -68,6 +64,3 @@
 </footer>
 
 {include file='footer'}
-
-</body>
-</html>
