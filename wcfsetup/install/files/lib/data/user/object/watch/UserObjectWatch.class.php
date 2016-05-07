@@ -13,11 +13,11 @@ use wcf\system\WCF;
  * @subpackage	data.user.object.watch
  * @category	Community Framework
  *
- * @property-read	integer		$watchID
- * @property-read	integer		$objectTypeID
- * @property-read	integer		$objectID
- * @property-read	integer		$userID
- * @property-read	integer		$notification
+ * @property-read	integer		$watchID		unique id of the watched object
+ * @property-read	integer		$objectTypeID		id of the watched object type
+ * @property-read	integer		$objectID		id of the watched object of the specific object type
+ * @property-read	integer		$userID			id of the user watching the object
+ * @property-read	integer		$notification		is 1 if the user wants to receive notifications for the watched object, otherwise 0
  */
 class UserObjectWatch extends DatabaseObject {
 	/**

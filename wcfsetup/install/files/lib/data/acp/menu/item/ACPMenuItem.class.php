@@ -23,7 +23,7 @@ use wcf\system\WCF;
  * @property-read	string		$menuItemController	class name of the ACP menu item's controller used to generate menu item link
  * @property-read	string		$menuItemLink		additional part of the ACP menu item link if `$menuItemController` is set, external link or name of language item which contains the external link
  * @property-read	integer		$showOrder		position of the ACP menu item in relation to its siblings
- * @property-read	string		$permissions		comma separated list of user group permissions of which the active user needs to have at least one to see the ACP menu item 
+ * @property-read	string		$permissions		comma separated list of user group permissions of which the active user needs to have at least one to see the ACP menu item
  * @property-read	string		$options		comma separated list of options of which at least one needs to be enabled for the ACP menu item to be shown
  * @property-read	string		$icon			FontAwesome CSS class name for ACP menu items on the first or third level
  */

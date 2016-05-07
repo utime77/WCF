@@ -14,14 +14,14 @@ use wcf\util\StringUtil;
  * @subpackage	data.user.rank
  * @category	Community Framework
  *
- * @property-read	integer		$rankID
- * @property-read	integer		$groupID
- * @property-read	integer		$requiredPoints
- * @property-read	string		$rankTitle
- * @property-read	string		$cssClassName
- * @property-read	string		$rankImage
- * @property-read	integer		$repeatImage
- * @property-read	integer		$requiredGender
+ * @property-read	integer		$rankID			unique id of the user rank
+ * @property-read	integer		$groupID		id of the user group to which the user rank belongs
+ * @property-read	integer		$requiredPoints		minimum number of user activity points required for a user to get the user rank
+ * @property-read	string		$rankTitle		title of the user rank or name of the language item which contains the rank
+ * @property-read	string		$cssClassName		css class name used when displaying the user rank
+ * @property-read	string		$rankImage		(WCF relative) path to the image displayed next to the rank or empty if no rank image exists
+ * @property-read	integer		$repeatImage		number of times the rank image is displayed
+ * @property-read	integer		$requiredGender		numeric representation of the user's genered required for the user rank (see `UserProfile::GENDER_*` constants) or 0 if no specific gender is required
  */
 class UserRank extends DatabaseObject {
 	/**
