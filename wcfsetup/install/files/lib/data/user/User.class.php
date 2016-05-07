@@ -21,7 +21,7 @@ use wcf\util\PasswordUtil;
  * @package	com.woltlab.wcf
  * @subpackage	data.user
  * @category	Community Framework
- *
+ * 
  * @property-read	integer		$userID				unique id of the user
  * @property-read	string		$username			name of the user
  * @property-read	string		$email				email address of the user
