@@ -12,9 +12,9 @@ use wcf\data\DatabaseObject;
  * @subpackage	data.style.variable
  * @category	Community Framework
  *
- * @property-read	integer		$variableID
- * @property-read	string		$variableName
- * @property-read	string		$defaultValue
+ * @property-read	integer		$variableID		unique id of the style variable
+ * @property-read	string		$variableName		name of the style variable
+ * @property-read	string		$defaultValue		default value of the style variable
  */
 class StyleVariable extends DatabaseObject {
 	/**

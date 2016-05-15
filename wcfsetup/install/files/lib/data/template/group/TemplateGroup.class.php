@@ -14,10 +14,10 @@ use wcf\util\StringUtil;
  * @subpackage	data.template.group
  * @category	Community Framework
  *
- * @property-read	integer		$templateGroupID
- * @property-read	integer|null	$parentTemplateGroupID
- * @property-read	string		$templateGroupName
- * @property-read	string		$templateGroupFolderName
+ * @property-read	integer		$templateGroupID		unique id of the template group
+ * @property-read	integer|null	$parentTemplateGroupID		id of the template group's parent template group or `null` if the template group has no parent template group
+ * @property-read	string		$templateGroupName		name of the template group
+ * @property-read	string		$templateGroupFolderName	name of the folder containing the modified templates (relative to the normal template folder)
  */
 class TemplateGroup extends DatabaseObject {
 	/**
