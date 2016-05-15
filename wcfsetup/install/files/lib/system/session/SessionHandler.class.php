@@ -623,15 +623,12 @@ class SessionHandler extends SingletonFactory {
 		
 		// work-around for setup process (package wcf does not exist yet)
 		if (!PACKAGE_ID) {
-			$groupIDs = array();
 			$sql = "SELECT	groupID
 				FROM	wcf".WCF_N."_user_to_group
 				WHERE	userID = ?";
 			$statement = WCF::getDB()->prepareStatement($sql);
 			$statement->execute(array($this->user->userID));
-			while ($row = $statement->fetchArray()) {
-				$groupIDs[] = $row['groupID'];
-			}
+			$groupIDs = $statement->fetchAll(\PDO::FETCH_COLUMN);
 		}
 		else {
 			$groupIDs = $this->user->getGroupIDs();
@@ -674,9 +671,7 @@ class SessionHandler extends SingletonFactory {
 				WHERE	userID = ?";
 			$statement = WCF::getDB()->prepareStatement($sql);
 			$statement->execute(array($this->user->userID));
-			while ($row = $statement->fetchArray()) {
-				$this->languageIDs[] = $row['languageID'];
-			}
+			$this->languageIDs = $statement->fetchAll(\PDO::FETCH_COLUMN);
 		}
 		else {
 			$this->languageIDs = $this->user->getLanguageIDs();

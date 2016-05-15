@@ -49,9 +49,7 @@ class UserImporter extends AbstractImporter {
 			WHERE	preset = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
 		$statement->execute(array(1));
-		while ($row = $statement->fetchArray()) {
-			$this->eventIDs[] = $row['eventID'];
-		}
+		$this->eventIDs = $statement->fetchAll(\PDO::FETCH_COLUMN);
 		
 		$userOptionList = new UserOptionList();
 		$userOptionList->readObjects();

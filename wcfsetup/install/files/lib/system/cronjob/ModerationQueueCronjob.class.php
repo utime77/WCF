@@ -32,10 +32,7 @@ class ModerationQueueCronjob extends AbstractCronjob {
 			ModerationQueue::STATUS_DONE,
 			(TIME_NOW - (86400 * 30))
 		));
-		$queueIDs = array();
-		while ($row = $statement->fetchArray()) {
-			$queueIDs[] = $row['queueID'];
-		}
+		$queueIDs = $statement->fetchAll(\PDO::FETCH_COLUMN);
 		
 		if (!empty($queueIDs)) {
 			$conditions = new PreparedStatementConditionBuilder();

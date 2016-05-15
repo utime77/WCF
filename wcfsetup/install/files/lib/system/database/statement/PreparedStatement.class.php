@@ -12,16 +12,18 @@ use wcf\system\WCF;
  * Represents a prepared statements based upon pdo statements.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
  * @package	com.woltlab.wcf
  * @subpackage	system.database.statement
  * @category	Community Framework
+ * 
+ * @mixin	\PDOStatement
  */
 class PreparedStatement {
 	/**
 	 * database object
-	 * @var	\wcf\system\database\Database
+	 * @var	Database
 	 */
 	protected $database = null;
 	
@@ -29,7 +31,7 @@ class PreparedStatement {
 	 * SQL query parameters
 	 * @var	array
 	 */
-	protected $parameters = array();
+	protected $parameters = [];
 	
 	/**
 	 * pdo statement object
@@ -46,9 +48,9 @@ class PreparedStatement {
 	/**
 	 * Creates a new PreparedStatement object.
 	 * 
-	 * @param	\wcf\system\database\Database	$database
-	 * @param	\PDOStatement			$pdoStatement
-	 * @param	string				$query		SQL query
+	 * @param	Database	$database
+	 * @param	\PDOStatement	$pdoStatement
+	 * @param	string		$query		SQL query
 	 */
 	public function __construct(Database $database, \PDOStatement $pdoStatement, $query = '') {
 		$this->database = $database;
@@ -70,7 +72,7 @@ class PreparedStatement {
 		}
 		
 		try {
-			return call_user_func_array(array($this->pdoStatement, $name), $arguments);
+			return call_user_func_array([$this->pdoStatement, $name], $arguments);
 		}
 		catch (\PDOException $e) {
 			throw new DatabaseQueryException("Could call '".$name."' on '".$this->query."'", $e);
@@ -83,7 +85,7 @@ class PreparedStatement {
 	 * @param	array		$parameters
 	 * @throws	DatabaseQueryExecutionException
 	 */
-	public function execute(array $parameters = array()) {
+	public function execute(array $parameters = []) {
 		$this->parameters = $parameters;
 		$this->database->incrementQueryCount();
 		
@@ -177,7 +179,7 @@ class PreparedStatement {
 	 * @return	DatabaseObject[]
 	 */
 	public function fetchObjects($className) {
-		$objects = array();
+		$objects = [];
 		while ($object = $this->fetchObject($className)) {
 			$objects[] = $object;
 		}

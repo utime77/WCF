@@ -6,12 +6,17 @@ use wcf\system\WCF;
  * Represents a list of viewable madia files.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
  * @package	com.woltlab.wcf
  * @subpackage	data.media
  * @category	Community Framework
  * @since	2.2
+ *
+ * @method	ViewableMedia		current()
+ * @method	ViewableMedia[]		getObjects()
+ * @method	ViewableMedia|null	search($objectID)
+ * @property	ViewableMedia[]		$objects
  */
 class ViewableMediaList extends MediaList {
 	/**

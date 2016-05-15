@@ -203,15 +203,12 @@ final class User extends DatabaseObject implements IRouteController, IUserConten
 				
 				// cache does not exist or is outdated
 				if ($data === null || $skipCache) {
-					$this->groupIDs = [];
 					$sql = "SELECT	groupID
 						FROM	wcf".WCF_N."_user_to_group
 						WHERE	userID = ?";
 					$statement = WCF::getDB()->prepareStatement($sql);
 					$statement->execute([$this->userID]);
-					while ($row = $statement->fetchArray()) {
-						$this->groupIDs[] = $row['groupID'];
-					}
+					$this->groupIDs = $statement->fetchAll(\PDO::FETCH_COLUMN);
 					
 					// update storage data
 					if (!$skipCache) {
@@ -249,9 +246,7 @@ final class User extends DatabaseObject implements IRouteController, IUserConten
 						WHERE	userID = ?";
 					$statement = WCF::getDB()->prepareStatement($sql);
 					$statement->execute([$this->userID]);
-					while ($row = $statement->fetchArray()) {
-						$this->languageIDs[] = $row['languageID'];
-					}
+					$this->languageIDs = $statement->fetchAll(\PDO::FETCH_COLUMN);
 					
 					// update storage data
 					UserStorageHandler::getInstance()->update($this->userID, 'languageIDs', serialize($this->languageIDs));

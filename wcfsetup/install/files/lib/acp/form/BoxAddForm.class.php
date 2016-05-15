@@ -179,10 +179,10 @@ class BoxAddForm extends AbstractForm {
 		
 		// fetch page handlers
 		foreach ($this->pageNodeList as $pageNode) {
-			$handler = $pageNode->getPage()->getHandler();
+			$handler = $pageNode->getHandler();
 			if ($handler !== null) {
 				if ($handler instanceof ILookupPageHandler) {
-					$this->pageHandlers[$pageNode->getPage()->pageID] = $pageNode->getPage()->requireObjectID;
+					$this->pageHandlers[$pageNode->pageID] = $pageNode->requireObjectID;
 				}
 			}
 		}
@@ -317,10 +317,7 @@ class BoxAddForm extends AbstractForm {
 				" . $conditionBuilder;
 			$statement = WCF::getDB()->prepareStatement($sql);
 			$statement->execute($conditionBuilder->getParameters());
-			$this->pageIDs = [];
-			while ($row = $statement->fetchArray()) {
-				$this->pageIDs[] = $row['pageID'];
-			}
+			$this->pageIDs = $statement->fetchAll(\PDO::FETCH_COLUMN);
 		}
 		
 		// validate images

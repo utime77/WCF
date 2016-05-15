@@ -2,6 +2,7 @@
 namespace wcf\data\user\group;
 use wcf\data\user\User;
 use wcf\data\DatabaseObject;
+use wcf\data\ITitledObject;
 use wcf\system\cache\builder\UserGroupCacheBuilder;
 use wcf\system\database\util\PreparedStatementConditionBuilder;
 use wcf\system\exception\SystemException;
@@ -25,7 +26,7 @@ use wcf\system\WCF;
  * @property-read	string		$userOnlineMarking	HTML code used to print the formatted name of a user group member 
  * @property-read	integer		$showOnTeamPage		is 1 if the user group and its members should be shown on the team page, otherwise 0
  */
-class UserGroup extends DatabaseObject {
+class UserGroup extends DatabaseObject implements ITitledObject {
 	/**
 	 * group type everyone user group
 	 * @var	integer
@@ -370,5 +371,12 @@ class UserGroup extends DatabaseObject {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function getTitle() {
+		return WCF::getLanguage()->get($this->groupName);
 	}
 }

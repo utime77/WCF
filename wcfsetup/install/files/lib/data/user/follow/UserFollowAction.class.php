@@ -198,10 +198,7 @@ class UserFollowAction extends AbstractDatabaseObjectAction implements IGroupedU
 			WHERE	followUserID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql, 20, ($this->parameters['pageNo'] - 1) * 20);
 		$statement->execute(array($this->parameters['userID']));
-		$userIDs = array();
-		while ($row = $statement->fetchArray()) {
-			$userIDs[] = $row['userID'];
-		}
+		$userIDs = $statement->fetchAll(\PDO::FETCH_COLUMN);
 		
 		// create group
 		$group = new GroupedUserList();

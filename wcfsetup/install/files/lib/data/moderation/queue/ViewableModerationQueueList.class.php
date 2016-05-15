@@ -17,6 +17,11 @@ use wcf\system\WCF;
  * @package	com.woltlab.wcf
  * @subpackage	data.moderation.queue
  * @category	Community Framework
+ *
+ * @method	ViewableModerationQueue		current()
+ * @method	ViewableModerationQueue[]	getObjects()
+ * @method	ViewableModerationQueue|null	search($objectID)
+ * @property	ViewableModerationQueue[]	$objects
  */
 class ViewableModerationQueueList extends ModerationQueueList {
 	/**
