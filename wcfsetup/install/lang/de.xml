@@ -1700,11 +1700,11 @@ Klicken Sie hier, um sich mit Ihrem neuen Kennwort anzumelden: {link controller=
 		<item name="wcf.acp.user.activation.mail.subject"><![CDATA[Ihr Benutzerkonto auf der Website: {@PAGE_TITLE|language} wurde freigeschaltet]]></item>
 		<item name="wcf.acp.user.activation.mail.html.headline"><![CDATA[Hallo {$mailbox->getUser()->username},]]></item>
 		<item name="wcf.acp.user.activation.mail.html.text"><![CDATA[
-<p>Ihr Benutzerkonto auf der Website: <a href="{link}{/link}">{PAGE_TITLE|language}</a> wurde von einem Administrator
+<p>Ihr Benutzerkonto auf der Website: <a href="{link isEmail=true}{/link}">{PAGE_TITLE|language}</a> wurde von einem Administrator
 freigeschaltet. Sie können die Funktionen Ihres Benutzerkontos nun in vollem Umfang nutzen.</p>]]></item>
 		<item name="wcf.acp.user.activation.mail.plaintext"><![CDATA[Hallo {@$mailbox->getUser()->username},
 
-Ihr Benutzerkonto auf der Website: {@PAGE_TITLE|language} [URL:{link}{/link}] wurde von
+Ihr Benutzerkonto auf der Website: {@PAGE_TITLE|language} [URL:{link isEmail=true}{/link}] wurde von
 einem Administrator freigeschaltet. Sie können die Funktionen Ihres
 Benutzerkontos nun in vollem Umfang nutzen.]]></item>
 		<item name="wcf.acp.user.notificationPresetSettings"><![CDATA[Vorgabewerte für Benachrichtigungen bearbeiten]]></item>
@@ -2914,7 +2914,7 @@ Wenn Sie Probleme mit der Aktivierung haben, wenden Sie sich bitte an den Admini
 		<item name="wcf.user.register.needActivation.mail.subject"><![CDATA[Aktivierung der Registrierung auf der Website: {@PAGE_TITLE|language}]]></item>
 		<item name="wcf.user.register.needActivation.mail.html.headline"><![CDATA[Hallo {$mailbox->getUser()->username},]]></item>
 		<item name="wcf.user.register.needActivation.mail.html.intro"><![CDATA[
-<p>vielen Dank für Ihre Registrierung auf der Website: <a href="{link}{/link}">{PAGE_TITLE|language}</a>. Bevor Sie Ihr
+<p>vielen Dank für Ihre Registrierung auf der Website: <a href="{link isEmail=true}{/link}">{PAGE_TITLE|language}</a>. Bevor Sie Ihr
 Benutzerkonto vollständig verwenden können ist es notwendig, dass Sie einmalig die Gültigkeit Ihrer E-Mail-Adresse bestätigen:</p>]]></item>
 		<item name="wcf.user.register.needActivation.mail.html.activate"><![CDATA[Benutzerkonto aktivieren!]]></item>
 		<item name="wcf.user.register.needActivation.mail.html.outro"><![CDATA[
@@ -2924,7 +2924,7 @@ unter: <a href="mailto:{MAIL_ADMIN_ADDRESS}">{MAIL_ADMIN_ADDRESS}</a>. Wenn Sie 
 dann können Sie diese E-Mail ignorieren.</p>]]></item>
 		<item name="wcf.user.register.needActivation.mail.plaintext"><![CDATA[Hallo {$mailbox->getUser()->username},
 
-vielen Dank für Ihre Registrierung auf der Website: {@PAGE_TITLE|language} [URL:{link}{/link}].
+vielen Dank für Ihre Registrierung auf der Website: {@PAGE_TITLE|language} [URL:{link isEmail=true}{/link}].
 Bevor Sie Ihr Benutzerkonto vollständig verwenden können ist es notwendig,
 dass Sie einmalig durch Klicken des Folgenden Links die Gültigkeit Ihrer
 E-Mail-Adresse bestätigen:
