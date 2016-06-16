@@ -3112,37 +3112,6 @@ Sie erreichen das Benutzerprofil des neuen Benutzers, indem Sie folgenden Link a
 	<category name="wcf.user.notification">
 		<item name="wcf.user.notification.button.confirmed"><![CDATA[OK]]></item>
 		<item name="wcf.user.notification.count"><![CDATA[if (data.returnValues.count == 0) { "Keine Benachrichtigungen" } else if (data.returnValues.count == 1) { "Eine Benachrichtigung" } else { data.returnValues.count + " Benachrichtigungen" }]]></item>
-		<item name="wcf.user.notification.follow.message"><![CDATA[{@$author->getAnchorTag()} folgt Ihnen.]]></item>
-		<item name="wcf.user.notification.follow.message.stacked"><![CDATA[{if $count < 4}{@$authors[0]->getAnchorTag()}{if $count == 2} und {else}, {/if}{@$authors[1]->getAnchorTag()}{if $count == 3} und {@$authors[2]->getAnchorTag()}{/if}{else}{@$authors[0]->getAnchorTag()} und {#$others} weiteren{/if} folgen Ihnen.]]></item>
-		<item name="wcf.user.notification.follow.title"><![CDATA[Neuer Follower]]></item>
-		<item name="wcf.user.notification.follow.title.stacked"><![CDATA[{#$count} neue Follower]]></item>
-		<item name="wcf.user.notification.follow.mail"><![CDATA[{@$author->username} folgt Ihnen.]]></item>
-		<item name="wcf.user.notification.follow.mail.stacked"><![CDATA[{if $count < 4}{@$authors[0]->username}{if $count == 2} und {else}, {/if}{@$authors[1]->username}{if $count == 3} und {@$authors[2]->username}{/if}{else}{@$authors[0]->username} und {#$others} weiteren{/if} folgen Ihnen.]]></item>
-		<item name="wcf.user.notification.mail.disabled"><![CDATA[Die E-Mail-Benachrichtigung wurde erfolgreich abgeschaltet.]]></item>
-		
-		<!-- Emails -->
-		<item name="wcf.user.notification.mail.subject"><![CDATA[Neue Benachrichtigung: {@$title}]]></item>
-		<item name="wcf.user.notification.mail.plaintext.intro"><![CDATA[Hallo {@$mailbox->getUser()->username},]]></item>
-		<item name="wcf.user.notification.mail.plaintext.outro"><![CDATA[Diese E-Mail ist eine automatische Benachrichtigung. BITTE ANTWORTEN SIE NICHT AUF DIESE E-MAIL.
-		
-Sie können die Einstellungen für Ihre Benachrichtigungen auf {@PAGE_TITLE|language} unter folgender URL detailliert konfigurieren:
-{link controller='NotificationSettings' isEmail=true}{/link} 
-
-Möchten Sie diese E-Mail-Benachrichtigung in Zukunft nicht mehr erhalten, können Sie folgenden Link aufrufen, um die Benachrichtigung abzuschalten:
-{link controller='NotificationDisable' isEmail=true}eventID={@$event->eventID}&userID={@$mailbox->getUser()->userID}&token={@$mailbox->getUser()->notificationMailToken}{/link}]]></item>
-		<item name="wcf.user.notification.mail.daily.subject"><![CDATA[{if $count == 1}Neue Benachrichtigung{else}{#$count} neue Benachrichtigungen{/if}]]></item>
-		<item name="wcf.user.notification.mail.daily.footer"><![CDATA[Diese E-Mail ist eine automatische Benachrichtigung. BITTE ANTWORTEN SIE NICHT AUF DIESE E-MAIL.
-		
-Sie können die Einstellungen für Ihre Benachrichtigungen auf {@PAGE_TITLE|language} unter folgender URL detailliert konfigurieren:
-{link controller='NotificationSettings' isEmail=true}{/link} 
-
-Möchten Sie diese E-Mail-Benachrichtigung in Zukunft nicht mehr erhalten, können Sie folgenden Link aufrufen, um die Benachrichtigung abzuschalten:
-{link controller='NotificationDisable' isEmail=true}userID={@$user->userID}&token={@$token}{/link}]]></item>
-	
-		<item name="wcf.user.notification.mailNotificationType.none"><![CDATA[Keine E-Mail-Benachrichtigung]]></item>
-		<item name="wcf.user.notification.mailNotificationType.instant"><![CDATA[Sofortige E-Mail-Benachrichtigung]]></item>
-		<item name="wcf.user.notification.mailNotificationType.daily"><![CDATA[Tägliche E-Mail-Benachrichtigung]]></item>
-		<item name="wcf.user.notification.mailNotificationType.notSupported"><![CDATA[E-Mail-Benachrichtigungen werden nicht unterstützt.]]></item>
 		<item name="wcf.user.notification.markAllAsConfirmed"><![CDATA[Alle als gelesen markieren]]></item>
 		<item name="wcf.user.notification.markAllAsConfirmed.confirmMessage"><![CDATA[Wollen Sie wirklich alle Benachrichtigungen als gelesen markieren?]]></item>
 		<item name="wcf.user.notification.markAsConfirmed"><![CDATA[Als gelesen markieren]]></item>
@@ -3153,8 +3122,46 @@ Möchten Sie diese E-Mail-Benachrichtigung in Zukunft nicht mehr erhalten, könn
 		<item name="wcf.user.notification.notifications.disabled"><![CDATA[Deaktiviert]]></item>
 		<item name="wcf.user.notification.notifications.enabled"><![CDATA[Aktiviert]]></item>
 		<item name="wcf.user.notification.showAll"><![CDATA[Alle Benachrichtigungen anzeigen]]></item>
+		<item name="wcf.user.notification.mail.disabled"><![CDATA[Die E-Mail-Benachrichtigung wurde erfolgreich abgeschaltet.]]></item>
+		<item name="wcf.user.notification.mailNotificationType.none"><![CDATA[Keine E-Mail-Benachrichtigung]]></item>
+		<item name="wcf.user.notification.mailNotificationType.instant"><![CDATA[Sofortige E-Mail-Benachrichtigung]]></item>
+		<item name="wcf.user.notification.mailNotificationType.daily"><![CDATA[Tägliche E-Mail-Benachrichtigung]]></item>
+		<item name="wcf.user.notification.mailNotificationType.notSupported"><![CDATA[E-Mail-Benachrichtigungen werden nicht unterstützt.]]></item>
+		
+		<!-- Email Wrapper -->
+		<item name="wcf.user.notification.mail.subject"><![CDATA[Neue Benachrichtigung: {@$title}]]></item>
+		<item name="wcf.user.notification.mail.plaintext.intro"><![CDATA[Hallo {@$mailbox->getUser()->username},]]></item>
+		<item name="wcf.user.notification.mail.plaintext.outro"><![CDATA[Diese E-Mail ist eine automatische Benachrichtigung. BITTE ANTWORTEN SIE NICHT AUF DIESE E-MAIL.
+		
+Besuchen Sie Ihre Benachrichtigungseinstellungen [URL:{link controller='NotificationSettings' isEmail=true}{/link}], um die
+Benachrichtigungen auf {@PAGE_TITLE|language} [URL:{link isEmail=true}{/link}] nach Ihren Wünschen zu konfigurieren.
+
+Wenn Sie nur diese E-Mail-Benachrichtigung nicht mehr erhalten möchten, dann können Sie diese direkt abbestellen: {link controller='NotificationDisable' isEmail=true}eventID={@$event->eventID}&userID={@$mailbox->getUser()->userID}&token={@$mailbox->getUser()->notificationMailToken}{/link}.]]></item>
+		<item name="wcf.user.notification.mail.html.intro"><![CDATA[<h1>Hallo {$mailbox->getUser()->username},</h1>]]></item>
+		<item name="wcf.user.notification.mail.html.outro"><![CDATA[<p>Diese E-Mail ist eine automatische Benachrichtigung. <b>Bitte antworten Sie nicht auf diese E-Mail</b>.</p>
+
+<p>Besuchen Sie Ihre <a href="{link controller='NotificationSettings' isEmail=true}{/link}">Benachrichtigungseinstellungen</a>, um die
+Benachrichtigungen auf <a href="{link isEmail=true}{/link}">{PAGE_TITLE|language}</a> nach Ihren Wünschen zu konfigurieren.</p>
+
+<p>Wenn Sie nur diese E-Mail-Benachrichtigung nicht mehr erhalten möchten, dann können Sie diese direkt <a href="{link controller='NotificationDisable' isEmail=true}eventID={@$event->eventID}&userID={@$mailbox->getUser()->userID}&token={@$mailbox->getUser()->notificationMailToken}{/link}">abbestellen</a>.</p>]]></item>
+		<item name="wcf.user.notification.mail.daily.subject"><![CDATA[{if $count == 1}Neue Benachrichtigung{else}{#$count} neue Benachrichtigungen{/if}]]></item>
+		<item name="wcf.user.notification.mail.daily.footer"><![CDATA[Diese E-Mail ist eine automatische Benachrichtigung. BITTE ANTWORTEN SIE NICHT AUF DIESE E-MAIL.
+		
+Sie können die Einstellungen für Ihre Benachrichtigungen auf {@PAGE_TITLE|language} unter folgender URL detailliert konfigurieren:
+{link controller='NotificationSettings' isEmail=true}{/link} 
+
+Möchten Sie diese E-Mail-Benachrichtigung in Zukunft nicht mehr erhalten, können Sie folgenden Link aufrufen, um die Benachrichtigung abzuschalten:
+{link controller='NotificationDisable' isEmail=true}userID={@$user->userID}&token={@$token}{/link}]]></item>
+
+		<!-- Notifications -->
 		<item name="wcf.user.notification.com.woltlab.wcf.user"><![CDATA[Benutzer-Profile]]></item>
 		<item name="wcf.user.notification.com.woltlab.wcf.user.follow.following"><![CDATA[Jemand folgt Ihnen]]></item>
+		<item name="wcf.user.notification.follow.title"><![CDATA[Neuer Follower]]></item>
+		<item name="wcf.user.notification.follow.title.stacked"><![CDATA[{#$count} neue Follower]]></item>
+		<item name="wcf.user.notification.follow.message"><![CDATA[{@$author->getAnchorTag()} folgt Ihnen.]]></item>
+		<item name="wcf.user.notification.follow.message.stacked"><![CDATA[{if $count < 4}{@$authors[0]->getAnchorTag()}{if $count == 2} und {else}, {/if}{@$authors[1]->getAnchorTag()}{if $count == 3} und {@$authors[2]->getAnchorTag()}{/if}{else}{@$authors[0]->getAnchorTag()} und {#$others} weiteren{/if} folgen Ihnen.]]></item>
+		<item name="wcf.user.notification.follow.mail.plaintext"><![CDATA[{@$event->getAuthor()->username} [URL:{link controller='User' object=$event->getAuthor() isEmail=true}{/link}] folgt Ihnen.]]></item>
+		<item name="wcf.user.notification.follow.mail.html"><![CDATA[<p><a href="{link controller='User' object=$event->getAuthor() isEmail=true}{/link}">{$event->getAuthor()->username}</a> folgt Ihnen.</p>]]></item>
 		<item name="wcf.user.notification.comment.title"><![CDATA[Neuer Kommentar (Pinnwand)]]></item>
 		<item name="wcf.user.notification.comment.title.stacked"><![CDATA[{#$timesTriggered} neue Kommentare (Pinnwand)]]></item>
 		<item name="wcf.user.notification.comment.message"><![CDATA[{if !$author->userID}Ein Gast{else}{@$author->getAnchorTag()}{/if} hat einen Kommentar an <a href="{link controller='User' object=$__wcf->getUser()}#wall{/link}">Ihrer Pinnwand</a> verfasst.]]></item>
