@@ -1704,11 +1704,9 @@ Klicken Sie hier, um sich mit Ihrem neuen Kennwort anzumelden: {link controller=
 freigeschaltet. Sie können die Funktionen Ihres Benutzerkontos nun in vollem Umfang nutzen.</p>]]></item>
 		<item name="wcf.acp.user.activation.mail.plaintext"><![CDATA[Hallo {@$mailbox->getUser()->username},
 
-Ihr Benutzerkonto auf der Website: {@PAGE_TITLE|language} [1] wurde von
+Ihr Benutzerkonto auf der Website: {@PAGE_TITLE|language} [URL:{link}{/link}] wurde von
 einem Administrator freigeschaltet. Sie können die Funktionen Ihres
-Benutzerkontos nun in vollem Umfang nutzen.
-
-[1] {link}{/link}]]></item>
+Benutzerkontos nun in vollem Umfang nutzen.]]></item>
 		<item name="wcf.acp.user.notificationPresetSettings"><![CDATA[Vorgabewerte für Benachrichtigungen bearbeiten]]></item>
 		<item name="wcf.acp.user.notificationPresetSettings.description"><![CDATA[Sie können auf dieser Seite die Standardeinstellungen für neue Benutzer festlegen, dies wirkt sich nicht auf bestehende Benutzer aus. Benutzer können abweichende Einstellungen festlegen.]]></item>
 		<item name="wcf.acp.user.notificationPresetSettings.applyChangesToExistingUsers"><![CDATA[Änderungen auch auf bestehende Benutzerkonten anwenden]]></item>
@@ -2926,7 +2924,7 @@ unter: <a href="mailto:{MAIL_ADMIN_ADDRESS}">{MAIL_ADMIN_ADDRESS}</a>. Wenn Sie 
 dann können Sie diese E-Mail ignorieren.</p>]]></item>
 		<item name="wcf.user.register.needActivation.mail.plaintext"><![CDATA[Hallo {$mailbox->getUser()->username},
 
-vielen Dank für Ihre Registrierung auf der Website: {@PAGE_TITLE|language} [1].
+vielen Dank für Ihre Registrierung auf der Website: {@PAGE_TITLE|language} [URL:{link}{/link}].
 Bevor Sie Ihr Benutzerkonto vollständig verwenden können ist es notwendig,
 dass Sie einmalig durch Klicken des Folgenden Links die Gültigkeit Ihrer
 E-Mail-Adresse bestätigen:
@@ -2937,9 +2935,7 @@ Ihr Aktivierungscode lautet: {@$mailbox->getUser()->activationCode} {* this line
 
 Wenn Sie Probleme mit der Aktivierung Ihres Benutzerkontos haben, dann wenden
 Sie sich bitte an den Administrator unter: {@MAIL_ADMIN_ADDRESS}. Wenn Sie
-sich nicht bei uns registriert haben, dann können Sie diese E-Mail ignorieren.
-
-[1] {link}{/link}]]></item>
+sich nicht bei uns registriert haben, dann können Sie diese E-Mail ignorieren.]]></item>
 		
 		<!-- Success Messages -->
 		<item name="wcf.user.register.success"><![CDATA[Vielen Dank für die Registrierung, {$user->username}. Ihre Registrierung ist hiermit vollständig abgeschlossen.]]></item>
