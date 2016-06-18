@@ -62,6 +62,7 @@ class UserProfileCommentUserNotificationEvent extends AbstractUserNotificationEv
 	 */
 	public function getEmailMessage($notificationType = 'instant') {
 		return [
+			'message-id' => 'com.woltlab.wcf.user.profileComment.notification/'.$this->getUserNotificationObject()->commentID,
 			'template' => 'email_notification_userProfileComment',
 			'application' => 'wcf',
 			'variables' => [
