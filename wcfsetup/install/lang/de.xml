@@ -3145,6 +3145,12 @@ Benachrichtigungen auf <a href="{link isEmail=true}{/link}">{PAGE_TITLE|language
 
 <p>Wenn Sie nur diese E-Mail-Benachrichtigung nicht mehr erhalten möchten, dann können Sie diese direkt <a href="{link controller='NotificationDisable' isEmail=true}eventID={@$event->eventID}&userID={@$mailbox->getUser()->userID}&token={@$mailbox->getUser()->notificationMailToken}{/link}">abbestellen</a>.</p>]]></item>
 		<item name="wcf.user.notification.mail.daily.subject"><![CDATA[{if $count == 1}Neue Benachrichtigung{else}{#$count} neue Benachrichtigungen{/if}]]></item>
+		<item name="wcf.user.notification.mail.daily.plaintext.intro"><![CDATA[Hallo {@$mailbox->getUser()->username},
+
+Sie haben derzeit insgesamt {#$notifications|count} ungelesene Benachrichtigungen, die älter als 24 Stunden sind:]]></item>
+		<item name="wcf.user.notification.mail.daily.html.intro"><![CDATA[<h1>Hallo {@$mailbox->getUser()->username},</h1>
+
+<p>Sie haben derzeit insgesamt {#$notifications|count} ungelesene Benachrichtigungen, die älter als 24 Stunden sind:</p>]]></item>
 		<item name="wcf.user.notification.mail.daily.footer"><![CDATA[Diese E-Mail ist eine automatische Benachrichtigung. BITTE ANTWORTEN SIE NICHT AUF DIESE E-MAIL.
 		
 Sie können die Einstellungen für Ihre Benachrichtigungen auf {@PAGE_TITLE|language} unter folgender URL detailliert konfigurieren:
