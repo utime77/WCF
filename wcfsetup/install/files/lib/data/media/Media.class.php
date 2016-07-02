@@ -25,26 +25,26 @@ use wcf\system\WCF;
  * @property-read	integer|null	$userID			id of the user who uploaded the media file or null if the user has been deleted
  * @property-read	string		$username		name of the user who uploaded the media file
  * @property-read	integer|null	$languageID		id of the language associated with the media file or null if the media file is multilingual or if the language has been deleted
- * @property-read	integer		$isMultilingual		is 1 if the media file is multilingual, otherwise 0
- * @property-read	integer		$isImage		is 1 if the media file is an image, otherwise 0
- * @property-read	integer		$width			width of the media file if `$isImage` = 1, otherwise 0
- * @property-read	integer		$height			height of the media file if `$isImage` = 1, otherwise 0
- * @property-read	string		$tinyThumbnailType	type of the tiny thumbnail file for the media file if `$isImage` = 1, otherwise empty
- * @property-read	integer		$tinyThumbnailSize	size of the tiny thumbnail file for the media file if `$isImage` = 1, otherwise 0
- * @property-read	integer		$tinyThumbnailWidth	width of the tiny thumbnail file for the media file if `$isImage` = 1, otherwise 0
- * @property-read	integer		$tinyThumbnailHeight	height of the tiny thumbnail file for the media file if `$isImage` = 1, otherwise 0
- * @property-read	string		$smallThumbnailType	type of the small thumbnail file for the media file if `$isImage` = 1, otherwise empty
- * @property-read	integer		$smallThumbnailSize	size of the small thumbnail file for the media file if `$isImage` = 1, otherwise 0
- * @property-read	integer		$smallThumbnailWidth	width of the small thumbnail file for the media file if `$isImage` = 1, otherwise 0
- * @property-read	integer		$smallThumbnailHeight	height of the small thumbnail file for the media file if `$isImage` = 1, otherwise 0
- * @property-read	string		$mediumThumbnailType	type of the medium thumbnail file for the media file if `$isImage` = 1, otherwise empty
- * @property-read	integer		$mediumThumbnailSize	size of the medium thumbnail file for the media file if `$isImage` = 1, otherwise 0
- * @property-read	integer		$mediumThumbnailWidth	width of the medium thumbnail file for the media file if `$isImage` = 1, otherwise 0
- * @property-read	integer		$mediumThumbnailHeight	height of the medium thumbnail file for the media file if `$isImage` = 1, otherwise 0
- * @property-read	string		$largeThumbnailType	type of the large thumbnail file for the media file if `$isImage` = 1, otherwise empty
- * @property-read	integer		$largeThumbnailSize	size of the large thumbnail file for the media file if `$isImage` = 1, otherwise 0
- * @property-read	integer		$largeThumbnailWidth	width of the large thumbnail file for the media file if `$isImage` = 1, otherwise 0
- * @property-read	integer		$largeThumbnailHeight	height of the large thumbnail file for the media file if `$isImage` = 1, otherwise 0
+ * @property-read	integer		$isMultilingual		is `1` if the media file is multilingual, otherwise `0`
+ * @property-read	integer		$isImage		is `1` if the media file is an image, otherwise `0`
+ * @property-read	integer		$width			width of the media file if `$isImage` is `1`, otherwise `0`
+ * @property-read	integer		$height			height of the media file if `$isImage` is `1`, otherwise `0`
+ * @property-read	string		$tinyThumbnailType	type of the tiny thumbnail file for the media file if `$isImage` is `1`, otherwise empty
+ * @property-read	integer		$tinyThumbnailSize	size of the tiny thumbnail file for the media file if `$isImage` is `1`, otherwise `0`
+ * @property-read	integer		$tinyThumbnailWidth	width of the tiny thumbnail file for the media file if `$isImage` is `1`, otherwise `0`
+ * @property-read	integer		$tinyThumbnailHeight	height of the tiny thumbnail file for the media file if `$isImage` is `1`, otherwise `0`
+ * @property-read	string		$smallThumbnailType	type of the small thumbnail file for the media file if `$isImage` is `1`, otherwise empty
+ * @property-read	integer		$smallThumbnailSize	size of the small thumbnail file for the media file if `$isImage` is `1`, otherwise `0`
+ * @property-read	integer		$smallThumbnailWidth	width of the small thumbnail file for the media file if `$isImage` is `1`, otherwise `0`
+ * @property-read	integer		$smallThumbnailHeight	height of the small thumbnail file for the media file if `$isImage` is `1`, otherwise `0`
+ * @property-read	string		$mediumThumbnailType	type of the medium thumbnail file for the media file if `$isImage` is `1`, otherwise empty
+ * @property-read	integer		$mediumThumbnailSize	size of the medium thumbnail file for the media file if `$isImage` is `1`, otherwise `0`
+ * @property-read	integer		$mediumThumbnailWidth	width of the medium thumbnail file for the media file if `$isImage` is `1`, otherwise `0`
+ * @property-read	integer		$mediumThumbnailHeight	height of the medium thumbnail file for the media file if `$isImage` is `1`, otherwise `0`
+ * @property-read	string		$largeThumbnailType	type of the large thumbnail file for the media file if `$isImage` is `1`, otherwise empty
+ * @property-read	integer		$largeThumbnailSize	size of the large thumbnail file for the media file if `$isImage` is `1`, otherwise `0`
+ * @property-read	integer		$largeThumbnailWidth	width of the large thumbnail file for the media file if `$isImage` is `1`, otherwise `0`
+ * @property-read	integer		$largeThumbnailHeight	height of the large thumbnail file for the media file if `$isImage` is `1`, otherwise `0`
  */
 class Media extends DatabaseObject implements ILinkableObject, IRouteController, IThumbnailFile {
 	/**

@@ -26,8 +26,8 @@ use wcf\system\WCF;
  * @property-read	integer		$pageObjectID		id of the object required to show the page referenced by `$pageID`
  * @property-read	string		$externalURL		external link of the menu item
  * @property-read	integer		$showOrder		position of the menu item in relation to its siblings
- * @property-read	integer		$isDisabled		is 1 if the menu item is disabled and thus not shown in the menu, otherwise 0
- * @property-read	integer		$originIsSystem		is 1 if the menu item has been delivered by a package, otherwise 0 (if the menu item has been created by an admin in the ACP)
+ * @property-read	integer		$isDisabled		is `1` if the menu item is disabled and thus not shown in the menu, otherwise `0`
+ * @property-read	integer		$originIsSystem		is `1` if the menu item has been delivered by a package, otherwise `0` (if the menu item has been created by an admin in the ACP)
  * @property-read	integer		$packageID		id of the package the which delivers the menu item or with which the menu item is associated
  */
 class MenuItem extends DatabaseObject {

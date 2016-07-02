@@ -28,7 +28,7 @@ use wcf\util\PasswordUtil;
  * @property-read	integer		$languageID			id of the interface language used by the user
  * @property-read	integer		$registrationDate		timestamp at which the user has registered/has been created
  * @property-read	integer		$styleID			id of the style used by the user
- * @property-read	integer		$banned				is 1 if the user is banned, otherwise 0
+ * @property-read	integer		$banned				is `1` if the user is banned, otherwise `0`
  * @property-read	string		$banReason			reason why the user is banned
  * @property-read	integer		$banExpires			timestamp at which the banned user is automatically unbanned
  * @property-read	integer		$activationCode			code sent to the user's email address used for account activation
@@ -41,16 +41,16 @@ use wcf\util\PasswordUtil;
  * @property-read	integer		$reactivationCode		code used for authenticating setting new email address or empty if no new email address has been set
  * @property-read	string		$registrationIpAddress		ip address of the user at the time of registration or empty if user has been created manually or if no ip address are logged
  * @property-read	integer|null	$avatarID			id of the user's avatar or null if they have no avatar
- * @property-read	integer		$disableAvatar			is 1 if the user's avatar has been disabled, otherwise 0
+ * @property-read	integer		$disableAvatar			is `1` if the user's avatar has been disabled, otherwise `0`
  * @property-read	string		$disableAvatarReason		reason why the user's avatar is disabled
  * @property-read	integer		$disableAvatarExpires		timestamp at which the user's avatar will automatically be enabled again
- * @property-read	integer		$enableGravatar			is 1 if the user uses a gravatar as avatar, otherwise 0
+ * @property-read	integer		$enableGravatar			is `1` if the user uses a gravatar as avatar, otherwise `0`
  * @property-read	string		$gravatarFileExtension		extension of the user's gravatar file
  * @property-read	string		$signature			text of the user's signature
- * @property-read	integer		$signatureEnableBBCodes		is 1 if BBCodes will rendered in the user's signature, otherwise 0
- * @property-read	integer		$signatureEnableHtml		is 1 if HTML will rendered in the user's signature, otherwise 0
- * @property-read	integer		$signatureEnableSmilies		is 1 if smilies will rendered in the user's signature, otherwise 0
- * @property-read	integer		$disableSignature		is 1 if the user's signature has been disabled, otherwise 0
+ * @property-read	integer		$signatureEnableBBCodes		is `1` if BBCodes will rendered in the user's signature, otherwise `0`
+ * @property-read	integer		$signatureEnableHtml		is `1` if HTML will rendered in the user's signature, otherwise `0`
+ * @property-read	integer		$signatureEnableSmilies		is `1` if smilies will rendered in the user's signature, otherwise `0`
+ * @property-read	integer		$disableSignature		is `1` if the user's signature has been disabled, otherwise `0`
  * @property-read	string		$disableSignatureReason		reason why the user's signature is disabled
  * @property-read	integer		$disableSignatureExpires	timestamp at which the user's signature will automatically be enabled again
  * @property-read	integer		$lastActivityTime		timestamp of the user's last activity
