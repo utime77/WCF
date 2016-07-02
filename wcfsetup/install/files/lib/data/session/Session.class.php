@@ -10,7 +10,7 @@ use wcf\data\acp\session\ACPSession;
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
  * @package	WoltLabSuite\Core\Data\Session
  * 
- * @property-read	string		$spiderID
+ * @property-read	integer		$spiderID	id of the spider the session belongs to
  */
 class Session extends ACPSession {
 	/**
