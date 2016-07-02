@@ -12,17 +12,19 @@ use wcf\system\WCF;
  * Executes profile visitor-related actions.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.profile.visitor
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Profile\Visitor
+ * 
+ * @method	UserProfileVisitor		create()
+ * @method	UserProfileVisitorEditor[]	getObjects()
+ * @method	UserProfileVisitorEditor	getSingleObject()
  */
 class UserProfileVisitorAction extends AbstractDatabaseObjectAction implements IGroupedUserListAction {
 	/**
-	 * @see	\wcf\data\AbstractDatabaseObjectAction::$allowGuestAccess
+	 * @inheritDoc
 	 */
-	protected $allowGuestAccess = array('getGroupedUserList');
+	protected $allowGuestAccess = ['getGroupedUserList'];
 	
 	/**
 	 * user profile object
@@ -31,7 +33,7 @@ class UserProfileVisitorAction extends AbstractDatabaseObjectAction implements I
 	public $userProfile = null;
 	
 	/**
-	 * @see	\wcf\data\IGroupedUserListAction::validateGetGroupedUserList()
+	 * @inheritDoc
 	 */
 	public function validateGetGroupedUserList() {
 		$this->readInteger('pageNo');
@@ -44,7 +46,7 @@ class UserProfileVisitorAction extends AbstractDatabaseObjectAction implements I
 	}
 	
 	/**
-	 * @see	\wcf\data\IGroupedUserListAction::getGroupedUserList()
+	 * @inheritDoc
 	 */
 	public function getGroupedUserList() {
 		// resolve page count
@@ -52,7 +54,7 @@ class UserProfileVisitorAction extends AbstractDatabaseObjectAction implements I
 			FROM	wcf".WCF_N."_user_profile_visitor
 			WHERE	ownerID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($this->parameters['userID']));
+		$statement->execute([$this->parameters['userID']]);
 		$pageCount = ceil($statement->fetchSingleColumn() / 20);
 		
 		// get user ids
@@ -61,7 +63,7 @@ class UserProfileVisitorAction extends AbstractDatabaseObjectAction implements I
 			WHERE		ownerID = ?
 			ORDER BY	time DESC";
 		$statement = WCF::getDB()->prepareStatement($sql, 20, ($this->parameters['pageNo'] - 1) * 20);
-		$statement->execute(array($this->parameters['userID']));
+		$statement->execute([$this->parameters['userID']]);
 		$userIDs = $statement->fetchAll(\PDO::FETCH_COLUMN);
 		
 		// create group
@@ -71,13 +73,13 @@ class UserProfileVisitorAction extends AbstractDatabaseObjectAction implements I
 		// load user profiles
 		GroupedUserList::loadUsers();
 		
-		WCF::getTPL()->assign(array(
-			'groupedUsers' => array($group)
-		));
+		WCF::getTPL()->assign([
+			'groupedUsers' => [$group]
+		]);
 		
-		return array(
+		return [
 			'pageCount' => $pageCount,
 			'template' => WCF::getTPL()->fetch('groupedUserList')
-		);
+		];
 	}
 }

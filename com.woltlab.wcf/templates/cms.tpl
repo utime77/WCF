@@ -1,53 +1,52 @@
 {if !$__wcf->isLandingPage()}
-	{capture assign='pageTitle'}{$content[title]}{/capture}
+	{capture assign='pageTitle'}{$content->title}{/capture}
+	{capture assign='contentTitle'}{$content->title}{/capture}
 {/if}
 
 {capture assign='headContent'}
-	<link rel="canonical" href="{$canonicalURL}">
+	{if $page->isMultilingual}
+		{foreach from=$page->getPageLanguages() item='pageLanguage'}
+			{if $pageLanguage->getLanguage()}
+				<link rel="alternate" hreflang="{$pageLanguage->getLanguage()->languageCode}" href="{$pageLanguage->getLink()}">
+			{/if}
+		{/foreach}
+	{/if}
 {/capture}
 
-{capture assign='contentHeader'}
-	{if $__wcf->isLandingPage()}
-		<header class="contentHeader">
-			<div class="contentHeaderTitle">
-				<h1 class="contentTitle">{PAGE_TITLE|language}</h1>
-				{hascontent}<p class="contentHeaderDescription">{content}{PAGE_DESCRIPTION|language}{/content}</p>{/hascontent}
-			</div>
-			
-			{hascontent}
-				<nav class="contentHeaderNavigation">
-					<ul>
-						{content}{event name='contentHeaderNavigation'}{/content}
-					</ul>
-				</nav>
-			{/hascontent}
-		</header>
-	{elseif $content[title]}
-		<header class="contentHeader">
-			<div class="contentHeaderTitle">
-				<h1 class="contentTitle">{$content[title]}</h1>
-			</div>
-			
-			{hascontent}
-				<nav class="contentHeaderNavigation">
-					<ul>
-						{content}{event name='contentHeaderNavigation'}{/content}
-					</ul>
-				</nav>
-			{/hascontent}
-		</header>
+{capture assign='contentHeaderNavigation'}
+	{if $page->isMultilingual && $__wcf->user->userID}
+		<li class="dropdown">
+			<a class="dropdownToggle boxFlag box24 button">
+				<span><img src="{$activePageLanguage->getIconPath()}" alt="" class="iconFlag"></span>
+				<span>{$activePageLanguage->languageName}</span>
+			</a>
+			<ul class="dropdownMenu">
+				{foreach from=$page->getPageLanguages() item='pageLanguage'}
+					{if $pageLanguage->getLanguage()}
+						<li class="boxFlag">
+							<a class="box24" href="{$pageLanguage->getLink()}">
+								<span><img src="{$pageLanguage->getLanguage()->getIconPath()}" alt="" class="iconFlag"></span>
+								<span>{$pageLanguage->getLanguage()->languageName}</span>
+							</a>
+						</li>
+					{/if}
+				{/foreach}
+			</ul>
+		</li>
 	{/if}
+	
+	{if $__wcf->getSession()->getPermission('admin.content.cms.canManagePage')}<li><a href="{link controller='PageEdit' id=$page->pageID isACP=true}{/link}" class="button"><span class="icon icon16 fa-pencil"></span> <span>{lang}wcf.acp.page.edit{/lang}</span></a></li>{/if}
 {/capture}
 
 {include file='header'}
 
-{if $content[content]}
+{if $content->content}
 	{if $page->pageType == 'text'}
 		<section class="section cmsContent htmlContent">
-			{@$content[content]}
+			{@$content->getFormattedContent()}
 		</section>
 	{elseif $page->pageType == 'html'}
-		{@$content[content]}
+		{@$content->content}
 	{elseif $page->pageType == 'tpl'}
 		{include file=$page->getTplName($contentLanguageID)}
 	{/if}

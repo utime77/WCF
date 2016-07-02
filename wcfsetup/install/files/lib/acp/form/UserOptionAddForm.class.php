@@ -17,9 +17,7 @@ use wcf\util\StringUtil;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Form
  */
 class UserOptionAddForm extends AbstractForm {
 	/**
@@ -211,6 +209,27 @@ class UserOptionAddForm extends AbstractForm {
 		}
 		if ($this->optionType == 'float') {
 			$this->defaultValue = floatval($this->defaultValue);
+		}
+
+		$this->setDefaultOutputClass();
+	}
+	
+	/**
+	 * Sets the default output class.
+	 */
+	protected function setDefaultOutputClass() {
+		if (empty($this->outputClass)) {
+			if (in_array($this->optionType, self::$optionTypesUsingSelectOptions)) {
+				$this->outputClass = 'wcf\system\option\user\SelectOptionsUserOptionOutput';
+			}
+			
+			if ($this->optionType == 'date') {
+				$this->outputClass = 'wcf\system\option\user\DateUserOptionOutput';
+			}
+			
+			if ($this->optionType == 'URL') {
+				$this->outputClass = 'wcf\system\option\user\URLUserOptionOutput';
+			}
 		}
 	}
 	

@@ -18,9 +18,7 @@ use wcf\util\PasswordUtil;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User
  * 
  * @property-read	integer		$userID				unique id of the user
  * @property-read	string		$username			name of the user
@@ -64,7 +62,6 @@ use wcf\util\PasswordUtil;
  * @property-read	string		$notificationMailToken		token used for authenticating requests by the user to disable notification emails
  * @property-read	string		$authData			data of the third party used for authentication
  * @property-read	integer		$likesReceived			cumulative result of likes (counting +1) and dislikes (counting -1) the user's contents have received
- * @property-read	string		$socialNetworkPrivacySettings	serialized array with the user's settings for share buttons of social networks
  */
 final class User extends DatabaseObject implements IRouteController, IUserContent {
 	/**
@@ -107,6 +104,7 @@ final class User extends DatabaseObject implements IRouteController, IUserConten
 	 */
 	protected static $userOptions = null;
 	
+	/** @noinspection PhpMissingParentConstructorInspection */
 	/**
 	 * @inheritDoc
 	 */
@@ -523,24 +521,16 @@ final class User extends DatabaseObject implements IRouteController, IUserConten
 	
 	/**
 	 * Returns the social network privacy settings of the user.
+	 * @deprecated 3.0
 	 * 
 	 * @return	boolean[]
 	 */
 	public function getSocialNetworkPrivacySettings() {
-		$settings = false;
-		if ($this->userID && WCF::getUser()->socialNetworkPrivacySettings) {
-			$settings = @unserialize(WCF::getUser()->socialNetworkPrivacySettings);
-		}
-		
-		if ($settings === false) {
-			$settings = [
-				'facebook' => false,
-				'google' => false,
-				'reddit' => false,
-				'twitter' => false
-			];
-		}
-		
-		return $settings;
+		return [
+			'facebook' => false,
+			'google' => false,
+			'reddit' => false,
+			'twitter' => false
+		];
 	}
 }

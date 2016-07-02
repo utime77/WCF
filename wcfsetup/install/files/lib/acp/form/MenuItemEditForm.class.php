@@ -14,12 +14,10 @@ use wcf\system\WCF;
  * Shows the menu item edit form.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Form
+ * @since	3.0
  */
 class MenuItemEditForm extends MenuItemAddForm {
 	/**
@@ -89,7 +87,7 @@ class MenuItemEditForm extends MenuItemAddForm {
 		}
 		
 		// update menu
-		$this->objectAction = new MenuItemAction(array($this->itemID), 'update', array('data' => array_merge($this->additionalFields, array(
+		$this->objectAction = new MenuItemAction([$this->itemID], 'update', ['data' => array_merge($this->additionalFields, [
 			'isDisabled' => ($this->isDisabled) ? 1 : 0,
 			'title' => $this->title,
 			'pageID' => $this->pageID,
@@ -97,14 +95,14 @@ class MenuItemEditForm extends MenuItemAddForm {
 			'externalURL' => $this->externalURL,
 			'parentItemID' => $this->parentItemID,
 			'showOrder' => $this->showOrder
-		))));
+		])]);
 		$this->objectAction->executeAction();
 		$this->saved();
 		
 		// show success
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'success' => true
-		));
+		]);
 	}
 	
 	/**
@@ -138,10 +136,10 @@ class MenuItemEditForm extends MenuItemAddForm {
 		
 		I18nHandler::getInstance()->assignVariables(!empty($_POST));
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'action' => 'edit',
 			'itemID' => $this->itemID,
 			'menuItem' => $this->menuItem
-		));
+		]);
 	}
 }

@@ -11,6 +11,7 @@ use wcf\system\event\EventHandler;
 use wcf\system\exception\IllegalLinkException;
 use wcf\system\exception\SystemException;
 use wcf\system\language\LanguageFactory;
+use wcf\system\package\plugin\IPackageInstallationPlugin;
 use wcf\system\setup\Uninstaller;
 use wcf\system\style\StyleHandler;
 use wcf\system\user\storage\UserStorageHandler;
@@ -22,9 +23,7 @@ use wcf\system\WCF;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.package
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Package
  */
 class PackageUninstallationDispatcher extends PackageInstallationDispatcher {
 	/**
@@ -34,6 +33,7 @@ class PackageUninstallationDispatcher extends PackageInstallationDispatcher {
 	 */
 	protected $didExecuteUninstallScript = false;
 	
+	/** @noinspection PhpMissingParentConstructorInspection */
 	/**
 	 * Creates a new instance of PackageUninstallationDispatcher.
 	 * 
@@ -43,7 +43,7 @@ class PackageUninstallationDispatcher extends PackageInstallationDispatcher {
 		$this->queue = $queue;
 		$this->nodeBuilder = new PackageUninstallationNodeBuilder($this);
 		
-		$this->action = $this->queue->installationType;
+		$this->action = $this->queue->action;
 	}
 	
 	/**
@@ -114,6 +114,7 @@ class PackageUninstallationDispatcher extends PackageInstallationDispatcher {
 	 * @inheritDoc
 	 */
 	protected function executePIP(array $nodeData) {
+		/** @var IPackageInstallationPlugin $pip */
 		$pip = new $nodeData['className']($this);
 		
 		$pip->uninstall();
@@ -122,7 +123,7 @@ class PackageUninstallationDispatcher extends PackageInstallationDispatcher {
 	/**
 	 * Executes the package's uninstall script (if existing).
 	 * 
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	protected function executeUninstallScript() {
 		// check if uninstall script file for the uninstalled package exists
@@ -164,48 +165,6 @@ class PackageUninstallationDispatcher extends PackageInstallationDispatcher {
 	 */
 	public function deleteFiles($targetDir, $files, $deleteEmptyTargetDir = false, $deleteEmptyDirectories = true) {
 		new Uninstaller($targetDir, $files, $deleteEmptyTargetDir, $deleteEmptyDirectories);
-	}
-	
-	/**
-	 * Checks whether this package is required by other packages.
-	 * If so than a template will be displayed to warn the user that
-	 * a further uninstallation will uninstall also the dependent packages
-	 */
-	public static function checkDependencies() {
-		$packageID = 0;
-		if (isset($_REQUEST['packageID'])) {
-			$packageID = intval($_REQUEST['packageID']);
-		}
-		
-		// get packages info
-		try {
-			// create object of uninstalling package
-			$package = new Package($packageID);
-		}
-		catch (SystemException $e) {
-			throw new IllegalLinkException();
-		}
-		
-		// can not uninstall wcf package.
-		if ($package->package == 'com.woltlab.wcf') {
-			throw new IllegalLinkException();
-		}
-		
-		$dependentPackages = [];
-		$uninstallAvailable = true;
-		if ($package->isRequired()) {
-			// get packages that requires this package
-			$dependentPackages = self::getPackageDependencies($package->packageID);
-			foreach ($dependentPackages as $dependentPackage) {
-				if ($dependentPackage['packageID'] == PACKAGE_ID) {
-					$uninstallAvailable = false;
-					break;
-				}
-			}
-		}
-		
-		// add this package to queue
-		self::addQueueEntries($package, $dependentPackages);
 	}
 	
 	/**

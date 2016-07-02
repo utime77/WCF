@@ -7,11 +7,9 @@ use wcf\util\UserUtil;
  * Represents a session access log entry.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.acp.session.access.log
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Acp\Session\Access\Log
  *
  * @property-read	integer		$sessionAccessLogID
  * @property-read	integer		$sessionLogID
@@ -23,12 +21,12 @@ use wcf\util\UserUtil;
  */
 class ACPSessionAccessLog extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'acp_session_access_log';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'sessionAccessLogID';
 	

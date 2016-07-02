@@ -1,7 +1,3 @@
-{capture assign='pageTitle'}{lang}wcf.user.menu.settings.paidSubscription{/lang} - {lang}wcf.user.menu.settings{/lang}{/capture}
-
-{capture assign='contentTitle'}{lang}wcf.user.menu.settings.paidSubscription{/lang}{/capture}
-
 {capture assign='headContent'}
 	{if PAID_SUBSCRIPTION_ENABLE_TOS_CONFIRMATION}
 		<script data-relocate="true">
@@ -37,7 +33,7 @@
 		<header class="sectionHeader">
 			<h2 class="sectionTitle">{lang}wcf.paidSubscription.availableSubscriptions{/lang}</h2>
 			{if PAID_SUBSCRIPTION_ENABLE_TOS_CONFIRMATION}
-				<div class="sectionDescription"><label><input type="checkbox" id="tosConfirmed" name="tosConfirmed" value="1" /> {lang}wcf.paidSubscription.confirmTOS{/lang}</label></div>
+				<div class="sectionDescription"><label><input type="checkbox" id="tosConfirmed" name="tosConfirmed" value="1"> {lang}wcf.paidSubscription.confirmTOS{/lang}</label></div>
 			{/if}
 		</header>
 	

@@ -10,11 +10,9 @@ use wcf\system\WCF;
  * Represents a poll.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.poll
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Poll
  *
  * @property-read	integer		$pollID
  * @property-read	integer		$objectTypeID
@@ -31,12 +29,12 @@ use wcf\system\WCF;
  */
 class Poll extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'poll';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'pollID';
 	
@@ -50,7 +48,7 @@ class Poll extends DatabaseObject {
 	 * list of poll options
 	 * @var	PollOption[]
 	 */
-	protected $options = array();
+	protected $options = [];
 	
 	/**
 	 * related object
@@ -61,12 +59,13 @@ class Poll extends DatabaseObject {
 	/**
 	 * Adds an option to current poll.
 	 * 
-	 * @param	\wcf\data\poll\option\PollOption		$option
+	 * @param	PollOption	$option
 	 */
 	public function addOption(PollOption $option) {
 		if ($option->pollID == $this->pollID) {
 			$this->options[$option->optionID] = $option;
 			
+			/** @noinspection PhpUndefinedFieldInspection */
 			if ($option->voted) {
 				$this->isParticipant = true;
 			}
@@ -120,10 +119,11 @@ class Poll extends DatabaseObject {
 			return;
 		}
 		
-		$optionList = PollManager::getInstance()->getPollOptions(array($this->pollID));
+		$optionList = PollManager::getInstance()->getPollOptions([$this->pollID]);
 		foreach ($optionList as $option) {
 			$this->options[$option->optionID] = $option;
 			
+			/** @noinspection PhpUndefinedFieldInspection */
 			if ($option->voted) {
 				$this->isParticipant = true;
 			}

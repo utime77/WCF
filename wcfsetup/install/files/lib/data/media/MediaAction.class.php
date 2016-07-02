@@ -12,6 +12,7 @@ use wcf\system\language\LanguageFactory;
 use wcf\system\request\LinkHandler;
 use wcf\system\upload\DefaultUploadFileSaveStrategy;
 use wcf\system\upload\MediaUploadFileValidationStrategy;
+use wcf\system\upload\UploadFile;
 use wcf\system\WCF;
 use wcf\util\FileUtil;
 
@@ -21,10 +22,12 @@ use wcf\util\FileUtil;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.media
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Data\Media
+ * @since	3.0
+ * 
+ * @method	Media		create()
+ * @method	MediaEditor[]	getObjects()
+ * @method	MediaEditor	getSingleObject()
  */
 class MediaAction extends AbstractDatabaseObjectAction implements ISearchAction, IUploadAction {
 	/**
@@ -37,6 +40,7 @@ class MediaAction extends AbstractDatabaseObjectAction implements ISearchAction,
 			throw new UserInputException('fileTypeFilters');
 		}
 		
+		/** @noinspection PhpUndefinedMethodInspection */
 		$this->parameters['__files']->validateFiles(new MediaUploadFileValidationStrategy(isset($this->parameters['fileTypeFilters']) ? $this->parameters['fileTypeFilters'] : []));
 	}
 	
@@ -52,7 +56,10 @@ class MediaAction extends AbstractDatabaseObjectAction implements ISearchAction,
 			'username' => WCF::getUser()->username
 		]);
 		
+		/** @noinspection PhpUndefinedMethodInspection */
 		$this->parameters['__files']->saveFiles($saveStrategy);
+		
+		/** @var Media[] $mediaFiles */
 		$mediaFiles = $saveStrategy->getObjects();
 		
 		$result = [
@@ -77,6 +84,8 @@ class MediaAction extends AbstractDatabaseObjectAction implements ISearchAction,
 			}
 		}
 		
+		/** @var UploadFile[] $files */
+		/** @noinspection PhpUndefinedMethodInspection */
 		$files = $this->parameters['__files']->getFiles();
 		foreach ($files as $file) {
 			if ($file->getValidationErrorType()) {
@@ -203,7 +212,7 @@ class MediaAction extends AbstractDatabaseObjectAction implements ISearchAction,
 				$mediaData[$row['mediaID']] = [
 					'altText' => [],
 					'caption' => [],
-					'title' => [],
+					'title' => []
 				];
 			}
 			
@@ -333,10 +342,12 @@ class MediaAction extends AbstractDatabaseObjectAction implements ISearchAction,
 						if (isset($this->parameters[$type])) {
 							if (is_array($this->parameters[$type])) {
 								if (isset($this->parameters[$type][$language->languageID])) {
+									/** @noinspection PhpVariableVariableInspection */
 									$$type = $this->parameters[$type][$language->languageID];
 								}
 							}
 							else {
+								/** @noinspection PhpVariableVariableInspection */
 								$$type = $this->parameters[$type];
 							}
 						}
@@ -436,8 +447,7 @@ class MediaAction extends AbstractDatabaseObjectAction implements ISearchAction,
 			$this->readObjects();
 		}
 		
-		/** @var MediaEditor $mediaEditor */
-		foreach ($this->objects as $mediaEditor) {
+		foreach ($this->getObjects() as $mediaEditor) {
 			$mediaEditor->deleteFiles();
 		}
 		
@@ -454,7 +464,7 @@ class MediaAction extends AbstractDatabaseObjectAction implements ISearchAction,
 	 */
 	protected function unmarkItems(array $mediaIDs = []) {
 		if (empty($mediaIDs)) {
-			foreach ($this->objects as $media) {
+			foreach ($this->getObjects() as $media) {
 				$mediaIDs[] = $media->mediaID;
 			}
 		}

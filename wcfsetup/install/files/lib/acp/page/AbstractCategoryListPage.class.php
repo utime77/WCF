@@ -14,11 +14,9 @@ use wcf\system\WCF;
  * type.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.page
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Page
  */
 abstract class AbstractCategoryListPage extends AbstractPage {
 	/**
@@ -98,14 +96,14 @@ abstract class AbstractCategoryListPage extends AbstractPage {
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'addController' => $this->addController,
 			'categoryNodeList' => $this->categoryNodeTree->getIterator(),
 			'collapsedCategoryIDs' => $this->collapsedCategoryIDs,
 			'collapsibleObjectTypeID' => $this->collapsibleObjectTypeID,
 			'editController' => $this->editController,
 			'objectType' => $this->objectType
-		));
+		]);
 		
 		if ($this->pageTitle) {
 			WCF::getTPL()->assign('pageTitle', $this->pageTitle);

@@ -183,6 +183,20 @@ WCF.User.Panel.Abstract = Class.extend({
 		});
 		
 		this._triggerElement.click($.proxy(this.toggle, this));
+		
+		var timer = null;
+		this._triggerElement.hover(
+			(function() {
+				if (this._dropdown === null || !this._dropdown.isOpen()) {
+					timer = window.setTimeout(this.toggle.bind(this, undefined, true), 300);
+				}
+			}).bind(this),
+			function() {
+				window.clearTimeout(timer);
+				timer = null;
+			}
+		);
+		
 		if (this._options.showAllLink) {
 			this._triggerElement.dblclick($.proxy(this._dblClick, this));
 		}
@@ -201,16 +215,21 @@ WCF.User.Panel.Abstract = Class.extend({
 	/**
 	 * Toggles the interactive dropdown.
 	 * 
-	 * @param	{Event=}		event
+	 * @param	{Event?}	event
+	 * @param       {boolean?}      openOnly
 	 * @return	{boolean}
 	 */
-	toggle: function(event) {
+	toggle: function(event, openOnly) {
 		if (event instanceof Event) {
 			event.preventDefault();
 		}
 		
 		if (this._dropdown === null) {
 			this._dropdown = this._initDropdown();
+		}
+		
+		if (openOnly === true && this._dropdown.isOpen()) {
+			return false;
 		}
 		
 		if (this._dropdown.toggle()) {
@@ -1674,12 +1693,12 @@ WCF.User.RecentActivityLoader = Class.extend({
 		});
 		
 		if (this._container.children('li').length) {
-			// todo: remove recentActivitiesMore in 2.2
+			// todo: remove recentActivitiesMore in 3.0
 			this._loadButton = $('<li class="recentActivitiesMore showMore"><button class="small">' + WCF.Language.get('wcf.user.recentActivity.more') + '</button></li>').appendTo(this._container);
 			this._loadButton = this._loadButton.children('button').click($.proxy(this._click, this));
 		}
 		else {
-			// todo: remove recentActivitiesMore in 2.2
+			// todo: remove recentActivitiesMore in 3.0
 			$('<li class="recentActivitiesMore showMore"><small>' + WCF.Language.get('wcf.user.recentActivity.noMoreEntries') + '</small></li>').appendTo(this._container);
 		}
 		
@@ -1823,7 +1842,7 @@ WCF.User.LikeLoader = Class.extend({
 			success: $.proxy(this._success, this)
 		});
 		
-		// todo: remove recentActivitiesMore in 2.2
+		// todo: remove recentActivitiesMore in 3.0
 		var $container = $('<li class="likeListMore recentActivitiesMore showMore"><button class="small">' + WCF.Language.get('wcf.like.likes.more') + '</button><small>' + WCF.Language.get('wcf.like.likes.noMoreEntries') + '</small></li>').appendTo(this._container);
 		this._loadButton = $container.children('button').click($.proxy(this._click, this));
 		this._noMoreEntries = $container.children('small').hide();
@@ -3127,7 +3146,7 @@ WCF.User.InlineEditor = WCF.InlineEditor.extend({
 		
 		// create dialog
 		this._dialog = $('<div />').hide().appendTo(document.body);
-		this._dialog.append($('<div class="section"><dl><dt><label for="' + optionName + 'Reason">' + WCF.Language.get('wcf.global.reason') + '</label></dt><dd><textarea id="' + optionName + 'Reason" cols="40" rows="3" />' + (WCF.Language.get('wcf.user.' + optionName + '.reason.description') != 'wcf.user.' + optionName + '.reason.description' ? '<small>' + WCF.Language.get('wcf.user.' + optionName + '.reason.description') + '</small>' : '') + '</dd></dl><dl><dt></dt><dd><label for="' + optionName + 'NeverExpires"><input type="checkbox" name="' + optionName + 'NeverExpires" id="' + optionName + 'NeverExpires" checked="checked" /> ' + WCF.Language.get('wcf.user.' + optionName + '.neverExpires') + '</label></dd></dl><dl id="' + optionName + 'ExpiresSettings" style="display: none;"><dt><label for="' + optionName + 'Expires">' + WCF.Language.get('wcf.user.' + optionName + '.expires') + '</label></dt><dd><input type="date" name="' + optionName + 'Expires" id="' + optionName + 'Expires" class="medium" min="' + new Date(TIME_NOW * 1000).toISOString() + '" data-ignore-timezone="true" /><small>' + WCF.Language.get('wcf.user.' + optionName + '.expires.description') + '</small></dd></dl></div>'));
+		this._dialog.append($('<div class="section"><dl><dt><label for="' + optionName + 'Reason">' + WCF.Language.get('wcf.global.reason') + '</label></dt><dd><textarea id="' + optionName + 'Reason" cols="40" rows="3" />' + (WCF.Language.get('wcf.user.' + optionName + '.reason.description') != 'wcf.user.' + optionName + '.reason.description' ? '<small>' + WCF.Language.get('wcf.user.' + optionName + '.reason.description') + '</small>' : '') + '</dd></dl><dl><dt></dt><dd><label for="' + optionName + 'NeverExpires"><input type="checkbox" name="' + optionName + 'NeverExpires" id="' + optionName + 'NeverExpires" checked> ' + WCF.Language.get('wcf.user.' + optionName + '.neverExpires') + '</label></dd></dl><dl id="' + optionName + 'ExpiresSettings" style="display: none;"><dt><label for="' + optionName + 'Expires">' + WCF.Language.get('wcf.user.' + optionName + '.expires') + '</label></dt><dd><input type="date" name="' + optionName + 'Expires" id="' + optionName + 'Expires" class="medium" min="' + new Date(TIME_NOW * 1000).toISOString() + '" data-ignore-timezone="true" /><small>' + WCF.Language.get('wcf.user.' + optionName + '.expires.description') + '</small></dd></dl></div>'));
 		this._dialog.append($('<div class="formSubmit"><button class="buttonPrimary" accesskey="s">' + WCF.Language.get('wcf.global.button.submit') + '</button></div>'));
 		
 		this._dialog.data('optionName', optionName).data('userID', userID);

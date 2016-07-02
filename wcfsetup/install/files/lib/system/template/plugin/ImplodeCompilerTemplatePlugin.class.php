@@ -11,21 +11,19 @@ use wcf\util\StringUtil;
  * 	{implode from=$array key=bar item=foo glue=";"}{$foo}{/implode}
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.template.plugin
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Template\Plugin
  */
 class ImplodeCompilerTemplatePlugin implements ICompilerTemplatePlugin {
 	/**
 	 * local tag stack
 	 * @var	string[]
 	 */
-	protected $tagStack = array();
+	protected $tagStack = [];
 	
 	/**
-	 * @see	\wcf\system\template\ICompilerTemplatePlugin::executeStart()
+	 * @inheritDoc
 	 */
 	public function executeStart($tagArgs, TemplateScriptingCompiler $compiler) {
 		$compiler->pushTag('implode');
@@ -39,7 +37,7 @@ class ImplodeCompilerTemplatePlugin implements ICompilerTemplatePlugin {
 		
 		$hash = StringUtil::getRandomID();
 		$glue = isset($tagArgs['glue']) ? $tagArgs['glue'] : "', '";
-		$this->tagStack[] = array('hash' => $hash, 'glue' => $glue);
+		$this->tagStack[] = ['hash' => $hash, 'glue' => $glue];
 		
 		$phpCode = "<?php\n";
 		$phpCode .= "\$_length".$hash." = count(".$tagArgs['from'].");\n";
@@ -49,7 +47,7 @@ class ImplodeCompilerTemplatePlugin implements ICompilerTemplatePlugin {
 	}
 	
 	/**
-	 * @see	\wcf\system\template\ICompilerTemplatePlugin::executeEnd()
+	 * @inheritDoc
 	 */
 	public function executeEnd(TemplateScriptingCompiler $compiler) {
 		$compiler->popTag('implode');

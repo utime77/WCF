@@ -1,5 +1,6 @@
 <?php
 namespace wcf\system\database;
+use wcf\system\database\editor\PostgreSQLDatabaseEditor;
 use wcf\system\database\exception\DatabaseException as GenericDatabaseException;
 use wcf\util\StringStack;
 
@@ -7,20 +8,18 @@ use wcf\util\StringStack;
  * This is the database implementation for PostgreSQL.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.database
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Database
  */
 class PostgreSQLDatabase extends Database {
 	/**
-	 * @see	\wcf\system\database\Database::$editorClassName
+	 * @inheritDoc
 	 */
-	protected $editorClassName = 'wcf\system\database\editor\PostgreSQLDatabaseEditor';
+	protected $editorClassName = PostgreSQLDatabaseEditor::class;
 	
 	/**
-	 * @see	\wcf\system\database\Database::connect()
+	 * @inheritDoc
 	 */
 	public function connect() {
 		if (!$this->port) $this->port = 5432; // postgresql default port
@@ -51,14 +50,14 @@ class PostgreSQLDatabase extends Database {
 	}
 	
 	/**
-	 * @see	\wcf\system\database\Database::isSupported()
+	 * @inheritDoc
 	 */
 	public static function isSupported() {
 		return (extension_loaded('PDO') && extension_loaded('pdo_pgsql'));
 	}
 	
 	/**
-	 * @see	\wcf\system\database\Database::prepareStatement()
+	 * @inheritDoc
 	 */
 	public function prepareStatement($statement, $limit = 0, $offset = 0) {
 		$statement = self::fixQuery($statement);
@@ -66,7 +65,7 @@ class PostgreSQLDatabase extends Database {
 	}
 	
 	/**
-	 * @see	\wcf\system\database\Database::getInsertID()
+	 * @inheritDoc
 	 */
 	public function getInsertID($table, $field) {
 		try {
@@ -86,8 +85,8 @@ class PostgreSQLDatabase extends Database {
 	 */
 	public static function fixQuery($query) {
 		// replace quotes
-		$query = preg_replace_callback('~\'([^\'\\\\]+|\\\\.)*\'~', array('self', 'replaceQuotesCallback'), $query);
-		$query = preg_replace_callback('~"([^"\\\\]+|\\\\.)*"~', array('self', 'replaceQuotesCallback'), $query);
+		$query = preg_replace_callback('~\'([^\'\\\\]+|\\\\.)*\'~', ['self', 'replaceQuotesCallback'], $query);
+		$query = preg_replace_callback('~"([^"\\\\]+|\\\\.)*"~', ['self', 'replaceQuotesCallback'], $query);
 		
 		// double quote identifiers (column & table names ...)
 		$query = preg_replace('~(?<=^|\s|\.|\(|,)([A-Za-z0-9_-]*[a-z]{1}[A-Za-z0-9_-]*)(?=$|\s|\.|\)|,|=)~', '"\\1"', $query);
@@ -102,7 +101,7 @@ class PostgreSQLDatabase extends Database {
 	}
 	
 	/**
-	 * @see	\wcf\system\database\Database::escapeString()
+	 * @inheritDoc
 	 */
 	public function escapeString($string) {
 		$string = str_replace("\x00", "\\x00", $string); // escape nul bytes
@@ -110,7 +109,10 @@ class PostgreSQLDatabase extends Database {
 	}
 	
 	/**
-	 * Callback function used in fixQuery()
+	 * Callback function used in fixQuery().
+	 * 
+	 * @param	string[]	$matches
+	 * @return	string
 	 */
 	private static function replaceQuotesCallback($matches) {
 		return StringStack::pushToStringStack($matches[0], 'postgresQuotes');

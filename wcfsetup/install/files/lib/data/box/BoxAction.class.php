@@ -1,11 +1,14 @@
 <?php
 namespace wcf\data\box;
+use wcf\data\box\content\BoxContent;
+use wcf\data\box\content\BoxContentEditor;
 use wcf\data\object\type\ObjectType;
 use wcf\data\object\type\ObjectTypeCache;
 use wcf\data\AbstractDatabaseObjectAction;
 use wcf\system\box\IConditionBoxController;
 use wcf\system\exception\PermissionDeniedException;
 use wcf\system\exception\UserInputException;
+use wcf\system\message\embedded\object\MessageEmbeddedObjectManager;
 use wcf\system\WCF;
 
 /**
@@ -14,10 +17,11 @@ use wcf\system\WCF;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.box
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Data\Box
+ * @since	3.0
+ * 
+ * @method	BoxEditor[]	getObjects()
+ * @method	BoxEditor	getSingleObject()
  */
 class BoxAction extends AbstractDatabaseObjectAction {
 	/**
@@ -53,25 +57,38 @@ class BoxAction extends AbstractDatabaseObjectAction {
 	
 	/**
 	 * @inheritDoc
+	 * @return	Box
 	 */
 	public function create() {
+		/** @var Box $box */
 		$box = parent::create();
 	
 		// save box content
 		if (!empty($this->parameters['content'])) {
-			$sql = "INSERT INTO	wcf".WCF_N."_box_content
-						(boxID, languageID, title, content, imageID)
-				VALUES		(?, ?, ?, ?, ?)";
-			$statement = WCF::getDB()->prepareStatement($sql);
-			
 			foreach ($this->parameters['content'] as $languageID => $content) {
-				$statement->execute([
-					$box->boxID,
-					($languageID ?: null),
-					$content['title'],
-					$content['content'],
-					$content['imageID']
+				if (!empty($content['htmlInputProcessor'])) {
+					/** @noinspection PhpUndefinedMethodInspection */
+					$content['content'] = $content['htmlInputProcessor']->getHtml();
+				}
+				
+				/** @var BoxContent $boxContent */
+				$boxContent = BoxContentEditor::create([
+					'boxID' => $box->boxID,
+					'languageID' => ($languageID ?: null),
+					'title' => $content['title'],
+					'content' => $content['content'],
+					'imageID' => $content['imageID']
 				]);
+				$boxContentEditor = new BoxContentEditor($boxContent);
+				
+				// save embedded objects
+				if (!empty($content['htmlInputProcessor'])) {
+					/** @noinspection PhpUndefinedMethodInspection */
+					$content['htmlInputProcessor']->setObjectID($boxContent->boxContentID);
+					if (MessageEmbeddedObjectManager::getInstance()->registerObjects($content['htmlInputProcessor'])) {
+						$boxContentEditor->update(['hasEmbeddedObjects' => 1]);
+					}
+				}
 			}
 		}
 		
@@ -111,26 +128,44 @@ class BoxAction extends AbstractDatabaseObjectAction {
 		
 		// update box content
 		if (!empty($this->parameters['content'])) {
-			$sql = "DELETE FROM	wcf".WCF_N."_box_content
-				WHERE		boxID = ?";
-			$deleteStatement = WCF::getDB()->prepareStatement($sql);
-			
-			$sql = "INSERT INTO	wcf".WCF_N."_box_content
-						(boxID, languageID, title, content, imageID)
-				VALUES		(?, ?, ?, ?, ?)";
-			$insertStatement = WCF::getDB()->prepareStatement($sql);
-			
-			foreach ($this->objects as $box) {
-				$deleteStatement->execute([$box->boxID]);
-				
+			foreach ($this->getObjects() as $box) {
 				foreach ($this->parameters['content'] as $languageID => $content) {
-					$insertStatement->execute([
-						$box->boxID,
-						($languageID ?: null),
-						$content['title'],
-						$content['content'],
-						$content['imageID']
-					]);
+					if (!empty($content['htmlInputProcessor'])) {
+						/** @noinspection PhpUndefinedMethodInspection */
+						$content['content'] = $content['htmlInputProcessor']->getHtml();
+					}
+					
+					$boxContent = BoxContent::getBoxContent($box->boxID, ($languageID ?: null));
+					$boxContentEditor = null;
+					if ($boxContent !== null) {
+						// update
+						$boxContentEditor = new BoxContentEditor($boxContent);
+						$boxContentEditor->update([
+							'title' => $content['title'],
+							'content' => $content['content'],
+							'imageID' => $content['imageID']
+						]);
+					}
+					else {
+						/** @var BoxContent $boxContent */
+						$boxContent = BoxContentEditor::create([
+							'boxID' => $box->boxID,
+							'languageID' => ($languageID ?: null),
+							'title' => $content['title'],
+							'content' => $content['content'],
+							'imageID' => $content['imageID']
+						]);
+						$boxContentEditor = new BoxContentEditor($boxContent);
+					}
+					
+					// save embedded objects
+					if (!empty($content['htmlInputProcessor'])) {
+						/** @noinspection PhpUndefinedMethodInspection */
+						$content['htmlInputProcessor']->setObjectID($boxContent->boxContentID);
+						if ($boxContent->hasEmbeddedObjects != MessageEmbeddedObjectManager::getInstance()->registerObjects($content['htmlInputProcessor'])) {
+							$boxContentEditor->update(['hasEmbeddedObjects' => ($boxContent->hasEmbeddedObjects ? 0 : 1)]);
+						}
+					}
 				}
 				
 				// save template
@@ -153,7 +188,7 @@ class BoxAction extends AbstractDatabaseObjectAction {
 				VALUES		(?, ?, ?)";
 			$insertStatement = WCF::getDB()->prepareStatement($sql);
 			
-			foreach ($this->objects as $box) {
+			foreach ($this->getObjects() as $box) {
 				$deleteStatement->execute([$box->boxID]);
 				$visibleEverywhere = (isset($this->parameters['data']['visibleEverywhere']) ? $this->parameters['data']['visibleEverywhere'] : $box->visibleEverywhere);
 				
@@ -170,7 +205,7 @@ class BoxAction extends AbstractDatabaseObjectAction {
 	public function validateDelete() {
 		parent::validateDelete();
 		
-		foreach ($this->objects as $object) {
+		foreach ($this->getObjects() as $object) {
 			if (!$object->canDelete()) {
 				throw new PermissionDeniedException();
 			}
@@ -181,7 +216,7 @@ class BoxAction extends AbstractDatabaseObjectAction {
 	 * @inheritDoc
 	 */
 	public function delete() {
-		foreach ($this->objects as $box) {
+		foreach ($this->getObjects() as $box) {
 			if ($box->boxType == 'tpl') {
 				foreach ($box->getBoxContent() as $languageID => $content) {
 					$file = WCF_DIR . 'templates/' . $box->getTplName(($languageID ?: null)) . '.tpl';

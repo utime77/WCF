@@ -4,6 +4,7 @@ use wcf\data\moderation\queue\ModerationQueue;
 use wcf\data\moderation\queue\ModerationQueueAction;
 use wcf\data\user\User;
 use wcf\data\user\UserProfile;
+use wcf\data\DatabaseObject;
 use wcf\system\database\util\PreparedStatementConditionBuilder;
 use wcf\system\exception\SystemException;
 use wcf\system\moderation\queue\activation\IModerationQueueActivationHandler;
@@ -16,9 +17,7 @@ use wcf\system\WCF;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.moderation.queue
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Moderation\Queue
  */
 abstract class AbstractModerationQueueHandler implements IModerationQueueHandler {
 	/**
@@ -49,15 +48,15 @@ abstract class AbstractModerationQueueHandler implements IModerationQueueHandler
 	 * @inheritDoc
 	 */
 	public function identifyOrphans(array $queues) {
-		if (empty($this->className) || !class_exists($this->className) || !is_subclass_of($this->className, 'wcf\data\DatabaseObject')) {
+		if (empty($this->className) || !class_exists($this->className) || !is_subclass_of($this->className, DatabaseObject::class)) {
 			throw new SystemException("DatabaseObject class name '" . $this->className . "' is missing or invalid");
 		}
 		
-		$indexName = call_user_func(array($this->className, 'getDatabaseTableIndexName'));
-		$tableName = call_user_func(array($this->className, 'getDatabaseTableName'));
+		$indexName = call_user_func([$this->className, 'getDatabaseTableIndexName']);
+		$tableName = call_user_func([$this->className, 'getDatabaseTableName']);
 		
 		$conditions = new PreparedStatementConditionBuilder();
-		$conditions->add($indexName . " IN (?)", array(array_keys($queues)));
+		$conditions->add($indexName . " IN (?)", [array_keys($queues)]);
 		
 		$sql = "SELECT	" . $indexName . "
 			FROM	" . $tableName . "
@@ -81,8 +80,8 @@ abstract class AbstractModerationQueueHandler implements IModerationQueueHandler
 		}
 		
 		$conditions = new PreparedStatementConditionBuilder();
-		$conditions->add("objectTypeID = ?", array($objectTypeID));
-		$conditions->add("objectID IN (?)", array($objectIDs));
+		$conditions->add("objectTypeID = ?", [$objectTypeID]);
+		$conditions->add("objectID IN (?)", [$objectIDs]);
 		
 		$sql = "SELECT	queueID
 			FROM	wcf".WCF_N."_moderation_queue
@@ -114,7 +113,7 @@ abstract class AbstractModerationQueueHandler implements IModerationQueueHandler
 	
 	/**
 	 * @inheritDoc
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	public function getCommentNotificationLanguageItemPrefix() {
 		// this implementation exists to provide backwards compatibility;

@@ -25,7 +25,7 @@
 		<dl{if $errorField == 'smileyTitle'} class="formError"{/if}>
 			<dt><label for="smileyTitle">{lang}wcf.acp.smiley.title{/lang}</label></dt>
 			<dd>
-				<input type="text" id="smileyTitle" name="smileyTitle" value="{$i18nPlainValues['smileyTitle']}" autofocus="autofocus" class="long" />
+				<input type="text" id="smileyTitle" name="smileyTitle" value="{$i18nPlainValues['smileyTitle']}" autofocus class="long">
 				
 				{if $errorField == 'smileyTitle'}
 					<small class="innerError">
@@ -44,7 +44,7 @@
 			<dt><label for="categoryID">{lang}wcf.acp.smiley.categoryID{/lang}</label></dt>
 			<dd>
 				<select id="categoryID" name="categoryID">
-					<option value="0"{if $categoryID === null} selected="selected"{/if}>{lang}wcf.acp.smiley.categoryID.default{/lang}</option>
+					<option value="0"{if $categoryID === null} selected{/if}>{lang}wcf.acp.smiley.categoryID.default{/lang}</option>
 					{include file='categoryOptionList'}
 				</select>
 				
@@ -63,7 +63,7 @@
 		<dl{if $errorField == 'smileyCode'} class="formError"{/if}>
 			<dt><label for="smileyCode">{lang}wcf.acp.smiley.smileyCode{/lang}</label></dt>
 			<dd>
-				<input type="text" id="smileyCode" name="smileyCode" value="{$smileyCode}" required="required" class="medium" />
+				<input type="text" id="smileyCode" name="smileyCode" value="{$smileyCode}" required class="medium">
 				
 				{if $errorField == 'smileyCode'}
 					<small class="innerError">
@@ -91,9 +91,9 @@
 		</dl>
 		
 		<dl{if $errorField == 'showOrder'} class="formError"{/if}>
-			<dt><label for="showOrder">{lang}wcf.acp.smiley.showOrder{/lang}</label></dt>
+			<dt><label for="showOrder">{lang}wcf.global.showOrder{/lang}</label></dt>
 			<dd>
-				<input type="number" id="showOrder" name="showOrder" value="{$showOrder}" min="0" class="short" />
+				<input type="number" id="showOrder" name="showOrder" value="{$showOrder}" min="0" class="short">
 				
 				{if $errorField == 'showOrder'}
 					<small class="innerError">
@@ -113,10 +113,10 @@
 			<dt><label for="fileUpload">{lang}wcf.acp.smiley.fileUpload{/lang}</label></dt>
 			<dd>
 				{if $uploadedFilename}
-					<img src="{@$__wcf->getPath()}images/smilies/{$uploadedFilename}" alt="" />
-					<input type="hidden" name="uploadedFilename" value="{$uploadedFilename}" />
+					<img src="{@$__wcf->getPath()}images/smilies/{$uploadedFilename}" alt="">
+					<input type="hidden" name="uploadedFilename" value="{$uploadedFilename}">
 				{/if}
-				<input type="file" id="fileUpload" name="fileUpload" value="" />
+				<input type="file" id="fileUpload" name="fileUpload" value="">
 				
 				{if $errorField == 'fileUpload'}
 					<small class="innerError">
@@ -134,7 +134,7 @@
 		<dl{if $errorField == 'smileyPath'} class="formError"{/if}>
 			<dt><label for="smileyPath">{lang}wcf.acp.smiley.smileyPath{/lang}</label></dt>
 			<dd>
-				<input type="text" id="smileyPath" name="smileyPath" value="{$smileyPath}" class="long" />
+				<input type="text" id="smileyPath" name="smileyPath" value="{$smileyPath}" class="long">
 				
 				{if $errorField == 'smileyPath'}
 					<small class="innerError">
@@ -155,7 +155,7 @@
 	{event name='sections'}
 	
 	<div class="formSubmit">
-		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s">
 		{@SECURITY_TOKEN_INPUT_TAG}
 	</div>
 </form>

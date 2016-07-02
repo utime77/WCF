@@ -14,9 +14,7 @@ use wcf\system\WCF;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.moderation.queue
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Moderation\Queue
  *
  * @method	ViewableModerationQueue		current()
  * @method	ViewableModerationQueue[]	getObjects()
@@ -64,7 +62,7 @@ class ViewableModerationQueueList extends ModerationQueueList {
 		
 		if (!empty($this->objects)) {
 			$objects = [];
-			foreach ($this->objects as &$object) {
+			foreach ($this->objects as $object) {
 				if (!isset($objects[$object->objectTypeID])) {
 					$objects[$object->objectTypeID] = [];
 				}

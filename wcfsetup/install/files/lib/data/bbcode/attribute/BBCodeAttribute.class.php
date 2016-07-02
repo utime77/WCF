@@ -7,11 +7,9 @@ use wcf\data\DatabaseObject;
  * Represents a bbcode attribute.
  * 
  * @author	Tim Duesterhus, Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.bbcode.attribute
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Bbcode\Attribute
  *
  * @property-read	integer		$attributeID
  * @property-read	integer		$bbcodeID
@@ -23,12 +21,12 @@ use wcf\data\DatabaseObject;
  */
 class BBCodeAttribute extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'bbcode_attribute';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'attributeID';
 	
@@ -41,7 +39,7 @@ class BBCodeAttribute extends DatabaseObject {
 	public static function getAttributesByBBCode(BBCode $bbcode) {
 		$attributeList = new BBCodeAttributeList();
 		$attributeList->sqlOrderBy = "bbcode_attribute.attributeNo ASC";
-		$attributeList->getConditionBuilder()->add('bbcode_attribute.bbcodeID = ?', array($bbcode->bbcodeID));
+		$attributeList->getConditionBuilder()->add('bbcode_attribute.bbcodeID = ?', [$bbcode->bbcodeID]);
 		$attributeList->readObjects();
 		return $attributeList->getObjects();
 	}

@@ -6,15 +6,13 @@ use wcf\util\StringUtil;
  * Parses the [list] bbcode tag.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.bbcode
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Bbcode
  */
 class ListBBCode extends AbstractBBCode {
 	/**
-	 * @see	\wcf\system\bbcode\IBBCode::getParsedTag()
+	 * @inheritDoc
 	 */
 	public function getParsedTag(array $openingTag, $content, array $closingTag, BBCodeParser $parser) {
 		if (mb_strpos($content, '[*]') !== false) {
@@ -24,7 +22,7 @@ class ListBBCode extends AbstractBBCode {
 			// remove empty elements
 			foreach ($listElements as $key => $val) {
 				$listElements[$key] = StringUtil::trim($val);
-				if (empty($listElements[$key]) || $listElements[$key] == '<br />') {
+				if (empty($listElements[$key]) || $listElements[$key] == '<br />' || $listElements[$key] == '<br>') {
 					unset($listElements[$key]);
 				}
 			}

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html dir="{@$__wcf->getLanguage()->getPageDirection()}" lang="{@$__wcf->getLanguage()->getFixedLanguageCode()}">
 <head>
-	<meta charset="utf-8" />
 	<title>{lang}wcf.global.progressBar{/lang} - {lang}wcf.global.title{/lang}</title>
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="{if $lastStep|isset}{@RELATIVE_WCF_DIR}acp/style/setup/{else}install.php?tmpFilePrefix={@TMP_FILE_PREFIX}&amp;showCSS={/if}WCFSetup.css" />
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" media="screen" href="{if $lastStep|isset}{@RELATIVE_WCF_DIR}acp/style/setup/{else}install.php?tmpFilePrefix={@TMP_FILE_PREFIX}&amp;showCSS={/if}WCFSetup.css">
 	
 	{if !$lastStep|isset}
 		<style type="text/css">
@@ -31,7 +32,7 @@
 				<div>
 					<div class="layoutBoundary">
 						<div id="pageHeaderLogo" class="pageHeaderLogo">
-							<img src="{if $lastStep|isset}{@RELATIVE_WCF_DIR}acp/images/{else}install.php?tmpFilePrefix={@TMP_FILE_PREFIX}&amp;showImage={/if}wcfLogo.png" alt="" style="height: 40px; width: 288px;" />
+							<img src="{if $lastStep|isset}{@RELATIVE_WCF_DIR}acp/images/{else}install.php?tmpFilePrefix={@TMP_FILE_PREFIX}&amp;showImage={/if}wcfLogo.png" alt="" style="height: 40px; width: 288px;">
 						</div>
 					</div>
 				</div>
@@ -44,6 +45,7 @@
 					<header class="contentHeader">
 						<div class="contentHeaderTitle">
 							<h1 class="contentTitle">{lang}wcf.global.title{/lang}</h1>
+							<p class="contentHeaderDescription">{lang}wcf.global.title.apps{/lang} {implode from=$setupPackageNames item='setupPackageName'}{'/^WoltLab Suite /'|preg_replace:'':$setupPackageName}{/implode}</p>
 							<p class="contentHeaderDescription"><progress id="packageInstallationProgress" value="{@$progress}" max="100" style="width: 300px;" title="{@$progress}%">{@$progress}%</progress></p>
 						</div>
 					</header>

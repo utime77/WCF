@@ -13,10 +13,8 @@ use wcf\system\WCF;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.package.plugin
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Package\Plugin
+ * @since	3.0
  */
 class BoxPackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin {
 	/**
@@ -132,6 +130,7 @@ class BoxPackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin 
 		
 		$ignoreMissingContent = false;
 		switch ($boxType) {
+			/** @noinspection PhpMissingBreakStatementInspection */
 			case 'system':
 				if (empty($data['elements']['objectType'])) {
 					throw new SystemException("Missing required element 'objectType' for 'system'-type box '{$identifier}'");
@@ -242,9 +241,9 @@ class BoxPackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin 
 	 * @return	integer
 	 */
 	protected function getItemOrder($position) {
-		$sql = "SELECT  MAX(showOrder) AS showOrder
+		$sql = "SELECT	MAX(showOrder) AS showOrder
 			FROM	wcf".WCF_N."_box
-			WHERE   position = ?";
+			WHERE	position = ?";
 		$statement = WCF::getDB()->prepareStatement($sql, 1);
 		$statement->execute([$position]);
 		
@@ -321,15 +320,17 @@ class BoxPackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin 
 		$statement = WCF::getDB()->prepareStatement($sql);
 		$statement->execute($conditions->getParameters());
 		$boxes = [];
+		
+		/** @var Box $box */
 		while ($box = $statement->fetchObject(Box::class)) {
 			$boxes[$box->identifier] = $box;
 		}
 		
 		// save visibility exceptions
-		$sql = "DELETE FROM     wcf".WCF_N."_box_to_page
-			WHERE           boxID = ?";
+		$sql = "DELETE FROM	wcf".WCF_N."_box_to_page
+			WHERE		boxID = ?";
 		$deleteStatement = WCF::getDB()->prepareStatement($sql);
-		$sql = "INSERT IGNORE   wcf".WCF_N."_box_to_page
+		$sql = "INSERT IGNORE	wcf".WCF_N."_box_to_page
 					(boxID, pageID, visible)
 			VALUES		(?, ?, ?)";
 		$insertStatement = WCF::getDB()->prepareStatement($sql);
@@ -340,8 +341,8 @@ class BoxPackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin 
 			// get page ids
 			$conditionBuilder = new PreparedStatementConditionBuilder();
 			$conditionBuilder->add('identifier IN (?)', [$pages]);
-			$sql = "SELECT  pageID
-				FROM    wcf".WCF_N."_page
+			$sql = "SELECT	pageID
+				FROM	wcf".WCF_N."_page
 				".$conditionBuilder;
 			$statement = WCF::getDB()->prepareStatement($sql);
 			$statement->execute($conditionBuilder->getParameters());

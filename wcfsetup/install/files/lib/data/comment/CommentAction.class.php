@@ -28,15 +28,17 @@ use wcf\util\UserUtil;
  * Executes comment-related actions.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.comment
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Comment
+ * 
+ * @method	Comment			create()
+ * @method	CommentEditor[]		getObjects()
+ * @method	CommentEditor		getSingleObject()
  */
 class CommentAction extends AbstractDatabaseObjectAction {
 	/**
-	 * @see	\wcf\data\AbstractDatabaseObjectAction::$allowGuestAccess
+	 * @inheritDoc
 	 */
 	protected $allowGuestAccess = ['addComment', 'addResponse', 'loadComments', 'getGuestDialog'];
 	
@@ -98,7 +100,7 @@ class CommentAction extends AbstractDatabaseObjectAction {
 		// update counters
 		$processors = [];
 		$groupCommentIDs = $commentIDs = [];
-		foreach ($this->objects as $comment) {
+		foreach ($this->getObjects() as $comment) {
 			if (!isset($processors[$comment->objectTypeID])) {
 				$objectType = ObjectTypeCache::getInstance()->getObjectType($comment->objectTypeID);
 				$processors[$comment->objectTypeID] = $objectType->getProcessor();
@@ -473,7 +475,6 @@ class CommentAction extends AbstractDatabaseObjectAction {
 	 * @return	array
 	 */
 	public function prepareEdit() {
-		$message = '';
 		if ($this->comment !== null) {
 			$message = $this->comment->message;
 		}

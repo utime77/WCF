@@ -10,12 +10,10 @@ use wcf\util\StringUtil;
  * Bulk processing action implementation for sening mails to users.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.bulk.processing.user
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Bulk\Processing\User
+ * @since	3.0
  */
 class SendMailUserBulkProcessingAction extends AbstractUserBulkProcessingAction {
 	/**
@@ -49,7 +47,7 @@ class SendMailUserBulkProcessingAction extends AbstractUserBulkProcessingAction 
 	public $text = '';
 	
 	/**
-	 * @see	\wcf\system\bulk\processing\IBulkProcessingAction::executeAction()
+	 * @inheritDoc
 	 */
 	public function executeAction(DatabaseObjectList $objectList) {
 		if (!($objectList instanceof UserList)) return;
@@ -57,9 +55,9 @@ class SendMailUserBulkProcessingAction extends AbstractUserBulkProcessingAction 
 		if (count($objectList)) {
 			// save config in session
 			$userMailData = WCF::getSession()->getVar('userMailData');
-			if ($userMailData === null) $userMailData = array();
+			if ($userMailData === null) $userMailData = [];
 			$this->mailID = count($userMailData);
-			$userMailData[$this->mailID] = array(
+			$userMailData[$this->mailID] = [
 				'action' => '',
 				'enableHTML' => $this->enableHTML,
 				'from' => $this->from,
@@ -67,13 +65,13 @@ class SendMailUserBulkProcessingAction extends AbstractUserBulkProcessingAction 
 				'subject' => $this->subject,
 				'text' => $this->text,
 				'userIDs' => $objectList->getObjectIDs()
-			);
+			];
 			WCF::getSession()->register('userMailData', $userMailData);
 		}
 	}
 	
 	/**
-	 * @see	\wcf\system\bulk\processing\IBulkProcessingAction::getHTML()
+	 * @inheritDoc
 	 */
 	public function getHTML() {
 		return WCF::getTPL()->fetch('sendMailUserBulkProcessing', 'wcf', [
@@ -86,7 +84,7 @@ class SendMailUserBulkProcessingAction extends AbstractUserBulkProcessingAction 
 	}
 	
 	/**
-	 * @see	\wcf\system\bulk\processing\IBulkProcessingAction::readFormParameters()
+	 * @inheritDoc
 	 */
 	public function readFormParameters() {
 		if (isset($_POST['enableHTML'])) $this->enableHTML = intval($_POST['enableHTML']);
@@ -96,7 +94,7 @@ class SendMailUserBulkProcessingAction extends AbstractUserBulkProcessingAction 
 	}
 	
 	/**
-	 * @see	\wcf\system\bulk\processing\IBulkProcessingAction::validate()
+	 * @inheritDoc
 	 */
 	public function validate() {
 		if (empty($this->subject)) {

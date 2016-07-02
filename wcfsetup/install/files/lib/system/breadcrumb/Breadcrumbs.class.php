@@ -3,16 +3,15 @@ namespace wcf\system\breadcrumb;
 use wcf\data\page\PageCache;
 use wcf\system\page\PageLocationManager;
 use wcf\system\SingletonFactory;
+use wcf\system\WCF;
 
 /**
  * Manages breadcrumbs.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.breadcrumb
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Breadcrumb
  */
 class Breadcrumbs extends SingletonFactory implements \Countable, \Iterator {
 	/**
@@ -29,17 +28,13 @@ class Breadcrumbs extends SingletonFactory implements \Countable, \Iterator {
 	/**
 	 * @inheritDoc
 	 */
-	protected function init() {
-		// add main breadcrumbs entry
-		// TODO: there is no longer a global landing page, what should be displayed instead?
-		//$this->add(new Breadcrumb(WCF::getLanguage()->get(PAGE_TITLE), PageMenu::getInstance()->getLandingPage()->getProcessor()->getLink()));
-	}
+	protected function init() {}
 	
 	/**
 	 * Adds a breadcrumb (insertion order is crucial!).
 	 * 
 	 * @param	Breadcrumb	$item
-	 * @deprecated  2.2
+	 * @deprecated  3.0
 	 */
 	public function add(Breadcrumb $item) {
 		throw new \BadMethodCallException("Breadcrumbs::add() is no longer supported, please use " . PageLocationManager::class . " instead.");
@@ -64,7 +59,7 @@ class Breadcrumbs extends SingletonFactory implements \Countable, \Iterator {
 	 * @param	Breadcrumb	$item
 	 * @param	integer		$index
 	 * @return	boolean
-	 * @deprecated  2.2
+	 * @deprecated  3.0
 	 */
 	public function replace(Breadcrumb $item, $index) {
 		throw new \BadMethodCallException("Breadcrumbs::replace() is no longer supported, please use " . PageLocationManager::class . " instead.");
@@ -75,7 +70,7 @@ class Breadcrumbs extends SingletonFactory implements \Countable, \Iterator {
 	 * 
 	 * @param	integer		$index
 	 * @return	boolean
-	 * @deprecated  2.2
+	 * @deprecated  3.0
 	 */
 	public function remove($index) {
 		throw new \BadMethodCallException("Breadcrumbs::remove() is no longer supported, please use " . PageLocationManager::class . " instead.");
@@ -102,7 +97,7 @@ class Breadcrumbs extends SingletonFactory implements \Countable, \Iterator {
 		if ($addLandingPage) {
 			array_unshift($locations, [
 				'link' => $landingPage->getLink(),
-				'title' => $landingPage->getTitle()
+				'title' => WCF::getLanguage()->get(PAGE_TITLE)
 			]);
 		}
 		

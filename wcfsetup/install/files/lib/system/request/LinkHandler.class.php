@@ -1,5 +1,6 @@
 <?php
 namespace wcf\system\request;
+use wcf\data\page\PageCache;
 use wcf\data\DatabaseObjectDecorator;
 use wcf\system\application\ApplicationHandler;
 use wcf\system\language\LanguageFactory;
@@ -12,11 +13,9 @@ use wcf\util\StringUtil;
  * Handles relative links within the wcf.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.request
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Request
  */
 class LinkHandler extends SingletonFactory {
 	/**
@@ -39,7 +38,7 @@ class LinkHandler extends SingletonFactory {
 	
 	
 	/**
-	 * @see	\wcf\system\SingletonFactory::init()
+	 * @inheritDoc
 	 */
 	protected function init() {
 		$this->titleRegex = new Regex('[\x0-\x2F\x3A-\x40\x5B-\x60\x7B-\x7F]+');
@@ -71,8 +70,9 @@ class LinkHandler extends SingletonFactory {
 		$encodeTitle = true;
 		
 		/**
-		 * @deprecated 2.2 - no longer required
+		 * @deprecated 3.0 - no longer required
 		 */
+		/** @noinspection PhpUnusedLocalVariableInspection */
 		$appendSession = false;
 		
 		// enforce a certain level of sanitation and protection for links embedded in emails
@@ -102,7 +102,7 @@ class LinkHandler extends SingletonFactory {
 			unset($parameters['forceFrontend']);
 		}
 		if (isset($parameters['forceWCF'])) {
-			/** @deprecated 2.2 */
+			/** @deprecated 3.0 */
 			unset($parameters['forceWCF']);
 		}
 		
@@ -123,7 +123,7 @@ class LinkHandler extends SingletonFactory {
 				$controller = 'Index';
 			}
 			else {
-				return '';// TODO: PageMenu::getInstance()->getLandingPage()->getProcessor()->getLink();
+				return PageCache::getInstance()->getLandingPage()->getLink();
 			}
 		}
 		
@@ -202,7 +202,7 @@ class LinkHandler extends SingletonFactory {
 	 * @param	integer		$pageID		page id
 	 * @param	integer		$languageID	language id, optional
 	 * @return	string		full URL of empty string if `$pageID` is invalid
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	public function getCmsLink($pageID, $languageID = -1) {
 		// use current language

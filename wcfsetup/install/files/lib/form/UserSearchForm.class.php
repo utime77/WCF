@@ -16,9 +16,7 @@ use wcf\util\StringUtil;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Form
  */
 class UserSearchForm extends UserOptionListForm {
 	/**
@@ -75,6 +73,7 @@ class UserSearchForm extends UserOptionListForm {
 	 * @inheritDoc
 	 */
 	protected function initOptionHandler() {
+		/** @noinspection PhpUndefinedMethodInspection */
 		$this->optionHandler->enableSearchMode();
 		$this->optionHandler->init();
 	}
@@ -195,6 +194,7 @@ class UserSearchForm extends UserOptionListForm {
 			$option = $option['object'];
 			
 			$value = isset($this->optionHandler->optionValues[$option->optionName]) ? $this->optionHandler->optionValues[$option->optionName] : null;
+			/** @noinspection PhpUndefinedMethodInspection */
 			$this->optionHandler->getTypeObject($option->optionType)->getCondition($this->conditions, $option, $value);
 		}
 	}

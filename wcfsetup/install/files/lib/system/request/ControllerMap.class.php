@@ -12,10 +12,8 @@ use wcf\system\WCF;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.request
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Request
+ * @since	3.0
  */
 class ControllerMap extends SingletonFactory {
 	/**
@@ -57,7 +55,7 @@ class ControllerMap extends SingletonFactory {
 	 * @param	string		$application	application identifier
 	 * @param	string		$controller	url controller
 	 * @param	boolean		$isAcpRequest	true if this is an ACP request
-	 * @return	mixed           array containing className, controller and pageType or a string containing the controller name for aliased controllers
+	 * @return	mixed		array containing className, controller and pageType or a string containing the controller name for aliased controllers
 	 * @throws	SystemException
 	 */
 	public function resolve($application, $controller, $isAcpRequest) {
@@ -66,15 +64,19 @@ class ControllerMap extends SingletonFactory {
 			throw new SystemException("Malformed controller name '" . $controller . "'");
 		}
 		
-		$parts = explode('-', $controller);
-		$parts = array_map('ucfirst', $parts);
-		$controller = implode('', $parts);
-		
-		if ($controller === 'AjaxProxy') $controller = 'AJAXProxy';
-		
-		$classData = $this->getClassData($application, $controller, $isAcpRequest, 'page');
-		if ($classData === null) $classData = $this->getClassData($application, $controller, $isAcpRequest, 'form');
-		if ($classData === null) $classData = $this->getClassData($application, $controller, $isAcpRequest, 'action');
+		$classData = $this->getLegacyClassData($application, $controller, $isAcpRequest);
+		if ($classData === null) {
+			$parts = explode('-', $controller);
+			$parts = array_map('ucfirst', $parts);
+			$controller = implode('', $parts);
+			
+			// work-around for upgrade path 2.1 -> 2.2
+			if ($controller === 'AjaxProxy') $controller = 'AJAXProxy';
+			
+			$classData = $this->getClassData($application, $controller, $isAcpRequest, 'page');
+			if ($classData === null) $classData = $this->getClassData($application, $controller, $isAcpRequest, 'form');
+			if ($classData === null) $classData = $this->getClassData($application, $controller, $isAcpRequest, 'action');
+		}
 		
 		if ($classData === null) {
 			throw new SystemException("Unknown controller '" . $controller . "'");
@@ -250,9 +252,9 @@ class ControllerMap extends SingletonFactory {
 	/**
 	 * Returns true if currently active request represents the landing page.
 	 * 
-	 * @param       string[]        $classData
-	 * @param       array           $metaData
-	 * @return      boolean
+	 * @param	string[]	$classData
+	 * @param	array		$metaData
+	 * @return	boolean
 	 */
 	public function isLandingPage(array $classData, array $metaData) {
 		if ($classData['className'] !== $this->landingPages['wcf'][2]) {
@@ -267,6 +269,32 @@ class ControllerMap extends SingletonFactory {
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Lookups the list of legacy controller names that violate the name
+	 * schema, e.g. are named 'BBCodeList' instead of `BbCodeList`.
+	 * 
+	 * @param       string          $application    application identifier
+	 * @param       string          $controller     controller name
+	 * @param       boolean         $isAcpRequest   true if this is an ACP request
+	 * @return      string[]|null   className, controller and pageType, or null if this is not a legacy controller name
+	 */
+	protected function getLegacyClassData($application, $controller, $isAcpRequest) {
+		$environment = ($isAcpRequest) ? 'acp' : 'frontend';
+		if (isset($this->ciControllers['lookup'][$application][$environment][$controller])) {
+			$className = $this->ciControllers['lookup'][$application][$environment][$controller];
+			
+			if (preg_match('~\\\\(?P<controller>[^\\\\]+)(?P<pageType>Action|Form|Page)$~', $className, $matches)) {
+				return [
+					'className' => $className,
+					'controller' => $matches['controller'],
+					'pageType' => strtolower($matches['pageType'])
+				];
+			}
+		}
+		
+		return null;
 	}
 	
 	/**

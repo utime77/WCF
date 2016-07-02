@@ -12,9 +12,7 @@ use wcf\util\StringUtil;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.condition
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Condition
  */
 class TimeCondition extends AbstractMultipleFieldsCondition implements IContentCondition {
 	/**
@@ -78,8 +76,8 @@ class TimeCondition extends AbstractMultipleFieldsCondition implements IContentC
 <dl>
 	<dt>{$this->getLabel('time')}</dt>
 	<dd>
-		<input type="datetime" data-ignore-timezone="1" data-time-only="1" id="startTime" name="startTime" value="{$this->startTime}" placeholder="{$start}" />
-		<input type="datetime" data-ignore-timezone="1" data-time-only="1" id="endTime" name="endTime" value="{$this->endTime}" placeholder="{$end}" />
+		<input type="datetime" data-ignore-timezone="1" data-time-only="1" id="startTime" name="startTime" value="{$this->startTime}" placeholder="{$start}">
+		<input type="datetime" data-ignore-timezone="1" data-time-only="1" id="endTime" name="endTime" value="{$this->endTime}" placeholder="{$end}">
 		{$this->getDescriptionElement('time')}
 		{$this->getErrorMessageElement('time')}
 	</dd>
@@ -101,9 +99,9 @@ HTML;
 	 * @return	string
 	 */
 	protected function getTimezoneFieldElement() {
-		$fieldElement = '<select name="timezone" id="timezone"><option value="0"'.($this->timezone ? ' selected="selected"' : '').'>'.WCF::getLanguage()->get('wcf.date.timezone.user').'</option>';
+		$fieldElement = '<select name="timezone" id="timezone"><option value="0"'.($this->timezone ? ' selected' : '').'>'.WCF::getLanguage()->get('wcf.date.timezone.user').'</option>';
 		foreach (DateUtil::getAvailableTimezones() as $timezone) {
-			$fieldElement .= '<option value="'.$timezone.'"'.($this->timezone === $timezone ? ' selected="selected"' : '').'>'.WCF::getLanguage()->get('wcf.date.timezone.'.str_replace('/', '.', strtolower($timezone))).'</option>';
+			$fieldElement .= '<option value="'.$timezone.'"'.($this->timezone === $timezone ? ' selected' : '').'>'.WCF::getLanguage()->get('wcf.date.timezone.'.str_replace('/', '.', strtolower($timezone))).'</option>';
 		}
 		$fieldElement .= '</select>';
 		

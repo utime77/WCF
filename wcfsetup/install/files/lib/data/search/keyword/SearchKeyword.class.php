@@ -6,11 +6,9 @@ use wcf\data\DatabaseObject;
  * Represents a search keyword.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.search.keyword
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Search\Keyword
  *
  * @property-read	integer		$keywordID
  * @property-read	string		$keyword
@@ -19,12 +17,12 @@ use wcf\data\DatabaseObject;
  */
 class SearchKeyword extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'search_keyword';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'keywordID';
 }

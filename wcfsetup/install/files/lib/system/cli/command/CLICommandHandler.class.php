@@ -10,18 +10,16 @@ use wcf\util\StringUtil;
  * Handles commands.
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.cli.command
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Cli\Command
  */
 class CLICommandHandler {
 	/**
 	 * list of all available commands
 	 * @var	ICLICommand[]
 	 */
-	private static $commands = array();
+	private static $commands = [];
 	
 	/**
 	 * Returns all available commands.
@@ -61,7 +59,7 @@ class CLICommandHandler {
 	 * @throws	IllegalLinkException
 	 */
 	public static function getCommand($line) {
-		list($command, $parameters) = explode(' ', $line.' ', 2);
+		list($command, ) = explode(' ', $line.' ', 2);
 		
 		if (!isset(self::$commands[strtolower($command)])) throw new IllegalLinkException();
 		
@@ -76,7 +74,7 @@ class CLICommandHandler {
 	 * @throws	IllegalLinkException
 	 */
 	public static function getCommandName($line) {
-		list($command, $parameters) = explode(' ', $line.' ', 2);
+		list($command, ) = explode(' ', $line.' ', 2);
 		
 		if (!isset(self::$commands[strtolower($command)])) throw new IllegalLinkException();
 		
@@ -90,13 +88,13 @@ class CLICommandHandler {
 	 * @return	string[]
 	 */
 	public static function getParameters($line) {
-		list ($command, $parameters) = explode(' ', $line.' ', 2);
+		list (, $parameters) = explode(' ', $line.' ', 2);
 		
 		$chars = str_split(StringUtil::trim($parameters));
 		$tmp = '';
 		$escaped = false;
 		$quoted = false;
-		$return = array();
+		$return = [];
 		// handle quotes
 		foreach ($chars as $char) {
 			// escaped chars are simply added

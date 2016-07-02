@@ -10,9 +10,7 @@ use wcf\system\Regex;
  * @author	Tim Duesterhus
  * @copyright	2011 Tim Duesterhus
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	util
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Util
  */
 final class DirectoryUtil {
 	/**
@@ -24,13 +22,13 @@ final class DirectoryUtil {
 	 * all files with full path
 	 * @var	string[]
 	 */
-	protected $files = array();
+	protected $files = [];
 	
 	/**
 	 * all files with filename as key and DirectoryIterator object as value
 	 * @var	\DirectoryIterator[]
 	 */
-	protected $fileObjects = array();
+	protected $fileObjects = [];
 	
 	/**
 	 * directory size in bytes
@@ -60,10 +58,10 @@ final class DirectoryUtil {
 	 * all recursive and non-recursive instances of DirectoryUtil
 	 * @var	DirectoryUtil[][]
 	 */
-	protected static $instances = array(
-		true => array(),	// recursive instances
-		false => array()	// non-recursive instances
-	);
+	protected static $instances = [
+		true => [],	// recursive instances
+		false => []        // non-recursive instances
+	];
 	
 	/**
 	 * Creates a new instance of DirectoryUtil.
@@ -113,7 +111,9 @@ final class DirectoryUtil {
 	/**
 	 * @see	\wcf\util\DirectoryUtil::getInstance()
 	 */
-	private final function __clone() {}
+	private final function __clone() {
+		// does nothing
+	}
 	
 	/**
 	 * Returns a sorted list of files.
@@ -330,8 +330,8 @@ final class DirectoryUtil {
 	 */
 	public function clearCaches() {
 		// clear cached list of files
-		$this->files = array();
-		$this->fileObjects = array();
+		$this->files = [];
+		$this->fileObjects = [];
 		
 		// clear cached size
 		$this->size = 0;

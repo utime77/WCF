@@ -8,11 +8,9 @@ use wcf\system\WCF;
  * Default implementation for quote handlers.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.message.quote
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Message\Quote
  */
 abstract class AbstractMessageQuoteHandler extends SingletonFactory implements IMessageQuoteHandler {
 	/**
@@ -25,14 +23,14 @@ abstract class AbstractMessageQuoteHandler extends SingletonFactory implements I
 	 * list of quoted message
 	 * @var	QuotedMessage[]
 	 */
-	public $quotedMessages = array();
+	public $quotedMessages = [];
 	
 	/**
-	 * @see	\wcf\system\message\quote\IMessageQuoteHandler::render()
+	 * @inheritDoc
 	 */
 	public function render(array $data, $supportPaste = false) {
 		$messages = $this->getMessages($data);
-		$userIDs = $userProfiles = array();
+		$userIDs = $userProfiles = [];
 		foreach ($messages as $message) {
 			$userID = $message->getUserID();
 			if ($userID) {
@@ -45,22 +43,22 @@ abstract class AbstractMessageQuoteHandler extends SingletonFactory implements I
 			$userProfiles = UserProfileRuntimeCache::getInstance()->getObjects($userIDs);
 		}
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'messages' => $this->getMessages($data),
 			'supportPaste' => $supportPaste,
 			'userProfiles' => $userProfiles
-		));
+		]);
 		
 		return WCF::getTPL()->fetch($this->templateName);
 	}
 	
 	/**
-	 * @see	\wcf\system\message\quote\IMessageQuoteHandler::renderQuotes()
+	 * @inheritDoc
 	 */
 	public function renderQuotes(array $data, $render = true, $renderAsString = true) {
 		$messages = $this->getMessages($data);
 		
-		$renderedQuotes = array();
+		$renderedQuotes = [];
 		foreach ($messages as $message) {
 			foreach ($message as $quoteID => $quote) {
 				$quotedMessage = $message->getFullQuote($quoteID);

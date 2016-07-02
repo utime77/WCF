@@ -8,12 +8,10 @@ use wcf\util\StringUtil;
  * RedisCacheSource is an implementation of CacheSource that uses a Redis server to store cached variables.
  * 
  * @author	Maximilian Mader
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.cache.source
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Cache\Source
+ * @since	3.0
  */
 class RedisCacheSource implements ICacheSource {
 	/**
@@ -63,7 +61,7 @@ class RedisCacheSource implements ICacheSource {
 	}
 	
 	/**
-	 * @see	\wcf\system\cache\source\ICacheSource::flush()
+	 * @inheritDoc
 	 */
 	public function flush($cacheName, $useWildcard) {
 		$parts = explode('-', $cacheName, 2);
@@ -85,7 +83,7 @@ class RedisCacheSource implements ICacheSource {
 	}
 	
 	/**
-	 * @see	\wcf\system\cache\source\ICacheSource::flushAll()
+	 * @inheritDoc
 	 */
 	public function flushAll() {
 		// set flush key to current time if it does not exist yet (this prevents falling back to 0 if the key gets deleted)
@@ -96,7 +94,7 @@ class RedisCacheSource implements ICacheSource {
 	}
 	
 	/**
-	 * @see	\wcf\system\cache\source\ICacheSource::get()
+	 * @inheritDoc
 	 */
 	public function get($cacheName, $maxLifetime) {
 		$parts = explode('-', $cacheName, 2);
@@ -137,7 +135,7 @@ class RedisCacheSource implements ICacheSource {
 	}
 	
 	/**
-	 * @see	\wcf\system\cache\source\ICacheSource::set()
+	 * @inheritDoc
 	 */
 	public function set($cacheName, $value, $maxLifetime) {
 		// split parameterized cache entry names into cache name and cache index

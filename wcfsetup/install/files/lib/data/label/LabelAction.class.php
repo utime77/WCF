@@ -14,9 +14,10 @@ use wcf\system\WCF;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.label
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Label
+ * 
+ * @method	LabelEditor[]	getObjects()
+ * @method	LabelEditor	getSingleObject()
  */
 class LabelAction extends AbstractDatabaseObjectAction implements ISortableAction {
 	/**
@@ -46,6 +47,7 @@ class LabelAction extends AbstractDatabaseObjectAction implements ISortableActio
 	
 	/**
 	 * @inheritDoc
+	 * @return	Label
 	 */
 	public function create() {
 		$showOrder = 0;
@@ -54,6 +56,7 @@ class LabelAction extends AbstractDatabaseObjectAction implements ISortableActio
 			unset($this->parameters['data']['showOrder']);
 		}
 		
+		/** @var Label $label */
 		$label = parent::create();
 		
 		(new LabelEditor($label))->setShowOrder($label->groupID, $showOrder);
@@ -62,15 +65,16 @@ class LabelAction extends AbstractDatabaseObjectAction implements ISortableActio
 	}
 	
 	/**
-	 * @see	\wcf\data\AbstractDatabaseObjectAction::update()
+	 * @inheritDoc
 	 */
 	public function update() {
 		parent::update();
 		
 		// update showOrder if required
 		if (count($this->objects) === 1 && isset($this->parameters['data']['groupID']) && isset($this->parameters['data']['showOrder'])) {
-			if ($this->objects[0]->groupID != $this->parameters['data']['groupID'] || $this->objects[0]->showOrder != $this->parameters['data']['showOrder']) {
-				$this->objects[0]->setShowOrder($this->parameters['data']['groupID'], $this->parameters['data']['showOrder']);
+			$labelEditor = $this->getObjects()[0];
+			if ($labelEditor->groupID != $this->parameters['data']['groupID'] || $labelEditor->showOrder != $this->parameters['data']['showOrder']) {
+				$labelEditor->setShowOrder($this->parameters['data']['groupID'], $this->parameters['data']['showOrder']);
 			}
 		}
 	}
@@ -84,7 +88,7 @@ class LabelAction extends AbstractDatabaseObjectAction implements ISortableActio
 		if (!empty($this->objects)) {
 			// identify i18n labels
 			$languageVariables = [];
-			foreach ($this->objects as $object) {
+			foreach ($this->getObjects() as $object) {
 				if (preg_match('~wcf.acp.label.label\d+~', $object->label)) {
 					$languageVariables[] = $object->label;
 				}
@@ -151,10 +155,10 @@ class LabelAction extends AbstractDatabaseObjectAction implements ISortableActio
 		WCF::getDB()->beginTransaction();
 		foreach ($this->parameters['data']['structure'] as $labelIDs) {
 			foreach ($labelIDs as $labelID) {
-				$statement->execute(array(
+				$statement->execute([
 					$showOrder++,
 					$labelID
-				));
+				]);
 			}
 		}
 		WCF::getDB()->commitTransaction();

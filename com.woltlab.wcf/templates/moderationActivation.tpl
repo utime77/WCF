@@ -1,9 +1,9 @@
-{capture assign='pageTitle'}{lang}wcf.moderation.activation{/lang}: {$queue->getTitle()}{/capture}
+{capture assign='pageTitle'}{$__wcf->getActivePage()->getTitle()}: {$queue->getTitle()}{/capture}
 
 {capture assign='contentHeader'}
 	<header class="contentHeader">
 		<div class="contentHeaderTitle">
-			<h1 class="contentTitle">{lang}wcf.moderation.activation{/lang}</h1>
+			<h1 class="contentTitle">{$__wcf->getActivePage()->getTitle()}</h1>
 			
 			{if $queue->lastChangeTime}
 				<dl class="plain inlineDataList">
@@ -66,7 +66,7 @@
 
 <section id="comments" class="section sectionContainerList moderationComments">
 	<header class="sectionHeader">
-		<h2 class="sectionTitle">{lang}wcf.moderation.comments{/lang} <span class="badge">{#$queue->comments}</span></h2>
+		<h2 class="sectionTitle">{lang}wcf.global.comments{/lang} <span class="badge">{#$queue->comments}</span></h2>
 		<p class="sectionDescription">{lang}wcf.moderation.comments.description{/lang}</p>
 	</header>
 	

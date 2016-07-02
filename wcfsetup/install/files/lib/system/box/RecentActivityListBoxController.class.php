@@ -11,10 +11,8 @@ use wcf\system\WCF;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.box
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Box
+ * @since	3.0
  */
 class RecentActivityListBoxController extends AbstractDatabaseObjectListBoxController {
 	/**
@@ -55,6 +53,7 @@ class RecentActivityListBoxController extends AbstractDatabaseObjectListBoxContr
 	 * @inheritDoc
 	 */
 	public function __construct() {
+		/** @noinspection PhpUndefinedMethodInspection */
 		if (WCF::getUser()->userID && count(WCF::getUserProfileHandler()->getFollowingUsers())) {
 			$this->canFilterByFollowedUsers = true;
 		}
@@ -85,6 +84,7 @@ class RecentActivityListBoxController extends AbstractDatabaseObjectListBoxContr
 	 */
 	public function getTemplate() {
 		if ($this->getBox()->position == 'contentTop' || $this->getBox()->position == 'contentBottom') {
+			/** @noinspection PhpUndefinedMethodInspection */
 			return WCF::getTPL()->fetch('boxRecentActivity', 'wcf', [
 				'canFilterByFollowedUsers' => $this->canFilterByFollowedUsers,
 				'eventList' => $this->objectList,
@@ -112,12 +112,14 @@ class RecentActivityListBoxController extends AbstractDatabaseObjectListBoxContr
 	protected function readObjects() {
 		// apply filter
 		if (($this->getBox()->position == 'contentTop' || $this->getBox()->position == 'contentBottom') && $this->filteredByFollowedUsers) {
+			/** @noinspection PhpUndefinedMethodInspection */
 			$this->objectList->getConditionBuilder()->add('user_activity_event.userID IN (?)', [WCF::getUserProfileHandler()->getFollowingUsers()]);
 		}
 		
 		parent::readObjects();
 		
 		// removes orphaned and non-accessable events
+		/** @noinspection PhpParamsInspection */
 		UserActivityEventHandler::validateEvents($this->objectList);
 	}
 }

@@ -23,11 +23,9 @@ use Zend\ProgressBar\ProgressBar;
  * Executes package installation.
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.cli.command
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Cli\Command
  */
 class PackageCLICommand implements IArgumentedCLICommand {
 	/**
@@ -44,7 +42,7 @@ class PackageCLICommand implements IArgumentedCLICommand {
 	}
 	
 	/**
-	 * @see	\wcf\system\cli\command\ICLICommand::execute()
+	 * @inheritDoc
 	 */
 	public function execute(array $parameters) {
 		$this->argv->setArguments($parameters);
@@ -159,7 +157,7 @@ class PackageCLICommand implements IArgumentedCLICommand {
 		$processNo = PackageInstallationQueue::getNewProcessNo();
 		
 		// insert queue
-		$queue = PackageInstallationQueueEditor::create([
+		PackageInstallationQueueEditor::create([
 			'processNo' => $processNo,
 			'userID' => CLIWCF::getUser()->userID,
 			'package' => $archive->getPackageInfo('name'),
@@ -286,6 +284,8 @@ class PackageCLICommand implements IArgumentedCLICommand {
 			}
 			$installation = new PackageInstallationDispatcher($queue);
 			
+			$progress = 0;
+			$currentAction = '';
 			switch ($step) {
 				case 'prepare':
 					// InstallPackageAction::stepPrepare()
@@ -309,9 +309,8 @@ class PackageCLICommand implements IArgumentedCLICommand {
 					// InstallPackageAction::stepInstall()
 					$step_ = $installation->install($node);
 					$queueID = $installation->nodeBuilder->getQueueByNode($installation->queue->processNo, $step_->getNode());
-						
+					
 					if ($step_->hasDocument()) {
-						$innerTemplate = $step_->getTemplate();
 						$progress = $installation->nodeBuilder->calculateProgress($node);
 						$node = $step_->getNode();
 						$currentAction = $installation->nodeBuilder->getPackageNameByQueue($queueID);
@@ -461,14 +460,14 @@ class PackageCLICommand implements IArgumentedCLICommand {
 	}
 	
 	/**
-	 * @see	\wcf\system\cli\command\ICLICommand::getUsage()
+	 * @inheritDoc
 	 */
 	public function getUsage() {
 		return str_replace($_SERVER['argv'][0].' [ options ]', 'package [ options ] <install|uninstall> <package>', $this->argv->getUsageMessage());
 	}
 	
 	/**
-	 * @see	\wcf\system\cli\command\ICLICommand::canAccess()
+	 * @inheritDoc
 	 */
 	public function canAccess() {
 		return CLIWCF::getSession()->getPermission('admin.configuration.package.canInstallPackage') || CLIWCF::getSession()->getPermission('admin.configuration.package.canUpdatePackage');

@@ -27,7 +27,7 @@ define(['Ajax', 'Core', 'EventKey', 'Dom/Util', 'Ui/SimpleDropdown'], function(A
 			if (!(this._element instanceof Element)) {
 				throw new TypeError("Expected a valid DOM element.");
 			}
-			else if (this._element.nodeName !== 'INPUT' || this._element.type !== 'text') {
+			else if (this._element.nodeName !== 'INPUT' || (this._element.type !== 'search' && this._element.type !== 'text')) {
 				throw new Error('Expected an input[type="text"].');
 			}
 			
@@ -44,6 +44,7 @@ define(['Ajax', 'Core', 'EventKey', 'Dom/Util', 'Ui/SimpleDropdown'], function(A
 					className: '',
 					interfaceName: 'wcf\\data\\ISearchAction'
 				},
+				callbackDropdownInit: null,
 				callbackSelect: null,
 				delay: 500,
 				minLength: 3,
@@ -65,13 +66,13 @@ define(['Ajax', 'Core', 'EventKey', 'Dom/Util', 'Ui/SimpleDropdown'], function(A
 		 * @protected
 		 */
 		_keydown: function(event) {
-			if (this._activeItem !== null || this._options.preventSubmit) {
+			if ((this._activeItem !== null && UiSimpleDropdown.isOpen(this._dropdownContainerId)) || this._options.preventSubmit) {
 				if (EventKey.Enter(event)) {
 					event.preventDefault();
 				}
 			}
 			
-			if (EventKey.ArrowUp(event) || EventKey.ArrowDown(event)) {
+			if (EventKey.ArrowUp(event) || EventKey.ArrowDown(event) || EventKey.Escape(event)) {
 				event.preventDefault();
 			}
 		},
@@ -85,6 +86,10 @@ define(['Ajax', 'Core', 'EventKey', 'Dom/Util', 'Ui/SimpleDropdown'], function(A
 		_keyup: function(event) {
 			// handle dropdown keyboard navigation
 			if (this._activeItem !== null) {
+				if (!UiSimpleDropdown.isOpen(this._dropdownContainerId)) {
+					return;
+				}
+				
 				if (EventKey.ArrowUp(event)) {
 					event.preventDefault();
 					
@@ -100,6 +105,13 @@ define(['Ajax', 'Core', 'EventKey', 'Dom/Util', 'Ui/SimpleDropdown'], function(A
 					
 					return this._keyboardSelectItem();
 				}
+			}
+			
+			// close list on escape
+			if (EventKey.Escape(event)) {
+				UiSimpleDropdown.close(this._dropdownContainerId);
+				
+				return;
 			}
 			
 			var value = this._element.value.trim();
@@ -251,6 +263,10 @@ define(['Ajax', 'Core', 'EventKey', 'Dom/Util', 'Ui/SimpleDropdown'], function(A
 				this._list.className = 'dropdownMenu';
 				
 				createdList = true;
+				
+				if (typeof this._options.callbackDropdownInit === 'function') {
+					this._options.callbackDropdownInit(this._list);
+				}
 			}
 			else {
 				// reset current list

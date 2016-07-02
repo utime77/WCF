@@ -10,15 +10,13 @@ use wcf\system\WCF;
  * Option type implementation for the 'about me' text field.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.option
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Option
  */
 class AboutMeOptionType extends MessageOptionType {
 	/**
-	 * @see	\wcf\system\option\IOptionType::validate()
+	 * @inheritDoc
 	 */
 	public function validate(Option $option, $newValue) {
 		parent::validate($option, $newValue);
@@ -38,7 +36,7 @@ class AboutMeOptionType extends MessageOptionType {
 	}
 	
 	/**
-	 * @see	\wcf\system\option\IOptionType::getData()
+	 * @inheritDoc
 	 */
 	public function getData(Option $option, $newValue) {
 		$newValue = parent::getData($option, $newValue);

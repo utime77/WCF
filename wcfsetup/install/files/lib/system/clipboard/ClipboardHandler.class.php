@@ -2,9 +2,12 @@
 namespace wcf\system\clipboard;
 use wcf\data\object\type\ObjectTypeCache;
 use wcf\data\DatabaseObject;
+use wcf\data\DatabaseObjectList;
 use wcf\system\cache\builder\ClipboardActionCacheBuilder;
 use wcf\system\cache\builder\ClipboardPageCacheBuilder;
+use wcf\system\clipboard\action\IClipboardAction;
 use wcf\system\database\util\PreparedStatementConditionBuilder;
+use wcf\system\exception\ImplementationException;
 use wcf\system\exception\SystemException;
 use wcf\system\SingletonFactory;
 use wcf\system\WCF;
@@ -13,11 +16,9 @@ use wcf\system\WCF;
  * Handles clipboard-related actions.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.clipboard
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Clipboard
  */
 class ClipboardHandler extends SingletonFactory {
 	/**
@@ -51,13 +52,13 @@ class ClipboardHandler extends SingletonFactory {
 	protected $pageObjectID = 0;
 	
 	/**
-	 * @see	\wcf\system\SingletonFactory::init()
+	 * @inheritDoc
 	 */
 	protected function init() {
-		$this->cache = array(
-			'objectTypes' => array(),
-			'objectTypeNames' => array()
-		);
+		$this->cache = [
+			'objectTypes' => [],
+			'objectTypeNames' => []
+		];
 		$cache = ObjectTypeCache::getInstance()->getObjectTypes('com.woltlab.wcf.clipboardItem');
 		foreach ($cache as $objectType) {
 			$this->cache['objectTypes'][$objectType->objectTypeID] = $objectType;
@@ -91,11 +92,11 @@ class ClipboardHandler extends SingletonFactory {
 			VALUES		(?, ?, ?)";
 		$statement = WCF::getDB()->prepareStatement($sql);
 		foreach ($objectIDs as $objectID) {
-			$statement->execute(array(
+			$statement->execute([
 				$objectTypeID,
 				WCF::getUser()->userID,
 				$objectID
-			));
+			]);
 		}
 	}
 	
@@ -107,9 +108,9 @@ class ClipboardHandler extends SingletonFactory {
 	 */
 	public function unmark(array $objectIDs, $objectTypeID) {
 		$conditions = new PreparedStatementConditionBuilder();
-		$conditions->add("objectTypeID = ?", array($objectTypeID));
-		$conditions->add("objectID IN (?)", array($objectIDs));
-		$conditions->add("userID = ?", array(WCF::getUser()->userID));
+		$conditions->add("objectTypeID = ?", [$objectTypeID]);
+		$conditions->add("objectID IN (?)", [$objectIDs]);
+		$conditions->add("userID = ?", [WCF::getUser()->userID]);
 		
 		$sql = "DELETE FROM	wcf".WCF_N."_clipboard_item
 			".$conditions;
@@ -127,10 +128,10 @@ class ClipboardHandler extends SingletonFactory {
 			WHERE		objectTypeID = ?
 					AND userID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array(
+		$statement->execute([
 			$objectTypeID,
 			WCF::getUser()->userID
-		));
+		]);
 	}
 	
 	/**
@@ -185,7 +186,7 @@ class ClipboardHandler extends SingletonFactory {
 	 */
 	protected function loadMarkedItems($objectTypeID = null) {
 		if ($this->markedItems === null) {
-			$this->markedItems = array();
+			$this->markedItems = [];
 		}
 		
 		if ($objectTypeID !== null) {
@@ -195,14 +196,14 @@ class ClipboardHandler extends SingletonFactory {
 			}
 			
 			if (!isset($this->markedItems[$objectType->objectType])) {
-				$this->markedItems[$objectType->objectType] = array();
+				$this->markedItems[$objectType->objectType] = [];
 			}
 		}
 		
 		$conditions = new PreparedStatementConditionBuilder();
-		$conditions->add("userID = ?", array(WCF::getUser()->userID));
+		$conditions->add("userID = ?", [WCF::getUser()->userID]);
 		if ($objectTypeID !== null) {
-			$conditions->add("objectTypeID = ?", array($objectTypeID));
+			$conditions->add("objectTypeID = ?", [$objectTypeID]);
 		}
 		
 		// fetch object ids
@@ -213,7 +214,7 @@ class ClipboardHandler extends SingletonFactory {
 		$statement->execute($conditions->getParameters());
 		
 		// group object ids by type name
-		$data = array();
+		$data = [];
 		while ($row = $statement->fetchArray()) {
 			$objectType = $this->getObjectType($row['objectTypeID']);
 			if ($objectType === null) {
@@ -225,10 +226,10 @@ class ClipboardHandler extends SingletonFactory {
 					throw new SystemException("Missing list class for object type '".$objectType->objectType."'");
 				}
 				
-				$data[$objectType->objectType] = array(
+				$data[$objectType->objectType] = [
 					'className' => $objectType->listclassname,
-					'objectIDs' => array()
-				);
+					'objectIDs' => []
+				];
 			}
 			
 			$data[$objectType->objectType]['objectIDs'][] = $row['objectID'];
@@ -236,8 +237,9 @@ class ClipboardHandler extends SingletonFactory {
 		
 		// read objects
 		foreach ($data as $objectType => $objectData) {
+			/** @var DatabaseObjectList $objectList */
 			$objectList = new $objectData['className']();
-			$objectList->getConditionBuilder()->add($objectList->getDatabaseTableAlias() . "." . $objectList->getDatabaseTableIndexName() . " IN (?)", array($objectData['objectIDs']));
+			$objectList->getConditionBuilder()->add($objectList->getDatabaseTableAlias() . "." . $objectList->getDatabaseTableIndexName() . " IN (?)", [$objectData['objectIDs']]);
 			$objectList->readObjects();
 			
 			$this->markedItems[$objectType] = $objectList->getObjects();
@@ -245,15 +247,16 @@ class ClipboardHandler extends SingletonFactory {
 			// validate object ids against loaded items (check for zombie object ids)
 			$indexName = $objectList->getDatabaseTableIndexName();
 			foreach ($this->markedItems[$objectType] as $object) {
+				/** @noinspection PhpVariableVariableInspection */
 				$index = array_search($object->$indexName, $objectData['objectIDs']);
 				unset($objectData['objectIDs'][$index]);
 			}
 			
 			if (!empty($objectData['objectIDs'])) {
 				$conditions = new PreparedStatementConditionBuilder();
-				$conditions->add("objectTypeID = ?", array($this->getObjectTypeByName($objectType)));
-				$conditions->add("userID = ?", array(WCF::getUser()->userID));
-				$conditions->add("objectID IN (?)", array($objectData['objectIDs']));
+				$conditions->add("objectTypeID = ?", [$this->getObjectTypeByName($objectType)]);
+				$conditions->add("userID = ?", [WCF::getUser()->userID]);
+				$conditions->add("objectID IN (?)", [$objectData['objectIDs']]);
 				
 				$sql = "DELETE FROM	wcf".WCF_N."_clipboard_item
 					".$conditions;
@@ -308,7 +311,7 @@ class ClipboardHandler extends SingletonFactory {
 		
 		// fetch action ids
 		$this->loadActionCache();
-		$actionIDs = array();
+		$actionIDs = [];
 		foreach ($this->pageCache[$page] as $actionID) {
 			if (isset($this->actionCache[$actionID])) {
 				$actionIDs[] = $actionID;
@@ -317,41 +320,44 @@ class ClipboardHandler extends SingletonFactory {
 		$actionIDs = array_unique($actionIDs);
 		
 		// load actions
-		$actions = array();
+		$actions = [];
 		foreach ($actionIDs as $actionID) {
 			$actionObject = $this->actionCache[$actionID];
 			$actionClassName = $actionObject->actionClassName;
 			if (!isset($actions[$actionClassName])) {
 				// validate class
-				if (!is_subclass_of($actionClassName, 'wcf\system\clipboard\action\IClipboardAction')) {
-					throw new SystemException("'".$actionClassName."' does not implement 'wcf\system\clipboard\action\IClipboardAction'");
+				if (!is_subclass_of($actionClassName, IClipboardAction::class)) {
+					throw new ImplementationException($actionClassName, IClipboardAction::class);
 				}
 				
-				$actions[$actionClassName] = array(
-					'actions' => array(),
+				$actions[$actionClassName] = [
+					'actions' => [],
 					'object' => new $actionClassName()
-				);
+				];
 			}
 			
 			$actions[$actionClassName]['actions'][] = $actionObject;
 		}
 		
 		// execute actions
-		$editorData = array();
+		$editorData = [];
 		foreach ($actions as $actionData) {
+			/** @var IClipboardAction $clipboardAction */
+			$clipboardAction = $actionData['object'];
+			
 			// get accepted objects
-			$typeName = $actionData['object']->getTypeName();
+			$typeName = $clipboardAction->getTypeName();
 			if (!isset($this->markedItems[$typeName]) || empty($this->markedItems[$typeName])) continue;
 			
 			if (!isset($editorData[$typeName])) {
-				$editorData[$typeName] = array(
-					'label' => $actionData['object']->getEditorLabel($this->markedItems[$typeName]),
-					'items' => array()
-				);
+				$editorData[$typeName] = [
+					'label' => $clipboardAction->getEditorLabel($this->markedItems[$typeName]),
+					'items' => []
+				];
 			}
 			
 			foreach ($actionData['actions'] as $actionObject) {
-				$data = $actionData['object']->execute($this->markedItems[$typeName], $actionObject);
+				$data = $clipboardAction->execute($this->markedItems[$typeName], $actionObject);
 				if ($data === null) {
 					continue;
 				}
@@ -370,8 +376,8 @@ class ClipboardHandler extends SingletonFactory {
 	 */
 	public function removeItems($typeID = null) {
 		$conditions = new PreparedStatementConditionBuilder();
-		$conditions->add("userID = ?", array(WCF::getUser()->userID));
-		if ($typeID !== null) $conditions->add("objectTypeID = ?", array($typeID));
+		$conditions->add("userID = ?", [WCF::getUser()->userID]);
+		if ($typeID !== null) $conditions->add("objectTypeID = ?", [$typeID]);
 		
 		$sql = "DELETE FROM	wcf".WCF_N."_clipboard_item
 			".$conditions;
@@ -389,9 +395,9 @@ class ClipboardHandler extends SingletonFactory {
 		if (!WCF::getUser()->userID) return 0;
 		
 		$conditionBuilder = new PreparedStatementConditionBuilder();
-		$conditionBuilder->add("userID = ?", array(WCF::getUser()->userID));
+		$conditionBuilder->add("userID = ?", [WCF::getUser()->userID]);
 		if ($objectTypeID !== null) {
-			$conditionBuilder->add("objectTypeID = ?", array($objectTypeID));
+			$conditionBuilder->add("objectTypeID = ?", [$objectTypeID]);
 		}
 		
 		$sql = "SELECT	COUNT(*)

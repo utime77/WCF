@@ -3,6 +3,7 @@ namespace wcf\system\search\acp;
 use wcf\data\acp\search\provider\ACPSearchProvider;
 use wcf\system\application\ApplicationHandler;
 use wcf\system\cache\builder\ACPSearchProviderCacheBuilder;
+use wcf\system\exception\ImplementationException;
 use wcf\system\exception\SystemException;
 use wcf\system\SingletonFactory;
 
@@ -10,18 +11,16 @@ use wcf\system\SingletonFactory;
  * Handles ACP Search.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.search.acp
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Search\Acp
  */
 class ACPSearchHandler extends SingletonFactory {
 	/**
 	 * list of application abbreviations
 	 * @var	string[]
 	 */
-	public $abbreviations = array();
+	public $abbreviations = [];
 	
 	/**
 	 * list of acp search provider
@@ -30,7 +29,7 @@ class ACPSearchHandler extends SingletonFactory {
 	protected $cache = null;
 	
 	/**
-	 * @see	\wcf\system\SingletonFactory::init()
+	 * @inheritDoc
 	 */
 	protected function init() {
 		$this->cache = ACPSearchProviderCacheBuilder::getInstance()->getData();
@@ -41,22 +40,27 @@ class ACPSearchHandler extends SingletonFactory {
 	 * 
 	 * @param	string		$query
 	 * @param	integer		$limit
+	 * @param       string          $providerName
 	 * @return	ACPSearchResultList[]
 	 * @throws	SystemException
 	 */
-	public function search($query, $limit = 10) {
-		$data = array();
-		$maxResultsPerProvider = ceil($limit / 2);
+	public function search($query, $limit = 10, $providerName = '') {
+		$data = [];
+		if ($providerName) $maxResultsPerProvider = $limit;
+		else $maxResultsPerProvider = ceil($limit / 2);
 		$totalResultCount = 0;
 		
 		foreach ($this->cache as $acpSearchProvider) {
+			if ($providerName && $acpSearchProvider->providerName != $providerName) continue;
+			
 			$className = $acpSearchProvider->className;
-			if (!is_subclass_of($className, 'wcf\system\search\acp\IACPSearchResultProvider')) {
-				throw new SystemException("'".$className."' does not implement 'wcf\system\search\acp\IACPSearchResultProvider'");
+			if (!is_subclass_of($className, IACPSearchResultProvider::class)) {
+				throw new ImplementationException($className, IACPSearchResultProvider::class);
 			}
 			
+			/** @var IACPSearchResultProvider $provider */
 			$provider = new $className();
-			$results = $provider->search($query, $maxResultsPerProvider);
+			$results = $provider->search($query);
 			
 			if (!empty($results)) {
 				$resultList = new ACPSearchResultList($acpSearchProvider->providerName);
@@ -130,7 +134,7 @@ class ACPSearchHandler extends SingletonFactory {
 		}
 		
 		if (!empty($suffix)) {
-			$abbreviations = array();
+			$abbreviations = [];
 			foreach ($this->abbreviations as $abbreviation) {
 				$abbreviations[] = $abbreviation . $suffix;
 			}

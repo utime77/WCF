@@ -12,15 +12,13 @@ use wcf\util\StringUtil;
  * Shows the language add form.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Form
  */
 class LanguageAddForm extends AbstractForm {
 	/**
-	 * @see	\wcf\page\AbstractPage::$activeMenuItem
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.language';
 	
@@ -31,9 +29,9 @@ class LanguageAddForm extends AbstractForm {
 	public $countryCode = '';
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededPermissions
+	 * @inheritDoc
 	 */
-	public $neededPermissions = array('admin.language.canManageLanguage');
+	public $neededPermissions = ['admin.language.canManageLanguage'];
 	
 	/**
 	 * language object
@@ -57,7 +55,7 @@ class LanguageAddForm extends AbstractForm {
 	 * list of available languages
 	 * @var	Language[]
 	 */
-	public $languages = array();
+	public $languages = [];
 	
 	/**
 	 * source language object
@@ -72,7 +70,7 @@ class LanguageAddForm extends AbstractForm {
 	public $sourceLanguageID = 0;
 	
 	/**
-	 * @see	\wcf\form\IForm::readFormParameters()
+	 * @inheritDoc
 	 */
 	public function readFormParameters() {
 		parent::readFormParameters();
@@ -84,7 +82,7 @@ class LanguageAddForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::validate()
+	 * @inheritDoc
 	 */
 	public function validate() {
 		parent::validate();
@@ -134,16 +132,16 @@ class LanguageAddForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		parent::save();
 		
-		$this->language = LanguageEditor::create(array(
+		$this->language = LanguageEditor::create([
 			'countryCode' => mb_strtolower($this->countryCode),
 			'languageName' => $this->languageName,
 			'languageCode' => mb_strtolower($this->languageCode)
-		));
+		]);
 		$languageEditor = new LanguageEditor($this->sourceLanguage);
 		$languageEditor->copy($this->language);
 		
@@ -157,7 +155,7 @@ class LanguageAddForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		parent::readData();
@@ -166,18 +164,18 @@ class LanguageAddForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'countryCode' => $this->countryCode,
 			'languageName' => $this->languageName,
 			'languageCode' => $this->languageCode,
 			'sourceLanguageID' => $this->sourceLanguageID,
 			'languages' => $this->languages,
 			'action' => 'add'
-		));
+		]);
 	}
 }

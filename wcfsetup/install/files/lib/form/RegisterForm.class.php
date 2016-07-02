@@ -1,6 +1,7 @@
 <?php
 namespace wcf\form;
 use wcf\acp\form\UserAddForm;
+use wcf\data\object\type\ObjectType;
 use wcf\data\user\avatar\Gravatar;
 use wcf\data\user\avatar\UserAvatarAction;
 use wcf\data\user\group\UserGroup;
@@ -29,16 +30,9 @@ use wcf\util\UserRegistrationUtil;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Form
  */
 class RegisterForm extends UserAddForm {
-	/**
-	 * @see	\wcf\page\AbstractPage::$enableTracking
-	 */
-	public $enableTracking = true;
-	
 	/**
 	 * true if external authentication is used
 	 * @var	boolean
@@ -46,7 +40,7 @@ class RegisterForm extends UserAddForm {
 	public $isExternalAuthentication = false;
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededPermissions
+	 * @inheritDoc
 	 */
 	public $neededPermissions = [];
 	
@@ -58,17 +52,20 @@ class RegisterForm extends UserAddForm {
 	public $message = '';
 	
 	/**
-	 * @see	\wcf\form\AbstractCaptchaForm::$captchaObjectType
+	 * captcha object type object
+	 * @var	ObjectType
 	 */
-	public $captchaObjectType = null;
+	public $captchaObjectType;
 	
 	/**
-	 * @see	\wcf\form\AbstractCaptchaForm::$useCaptcha
+	 * name of the captcha object type; if empty, captcha is disabled
+	 * @var	string
 	 */
 	public $captchaObjectTypeName = CAPTCHA_TYPE;
 	
 	/**
-	 * @see	\wcf\form\AbstractCaptchaForm::$useCaptcha
+	 * true if captcha is used
+	 * @var	boolean
 	 */
 	public $useCaptcha = REGISTER_USE_CAPTCHA;
 	
@@ -85,7 +82,7 @@ class RegisterForm extends UserAddForm {
 	public static $minRegistrationTime = 10;
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -112,7 +109,7 @@ class RegisterForm extends UserAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::readFormParameters()
+	 * @inheritDoc
 	 */
 	public function readFormParameters() {
 		parent::readFormParameters();
@@ -140,15 +137,16 @@ class RegisterForm extends UserAddForm {
 	}
 	
 	/**
-	 * wcf\acp\form\AbstractOptionListForm::initOptionHandler()
+	 * @inheritDoc
 	 */
 	protected function initOptionHandler() {
+		/** @noinspection PhpUndefinedMethodInspection */
 		$this->optionHandler->setInRegistration();
 		parent::initOptionHandler();
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::validate()
+	 * @inheritDoc
 	 */
 	public function validate() {
 		// validate captcha first
@@ -163,7 +161,7 @@ class RegisterForm extends UserAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		if ($this->useCaptcha && $this->captchaObjectTypeName) {
@@ -218,7 +216,7 @@ class RegisterForm extends UserAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
@@ -231,7 +229,7 @@ class RegisterForm extends UserAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::show()
+	 * @inheritDoc
 	 */
 	public function show() {
 		AbstractForm::show();
@@ -252,7 +250,7 @@ class RegisterForm extends UserAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\acp\form\UserAddForm::validateUsername()
+	 * @inheritDoc
 	 */
 	protected function validateUsername($username) {
 		parent::validateUsername($username);
@@ -264,7 +262,7 @@ class RegisterForm extends UserAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\acp\form\UserAddForm::validatePassword()
+	 * @inheritDoc
 	 */
 	protected function validatePassword($password, $confirmPassword) {
 		if (!$this->isExternalAuthentication) {
@@ -278,7 +276,7 @@ class RegisterForm extends UserAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\acp\form\UserAddForm::validateEmail()
+	 * @inheritDoc
 	 */
 	protected function validateEmail($email, $confirmEmail) {
 		parent::validateEmail($email, $confirmEmail);
@@ -289,7 +287,7 @@ class RegisterForm extends UserAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		AbstractForm::save();
@@ -433,7 +431,7 @@ class RegisterForm extends UserAddForm {
 			'data' => array_merge($this->additionalFields, [
 				'username' => $this->username,
 				'email' => $this->email,
-				'password' => $this->password,
+				'password' => $this->password
 			]),
 			'groups' => $this->groupIDs,
 			'languageIDs' => $this->visibleLanguages,

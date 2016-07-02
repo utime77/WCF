@@ -10,25 +10,28 @@ use wcf\data\object\type\ObjectTypeCache;
 use wcf\data\page\Page;
 use wcf\data\page\PageNodeTree;
 use wcf\form\AbstractForm;
+use wcf\system\acl\simple\SimpleAclHandler;
 use wcf\system\box\IConditionBoxController;
 use wcf\system\database\util\PreparedStatementConditionBuilder;
+use wcf\system\exception\IllegalLinkException;
 use wcf\system\exception\UserInputException;
+use wcf\system\html\input\HtmlInputProcessor;
 use wcf\system\language\LanguageFactory;
 use wcf\system\page\handler\ILookupPageHandler;
+use wcf\system\request\LinkHandler;
 use wcf\system\WCF;
 use wcf\util\ArrayUtil;
+use wcf\util\HeaderUtil;
 use wcf\util\StringUtil;
 
 /**
  * Shows the box add form.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Form
+ * @since	3.0
  */
 class BoxAddForm extends AbstractForm {
 	/**
@@ -168,12 +171,23 @@ class BoxAddForm extends AbstractForm {
 	public $pageNodeList;
 	
 	/**
+	 * acl values
+	 * @var array
+	 */
+	public $aclValues = [];
+	
+	/**
+	 * @var HtmlInputProcessor[]
+	 */
+	public $htmlInputProcessors = [];
+	
+	/**
 	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
-	
-		if (!empty($_REQUEST['isMultilingual'])) $this->isMultilingual = 1;
+		
+		$this->readBoxType();
 		
 		$this->pageNodeList = (new PageNodeTree())->getNodeList();
 		
@@ -185,6 +199,27 @@ class BoxAddForm extends AbstractForm {
 					$this->pageHandlers[$pageNode->pageID] = $pageNode->requireObjectID;
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Reads basic page parameters controlling type and i18n.
+	 *
+	 * @throws	IllegalLinkException
+	 */
+	protected function readBoxType() {
+		if (!empty($_REQUEST['isMultilingual'])) $this->isMultilingual = 1;
+		if (!empty($_REQUEST['boxType'])) $this->boxType = $_REQUEST['boxType'];
+		
+		// work-around to force adding boxes via dialog overlay
+		if (empty($_POST) && $this->boxType == '') {
+			HeaderUtil::redirect(LinkHandler::getInstance()->getLink('BoxList', ['showBoxAddDialog' => 1]));
+			exit;
+		}
+		
+		// validate box type
+		if (!in_array($this->boxType, Box::$availableBoxTypes)) {
+			throw new IllegalLinkException();
 		}
 	}
 	
@@ -212,6 +247,7 @@ class BoxAddForm extends AbstractForm {
 		if (isset($_POST['title']) && is_array($_POST['title'])) $this->title = ArrayUtil::trim($_POST['title']);
 		if (isset($_POST['content']) && is_array($_POST['content'])) $this->content = ArrayUtil::trim($_POST['content']);
 		if (isset($_POST['boxControllerID'])) $this->boxControllerID = intval($_POST['boxControllerID']);
+		if (isset($_POST['aclValues']) && is_array($_POST['aclValues'])) $this->aclValues = $_POST['aclValues'];
 		
 		if (WCF::getSession()->getPermission('admin.content.cms.canUseMedia')) {
 			if (isset($_POST['imageID']) && is_array($_POST['imageID'])) $this->imageID = ArrayUtil::toIntegerArray($_POST['imageID']);
@@ -247,11 +283,7 @@ class BoxAddForm extends AbstractForm {
 		// validate name
 		$this->validateName();
 		
-		// validate box type
-		if (!in_array($this->boxType, Box::$availableBoxTypes)) {
-			throw new UserInputException('boxType');
-		}
-		
+		// validate controller
 		if ($this->boxType === 'system') {
 			$this->boxController = ObjectTypeCache::getInstance()->getObjectType($this->boxControllerID);
 			if ($this->boxController === null || $this->boxController->getDefinition()->definitionName != 'com.woltlab.wcf.boxController') {
@@ -312,8 +344,8 @@ class BoxAddForm extends AbstractForm {
 		if (!empty($this->pageIDs)) {
 			$conditionBuilder = new PreparedStatementConditionBuilder();
 			$conditionBuilder->add('pageID IN (?)', [$this->pageIDs]);
-			$sql = "SELECT  pageID
-				FROM    wcf".WCF_N."_page
+			$sql = "SELECT	pageID
+				FROM	wcf".WCF_N."_page
 				" . $conditionBuilder;
 			$statement = WCF::getDB()->prepareStatement($sql);
 			$statement->execute($conditionBuilder->getParameters());
@@ -331,6 +363,19 @@ class BoxAddForm extends AbstractForm {
 		
 		if ($this->boxController && $this->boxController->getProcessor() instanceof IConditionBoxController) {
 			$this->boxController->getProcessor()->validateConditions();
+		}
+		
+		if ($this->boxType == 'text') {
+			if ($this->isMultilingual) {
+				foreach (LanguageFactory::getInstance()->getLanguages() as $language) {
+					$this->htmlInputProcessors[$language->languageID] = new HtmlInputProcessor();
+					$this->htmlInputProcessors[$language->languageID]->process((!empty($this->content[$language->languageID]) ? $this->content[$language->languageID] : ''), 'com.woltlab.wcf.box.content');
+				}
+			}
+			else {
+				$this->htmlInputProcessors[0] = new HtmlInputProcessor();
+				$this->htmlInputProcessors[0]->process((!empty($this->content[0]) ? $this->content[0] : ''), 'com.woltlab.wcf.box.content');
+			}
 		}
 	}
 	
@@ -353,11 +398,12 @@ class BoxAddForm extends AbstractForm {
 		parent::save();
 		
 		$content = [];
-		if ($this->isMultilingual) {
+		if ($this->boxType == 'system' || $this->isMultilingual) {
 			foreach (LanguageFactory::getInstance()->getLanguages() as $language) {
 				$content[$language->languageID] = [
 					'title' => (!empty($this->title[$language->languageID]) ? $this->title[$language->languageID] : ''),
 					'content' => (!empty($this->content[$language->languageID]) ? $this->content[$language->languageID] : ''),
+					'htmlInputProcessor' => (isset($this->htmlInputProcessors[$language->languageID]) ? $this->htmlInputProcessors[$language->languageID] : null),
 					'imageID' => (!empty($this->imageID[$language->languageID]) ? $this->imageID[$language->languageID] : null)
 				];
 			}
@@ -366,6 +412,7 @@ class BoxAddForm extends AbstractForm {
 			$content[0] = [
 				'title' => (!empty($this->title[0]) ? $this->title[0] : ''),
 				'content' => (!empty($this->content[0]) ? $this->content[0] : ''),
+				'htmlInputProcessor' => (isset($this->htmlInputProcessors[0]) ? $this->htmlInputProcessors[0] : null),
 				'imageID' => (!empty($this->imageID[0]) ? $this->imageID[0] : null)
 			];
 		}
@@ -389,7 +436,7 @@ class BoxAddForm extends AbstractForm {
 			$data['objectTypeID'] = $this->boxControllerID;
 		}
 		
-		$this->objectAction = new BoxAction([], 'create', ['data' => array_merge($this->additionalFields, $data), 'content' => $content, 'pageIDs' => $this->pageIDs ]);
+		$this->objectAction = new BoxAction([], 'create', ['data' => array_merge($this->additionalFields, $data), 'content' => $content, 'pageIDs' => $this->pageIDs]);
 		$box = $this->objectAction->executeAction()['returnValues'];
 		
 		// set generic box identifier
@@ -403,6 +450,9 @@ class BoxAddForm extends AbstractForm {
 			$this->boxController->getProcessor()->saveConditions();
 		}
 		
+		// save acl
+		SimpleAclHandler::getInstance()->setValues('com.woltlab.wcf.box', $box->boxID, $this->aclValues);
+		
 		// call saved event
 		$this->saved();
 		
@@ -413,7 +463,7 @@ class BoxAddForm extends AbstractForm {
 		$this->boxType = $this->position = $this->cssClassName = $this->name = '';
 		$this->showOrder = $this->boxControllerID = 0;
 		$this->visibleEverywhere = $this->showHeader = 1;
-		$this->title = $this->content = $this->images = $this->imageID = [];
+		$this->title = $this->content = $this->images = $this->imageID = $this->pageIDs = $this->aclValues = [];
 		$this->boxController = null;
 	}
 	
@@ -448,7 +498,8 @@ class BoxAddForm extends AbstractForm {
 			'availableBoxControllers' => ObjectTypeCache::getInstance()->getObjectTypes('com.woltlab.wcf.boxController'),
 			'boxController' => $this->boxController,
 			'pageNodeList' => $this->pageNodeList,
-			'pageHandlers' => $this->pageHandlers
+			'pageHandlers' => $this->pageHandlers,
+			'aclValues' => SimpleAclHandler::getInstance()->getOutputValues($this->aclValues)
 		]);
 	}
 }

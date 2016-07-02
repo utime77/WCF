@@ -10,6 +10,14 @@
 			color: $wcfHeaderLinkActive;
 		}
 	}
+	
+	.icon {
+		color: $wcfHeaderText;
+	}
+}
+
+.pageHeader {
+	min-height: 52px;
 }
 
 .pageHeader .layoutBoundary {
@@ -22,7 +30,7 @@
 	@include screen-lg {
 		align-items: center;
 		flex-wrap: wrap;
-		padding-top: 20px;
+		padding-top: 30px;
 		padding-bottom: 0;
 	}
 }
@@ -31,7 +39,7 @@
 .pageHeaderLogo {
 	@include screen-lg {
 		flex: 0 0 50%;
-		margin-bottom: 20px;
+		margin-bottom: 30px;
 		
 		.pageHeaderLogoSmall {
 			display: none;
@@ -51,11 +59,12 @@
 			flex: 0 0 auto;
 			
 			> a {
+				background: $wcfHeaderMenuLinkBackground;
 				align-items: center;
 				color: $wcfHeaderMenuLink;
 				display: flex;
 				height: 50px;
-				padding: 0 10px;
+				padding: 0 15px;
 				
 				> span {
 					flex: 0 0 auto;
@@ -72,13 +81,9 @@
 				cursor: default;
 			}
 			
-			&.active > a {
-				background: linear-gradient(to top, $wcfHeaderMenuBackground 0%, $wcfHeaderMenuBackgroundActive 50%);
-				color: $wcfHeaderMenuLinkActive;
-			}
-			
+			&.active > a,
 			&:hover > a {
-				background: $wcfHeaderMenuBackgroundActive;
+				background: $wcfHeaderMenuLinkBackgroundActive;
 				color: $wcfHeaderMenuLinkActive;
 			}
 		}
@@ -88,6 +93,19 @@
 			
 			&:hover .boxMenuDepth1 {
 				visibility: visible;
+			}
+			
+			> a {
+				&::after {
+					content: $fa-var-angle-down;
+					display: block;
+					font-family: 'FontAwesome';
+					font-size: 14px;
+					height: 24px;
+					line-height: 24px;
+					margin-left: 5px;
+					width: 10px;
+				}
 			}
 		}
 		
@@ -167,12 +185,10 @@
 				width: 100%;
 			}
 		}
-		
-		.pageHeaderSearchInputContainer .pageHeaderSearchInput {
-			padding-bottom: 10px;
-			padding-top: 10px;
-			width: 200px;
-		}
+	}
+	
+	.pageHeaderSearchInputContainer .pageHeaderSearchInput {
+		width: 250px;
 	}
 }
 
@@ -192,17 +208,13 @@
 			
 			> a {
 				align-items: center;
+				background: $wcfHeaderMenuLinkBackground;
 				color: $wcfHeaderMenuLink;
 				display: flex;
 				flex: 0 0 auto;
 				height: 50px;
-				padding: 0 10px;
+				padding: 0 15px;
 				position: relative;
-				
-				/* set icon color */
-				> .icon {
-					color: inherit;
-				}
 				
 				/* hide icon label */
 				> span:not(.icon):not(.badge) {
@@ -212,20 +224,18 @@
 				/* special styling for update badge */
 				> .badgeUpdate {
 					box-shadow: -1px 2px 3px rgba(0, 0, 0, .3), inset 0 2px 5px rgba(225, 225, 225, .3);
-					left: 26px;
+					left: 31px;
+					padding: 1px 6px;
 					position: absolute;
-					top: 2px;
+					top: 4px;
+					z-index: 101;
 				}
 			}
 			
 			&.dropdownOpen > a,
-			&.open > a {
-				background: linear-gradient(to top, $wcfHeaderMenuBackground 0%, $wcfHeaderMenuBackgroundActive 50%);
-				color: $wcfHeaderMenuLinkActive;
-			}
-			
+			&.open > a,
 			&:hover > a {
-				background: $wcfHeaderMenuBackgroundActive;
+				background: $wcfHeaderMenuLinkBackgroundActive;
 				color: $wcfHeaderMenuLinkActive;
 			}
 			
@@ -243,9 +253,8 @@
 /* SEARCH AREA */
 .pageHeaderSearch {
 	@include screen-lg {
-		align-self: flex-start;
 		flex: 0 0 50%;
-		margin-bottom: 20px;
+		margin-bottom: 30px;
 		text-align: right;
 		
 		.pageHeaderSearchLabel {
@@ -255,32 +264,54 @@
 }
 
 .pageHeaderSearchInputContainer {
-	display: inline-block;
+	background-color: $wcfHeaderSearchBoxBackground;
+	border-radius: 2px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+	display: inline-flex;
+	padding: 3px;
 	position: relative;
 	
-	&:hover {
-		.pageHeaderSearchInput {
-			background-color: $wcfHeaderSearchBoxBackgroundActive;
-			color: $wcfHeaderSearchBoxTextActive;
-		}
+	.pageHeaderSearchType > .button {
+		border-radius: 2px 0 0 2px;
+		min-width: 140px;
+		padding: 4px 24px 4px 8px;
+		position: relative;
+		text-align: left;
+		white-space: nowrap;
 		
-		.pageHeaderSearchInputButton > .icon {
-			color: $wcfHeaderSearchBoxTextActive;
+		&::after {
+			color: inherit;
+			content: $fa-var-caret-down;
+			font-family: FontAwesome;
+			position: absolute;
+			right: 8px;
 		}
 	}
 	
+	.pageHeaderSearchInputButton {
+		border-radius: 0 2px 2px 0;
+		padding: 4px 7px;
+	}
+	
 	.pageHeaderSearchInput {
-		background-color: $wcfHeaderSearchBoxBackground;
+		background-color: transparent;
 		border-width: 0;
 		color: $wcfHeaderSearchBoxText;
-		padding: 6px 30px 6px 8px;
 		
-		&:focus {
-			background-color: $wcfHeaderSearchBoxBackgroundActive;
+		&:focus,
+		&:hover {
+			background-color: transparent;
 			color: $wcfHeaderSearchBoxTextActive;
 			
-			~ .pageHeaderSearchInputButton > .icon {
-				color: $wcfHeaderSearchBoxTextActive;
+			/* set placeholder color */
+			&::-webkit-input-placeholder { /* WebKit browsers */
+				color: $wcfHeaderSearchBoxPlaceholderActive;
+			}
+			&::-moz-placeholder { /* Mozilla Firefox 19+ */
+				color: $wcfHeaderSearchBoxPlaceholderActive;
+			}
+			&:-ms-input-placeholder { /* Internet Explorer 10+ */
+				color: $wcfHeaderSearchBoxPlaceholderActive;
 			}
 		}
 		
@@ -294,40 +325,10 @@
 		&:-ms-input-placeholder { /* Internet Explorer 10+ */
 			color: $wcfHeaderSearchBoxPlaceholder;
 		}
-				
+		
 		/* remove broken cancel-button (webkit) */
 		&::-webkit-search-cancel-button {
-			display:none;
-		}
-	}
-	
-	&:hover .pageHeaderSearchInput,
-	.pageHeaderSearchInput:focus {
-		/* set placeholder color */
-		&::-webkit-input-placeholder { /* WebKit browsers */
-			color: $wcfHeaderSearchBoxPlaceholderActive;
-		}
-		&::-moz-placeholder { /* Mozilla Firefox 19+ */
-			color: $wcfHeaderSearchBoxPlaceholderActive;
-		}
-		&:-ms-input-placeholder { /* Internet Explorer 10+ */
-			color: $wcfHeaderSearchBoxPlaceholderActive;
-		}
-	}
-	
-	.pageHeaderSearchInputButton {
-		background: none;
-		border: 0 none;
-		height: 20px;
-		margin: -10px 5px 0 0;
-		padding: 0;
-		position: absolute;
-		right: 0;
-		top: 50%;
-		width: 20px;
-		
-		> .icon {
-			color: $wcfHeaderSearchBoxText;
+			display: none;
 		}
 	}
 }
@@ -391,7 +392,7 @@
 		}
 		
 		&:hover::before {
-			background-color: $wcfHeaderMenuBackgroundActive;
+			background-color: $wcfHeaderMenuLinkBackgroundActive;
 			color: $wcfHeaderMenuLinkActive;
 		}
 	}

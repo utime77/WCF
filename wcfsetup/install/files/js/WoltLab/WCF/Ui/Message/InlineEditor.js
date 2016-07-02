@@ -2,20 +2,20 @@
  * Flexible message inline editor.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
  * @module	WoltLab/WCF/Ui/Message/InlineEditor
  */
 define(
 	[
-		'Ajax',         'Core',            'Dictionary',        'Environment',
-		'EventHandler', 'Language',        'ObjectMap',         'Dom/Traverse',
-		'Dom/Util',     'Ui/Notification', 'Ui/ReusableDropdown'
+		'Ajax',         'Core',            'Dictionary',          'Environment',
+		'EventHandler', 'Language',        'ObjectMap',           'Dom/Traverse',
+		'Dom/Util',     'Ui/Notification', 'Ui/ReusableDropdown', 'WoltLab/WCF/Ui/Scroll'
 	],
 	function(
-		Ajax,            Core,              Dictionary,          Environment,
-		EventHandler,    Language,          ObjectMap,           DomTraverse,
-		DomUtil,         UiNotification,    UiReusableDropdown
+		Ajax,            Core,              Dictionary,            Environment,
+		EventHandler,    Language,          ObjectMap,             DomTraverse,
+		DomUtil,         UiNotification,    UiReusableDropdown,    UiScroll
 	)
 {
 	"use strict";
@@ -28,7 +28,7 @@ define(
 		/**
 		 * Initializes the message inline editor.
 		 * 
-		 * @param	{Object<string, *>}		options		list of configuration options
+		 * @param	{Object}        options		list of configuration options
 		 */
 		init: function(options) {
 			this._activeDropdownElement = null;
@@ -37,25 +37,25 @@ define(
 			this._elements = new ObjectMap();
 			this._options = Core.extend({
 				canEditInline: false,
-				extendedForm: true,
 				
 				className: '',
 				containerId: 0,
 				dropdownIdentifier: '',
 				editorPrefix: 'messageEditor',
 				
-				messageSelector: '.jsMessage'
+				messageSelector: '.jsMessage',
+				
+				quoteManager: null
 			}, options);
 			
-			this._initElements();
+			this.rebuild();
 		},
 		
 		/**
-		 * Initializes each applicable message.
-		 * 
-		 * @protected
+		 * Initializes each applicable message, should be called whenever new
+		 * messages are being displayed.
 		 */
-		_initElements: function() {
+		rebuild: function() {
 			var button, canEdit, element, elements = elBySelAll(this._options.messageSelector);
 			
 			for (var i = 0, length = elements.length; i < length; i++) {
@@ -69,7 +69,7 @@ define(
 					canEdit = elDataBool(element, 'can-edit');
 					
 					if (this._options.canEditInline) {
-						button.addEventListener('click', this._clickDropdown.bind(this, element));
+						button.addEventListener(WCF_CLICK_EVENT, this._clickDropdown.bind(this, element));
 						button.classList.add('jsDropdownEnabled');
 						
 						if (canEdit) {
@@ -77,12 +77,13 @@ define(
 						}
 					}
 					else if (canEdit) {
-						button.addEventListener('click', this._click.bind(this, element));
+						button.addEventListener(WCF_CLICK_EVENT, this._click.bind(this, element));
 					}
 				}
 				
 				var messageBody = elBySel('.messageBody', element);
 				var messageFooter = elBySel('.messageFooter', element);
+				var messageHeader = elBySel('.messageHeader', element);
 				
 				this._elements.set(element, {
 					button: button,
@@ -90,6 +91,7 @@ define(
 					messageBodyEditor: null,
 					messageFooter: messageFooter,
 					messageFooterButtons: elBySel('.messageFooterButtons', messageFooter),
+					messageHeader: messageHeader,
 					messageText: elBySel('.messageText', messageBody)
 				});
 			}
@@ -142,7 +144,7 @@ define(
 			button.classList.add('dropdownToggle');
 			button.parentNode.classList.add('dropdown');
 			(function(button, element) {
-				button.addEventListener('click', (function(event) {
+				button.addEventListener(WCF_CLICK_EVENT, (function(event) {
 					event.preventDefault();
 					event.stopPropagation();
 					
@@ -169,7 +171,7 @@ define(
 			}
 			
 			setTimeout(function() {
-				Core.triggerEvent(button, 'click');
+				Core.triggerEvent(button, WCF_CLICK_EVENT);
 			}, 10);
 		},
 		
@@ -197,10 +199,10 @@ define(
 					listItem.appendChild(label);
 					
 					if (item.item === 'editItem') {
-						listItem.addEventListener('click', this._click.bind(this, null));
+						listItem.addEventListener(WCF_CLICK_EVENT, this._click.bind(this, null));
 					}
 					else {
-						listItem.addEventListener('click', callbackClick);
+						listItem.addEventListener(WCF_CLICK_EVENT, callbackClick);
 					}
 				}
 				
@@ -292,6 +294,7 @@ define(
 		_clickDropdownItem: function(event) {
 			event.preventDefault();
 			
+			//noinspection JSCheckFunctionSignatures
 			this._dropdownSelect(elData(event.currentTarget, 'item'));
 		},
 		
@@ -333,6 +336,7 @@ define(
 			var messageBody = elementData.messageBodyEditor;
 			var editor = elCreate('div');
 			editor.className = 'editorContainer';
+			//noinspection JSUnresolvedVariable
 			DomUtil.setInnerHtml(editor, data.returnValues.template);
 			messageBody.appendChild(editor);
 			
@@ -340,15 +344,10 @@ define(
 			var formSubmit = elBySel('.formSubmit', editor);
 			
 			var buttonSave = elBySel('button[data-type="save"]', formSubmit);
-			buttonSave.addEventListener('click', this._save.bind(this));
-			
-			if (this._options.extendedForm) {
-				var buttonExtended = elBySel('button[data-type="extended"]', formSubmit);
-				buttonExtended.addEventListener('click', this._prepareExtended.bind(this));
-			}
+			buttonSave.addEventListener(WCF_CLICK_EVENT, this._save.bind(this));
 			
 			var buttonCancel = elBySel('button[data-type="cancel"]', formSubmit);
-			buttonCancel.addEventListener('click', this._restoreMessage.bind(this));
+			buttonCancel.addEventListener(WCF_CLICK_EVENT, this._restoreMessage.bind(this));
 			
 			EventHandler.add('com.woltlab.wcf.redactor', 'submitEditor_' + id, (function(data) {
 				data.cancel = true;
@@ -356,19 +355,18 @@ define(
 				this._save();
 			}).bind(this));
 			
-			// hide message options
+			// hide message header and footer
+			elHide(elementData.messageHeader);
 			elHide(elementData.messageFooter);
 			
 			var editorElement = elById(id);
 			if (Environment.editor() === 'redactor') {
 				window.setTimeout((function() {
-					// TODO: quote manager
-					if (this._quoteManager) {
-						this._quoteManager.setAlternativeEditor($element);
+					if (this._options.quoteManager) {
+						this._options.quoteManager.setAlternativeEditor(id);
 					}
 					
-					// TODO
-					new WCF.Effect.Scroll().scrollTo(this._activeElement, true);
+					UiScroll.element(this._activeElement);
 				}).bind(this), 250);
 			}
 			else {
@@ -391,13 +389,13 @@ define(
 			
 			elShow(elementData.messageBody);
 			elShow(elementData.messageFooter);
+			elShow(elementData.messageHeader);
 			this._activeElement.classList.remove('jsInvalidQuoteTarget');
 			
 			this._activeElement = null;
 			
-			// @TODO
-			if (this._quoteManager) {
-				this._quoteManager.clearAlternativeEditor();
+			if (this._options.quoteManager) {
+				this._options.quoteManager.clearAlternativeEditor();
 			}
 		},
 		
@@ -413,13 +411,19 @@ define(
 					message: ''
 				},
 				objectID: this._getObjectId(this._activeElement),
-				removeQuoteIDs: [] // @TODO
+				removeQuoteIDs: (this._options.quoteManager) ? this._options.quoteManager.getQuotesMarkedForRemoval() : []
 			};
 			
 			var id = this._getEditorId();
 			
 			EventHandler.fire('com.woltlab.wcf.redactor2', 'getText_' + id, parameters.data);
-			EventHandler.fire('com.woltlab.wcf.messageOptionsInline', 'submit_' + id, parameters);
+			
+			if (!this._validate(parameters)) {
+				// validation failed
+				return;
+			}
+			
+			EventHandler.fire('com.woltlab.wcf.redactor2', 'submit_' + id, parameters);
 			
 			Ajax.api(this, {
 				actionName: 'save',
@@ -427,6 +431,45 @@ define(
 			});
 			
 			this._hideEditor();
+		},
+		
+		/**
+		 * Validates the message and invokes listeners to perform additional validation.
+		 *
+		 * @param       {Object}        parameters      request parameters
+		 * @return      {boolean}       validation result
+		 * @protected
+		 */
+		_validate: function(parameters) {
+			// remove all existing error elements
+			var errorMessages = elByClass('innerError', this._activeElement);
+			while (errorMessages.length) {
+				elRemove(errorMessages[0]);
+			}
+			
+			var data = {
+				api: this,
+				parameters: parameters,
+				valid: true
+			};
+			
+			EventHandler.fire('com.woltlab.wcf.redactor2', 'validate_' + this._getEditorId(), data);
+			
+			return (data.valid !== false);
+		},
+		
+		/**
+		 * Throws an error by adding an inline error to target element.
+		 *
+		 * @param       {Element}       element         erroneous element
+		 * @param       {string}        message         error message
+		 */
+		throwError: function(element, message) {
+			var error = elCreate('small');
+			error.className = 'innerError';
+			error.textContent = message;
+			
+			DomUtil.insertAfter(error, element);
 		},
 		
 		/**
@@ -440,20 +483,41 @@ define(
 			var attachmentLists = elBySelAll('.attachmentThumbnailList, .attachmentFileList', elementData.messageBody);
 			
 			// set new content
+			//noinspection JSUnresolvedVariable
 			DomUtil.setInnerHtml(elementData.messageBody, data.returnValues.message);
 			
 			// handle attachment list
+			//noinspection JSUnresolvedVariable
 			if (typeof data.returnValues.attachmentList === 'string') {
 				for (var i = 0, length = attachmentLists.length; i < length; i++) {
 					elRemove(attachmentLists[i]);
 				}
 				
 				var element = elCreate('div');
+				//noinspection JSUnresolvedVariable
 				DomUtil.setInnerHtml(element, data.returnValues.attachmentList);
 				
 				while (element.childNodes.length) {
 					elementData.messageBody.appendChild(element.childNodes[0]);
 				}
+			}
+			
+			// handle poll
+			//noinspection JSUnresolvedVariable
+			if (typeof data.returnValues.poll === 'string') {
+				// find current poll
+				var poll = elBySel('.pollContainer', elementData.messageBody);
+				if (poll !== null) {
+					// poll contain is wrapped inside `.jsInlineEditorHideContent`
+					elRemove(poll.parentNode);
+				}
+				
+				var pollContainer = elCreate('div');
+				pollContainer.className = 'jsInlineEditorHideContent';
+				//noinspection JSUnresolvedVariable
+				DomUtil.setInnerHtml(pollContainer, data.returnValues.poll);
+				
+				DomUtil.prepend(pollContainer, elementData.messageBody);
 			}
 			
 			this._restoreMessage();
@@ -462,34 +526,10 @@ define(
 			
 			UiNotification.show();
 			
-			// @TODO
-			return;
-			
-			if (this._quoteManager) {
-				this._quoteManager.clearAlternativeEditor();
-				this._quoteManager.countQuotes();
+			if (this._options.quoteManager) {
+				this._options.quoteManager.clearAlternativeEditor();
+				this._options.quoteManager.countQuotes();
 			}
-		},
-		
-		/**
-		 * Initiates the jump to the extended edit form.
-		 * 
-		 * @protected
-		 */
-		_prepareExtended: function() {
-			var data = {
-				actionName: 'jumpToExtended',
-				parameters: {
-					containerID: this._options.containerId,
-					message: '',
-					messageID: this._getObjectId(this._activeElement)
-				}
-			};
-			
-			var id = this._getEditorId();
-			EventHandler.fire('com.woltlab.wcf.redactor', 'getText_' + id, data.parameters);
-			
-			Ajax.api(this, data);
 		},
 		
 		/**
@@ -576,7 +616,7 @@ define(
 			var elementData = this._elements.get(this._activeElement);
 			var editor = elBySel('.redactor-editor', elementData.messageBodyEditor);
 			
-			// handle errors occuring on editor load
+			// handle errors occurring on editor load
 			if (editor === null) {
 				this._restoreMessage();
 				
@@ -585,6 +625,7 @@ define(
 			
 			this._restoreEditor();
 			
+			//noinspection JSUnresolvedVariable
 			if (!data || data.returnValues === undefined || data.returnValues.errorType === undefined) {
 				return true;
 			}
@@ -597,7 +638,7 @@ define(
 				DomUtil.insertAfter(innerError, editor);
 			}
 			
-			
+			//noinspection JSUnresolvedVariable
 			innerError.textContent = data.returnValues.errorType;
 			
 			return false;
@@ -609,10 +650,6 @@ define(
 					this._showEditor(data);
 					break;
 					
-				case 'jumpToExtended':
-					window.location = data.returnValues.url;
-					break;
-				
 				case 'save':
 					this._showMessage(data);
 					break;
@@ -628,13 +665,13 @@ define(
 			};
 		},
 		
-		/** @deprecated	2.2 - used only for backward compatibility with `WCF.Message.InlineEditor` */
+		/** @deprecated	3.0 - used only for backward compatibility with `WCF.Message.InlineEditor` */
 		legacyGetDropdownMenus: function() { return this._dropdownMenus; },
 		
-		/** @deprecated	2.2 - used only for backward compatibility with `WCF.Message.InlineEditor` */
+		/** @deprecated	3.0 - used only for backward compatibility with `WCF.Message.InlineEditor` */
 		legacyGetElements: function() { return this._elements; },
 		
-		/** @deprecated	2.2 - used only for backward compatibility with `WCF.Message.InlineEditor` */
+		/** @deprecated	3.0 - used only for backward compatibility with `WCF.Message.InlineEditor` */
 		legacyEdit: function(containerId) {
 			this._click(elById(containerId), null);
 		}

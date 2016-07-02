@@ -13,9 +13,7 @@ use wcf\util\StringUtil;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.online
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Online
  *
  * @method	UserOnline		current()
  * @method	UserOnline[]		getObjects()
@@ -32,12 +30,12 @@ class UsersOnlineList extends SessionList {
 	 * users online stats
 	 * @var	array
 	 */
-	public $stats = array(
+	public $stats = [
 		'total' => 0,
 		'invisible' => 0,
 		'members' => 0,
 		'guests' => 0
-	);
+	];
 	
 	/**
 	 * users online markings
@@ -58,7 +56,7 @@ class UsersOnlineList extends SessionList {
 		$this->sqlJoins .= " LEFT JOIN wcf".WCF_N."_user_avatar user_avatar ON (user_avatar.avatarID = user_table.avatarID)";
 		$this->sqlJoins .= " LEFT JOIN wcf".WCF_N."_user_group user_group ON (user_group.groupID = user_table.userOnlineGroupID)";
 		
-		$this->getConditionBuilder()->add('session.lastActivityTime > ?', array(TIME_NOW - USER_ONLINE_TIMEOUT));
+		$this->getConditionBuilder()->add('session.lastActivityTime > ?', [TIME_NOW - USER_ONLINE_TIMEOUT]);
 	}
 	
 	/**
@@ -68,7 +66,7 @@ class UsersOnlineList extends SessionList {
 		parent::readObjects();
 		
 		$objects = $this->objects;
-		$this->indexToObject = $this->objects = array();
+		$this->indexToObject = $this->objects = [];
 		
 		foreach ($objects as $object) {
 			$object = new UserOnline(new User(null, null, $object));
@@ -117,7 +115,7 @@ class UsersOnlineList extends SessionList {
 	 */
 	public function getUsersOnlineMarkings() {
 		if ($this->usersOnlineMarkings === null) {
-			$this->usersOnlineMarkings = $priorities = array();
+			$this->usersOnlineMarkings = $priorities = [];
 			
 			// get groups
 			foreach (UserGroup::getGroupsByType() as $group) {
@@ -141,10 +139,10 @@ class UsersOnlineList extends SessionList {
 		$usersOnlineTotal = (USERS_ONLINE_RECORD_NO_GUESTS ? $this->stats['members'] : $this->stats['total']);
 		if ($usersOnlineTotal > USERS_ONLINE_RECORD) {
 			// save new record
-			$optionAction = new OptionAction(array(), 'import', array('data' => array(
+			$optionAction = new OptionAction([], 'import', ['data' => [
 				'users_online_record' => $usersOnlineTotal,
 				'users_online_record_time' => TIME_NOW
-			)));
+			]]);
 			$optionAction->executeAction();
 		}
 	}
@@ -166,6 +164,7 @@ class UsersOnlineList extends SessionList {
 				if (WCF::getUser()->userID) return true;
 				break;
 			case 2: // following
+				/** @noinspection PhpUndefinedMethodInspection */
 				if (WCF::getUserProfileHandler()->isFollower($userID)) return true;
 				break;
 		}

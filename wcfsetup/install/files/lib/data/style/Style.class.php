@@ -7,11 +7,9 @@ use wcf\system\WCF;
  * Represents a style.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.style
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Style
  *
  * @property-read	integer		$styleID		unique id of the style
  * @property-read	integer		$packageID		id of the package which delivers the style
@@ -33,12 +31,12 @@ use wcf\system\WCF;
  */
 class Style extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'style';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'styleID';
 	
@@ -46,7 +44,7 @@ class Style extends DatabaseObject {
 	 * list of style variables
 	 * @var	string[]
 	 */
-	protected $variables = array();
+	protected $variables = [];
 	
 	const PREVIEW_IMAGE_MAX_HEIGHT = 64;
 	const PREVIEW_IMAGE_MAX_WIDTH = 102;
@@ -104,7 +102,7 @@ class Style extends DatabaseObject {
 			ON		(value.variableID = variable.variableID AND value.styleID = ?)
 			ORDER BY	variable.variableID ASC";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($this->styleID));
+		$statement->execute([$this->styleID]);
 		while ($row = $statement->fetchArray()) {
 			$variableName = $row['variableName'];
 			$variableValue = (isset($row['variableValue'])) ? $row['variableValue'] : $row['defaultValue'];
@@ -128,7 +126,10 @@ class Style extends DatabaseObject {
 	
 	/**
 	 * TODO: add documentation
-	 * @since	2.2
+	 * 
+	 * @param	string		$variables
+	 * @return	array
+	 * @since	3.0
 	 */
 	public static function splitLessVariables($variables) {
 		$tmp = explode("/* WCF_STYLE_CUSTOM_USER_MODIFICATIONS */\n", $variables, 2);
@@ -141,7 +142,11 @@ class Style extends DatabaseObject {
 	
 	/**
 	 * TODO: add documentation
-	 * @since	2.2
+	 * 
+	 * @param	string		$preset
+	 * @param	string		$custom
+	 * @return	string
+	 * @since	3.0
 	 */
 	public static function joinLessVariables($preset, $custom) {
 		if (empty($custom)) {

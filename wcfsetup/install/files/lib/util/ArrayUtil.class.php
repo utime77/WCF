@@ -7,11 +7,9 @@ use wcf\system\Callback;
  * Contains Array-related functions.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	util
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Util
  */
 final class ArrayUtil {
 	/**
@@ -208,8 +206,8 @@ final class ArrayUtil {
 		}
 		
 		// get parameters
-		$params1 = array($array1, $array2);
-		$params2 = array($array2, $array1);
+		$params1 = [$array1, $array2];
+		$params2 = [$array2, $array1];
 		if ($callback !== null) {
 			$params1[] = $callback;
 			$params2[] = $callback;
@@ -219,5 +217,10 @@ final class ArrayUtil {
 		return ((count(call_user_func_array($function, $params1)) === 0) && (count(call_user_func_array($function, $params2)) === 0));
 	}
 	
-	private function __construct() { }
+	/**
+	 * Forbid creation of ArrayUtil objects.
+	 */
+	private function __construct() {
+		// does nothing
+	}
 }

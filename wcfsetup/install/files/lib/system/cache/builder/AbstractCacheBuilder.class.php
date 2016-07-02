@@ -10,16 +10,14 @@ use wcf\system\SingletonFactory;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.cache.builder
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Cache\Builder
  */
 abstract class AbstractCacheBuilder extends SingletonFactory implements ICacheBuilder {
 	/**
 	 * list of cache resources by index
 	 * @var	mixed[][]
 	 */
-	protected $cache = array();
+	protected $cache = [];
 	
 	/**
 	 * maximum cache lifetime in seconds, '0' equals infinite
@@ -30,7 +28,7 @@ abstract class AbstractCacheBuilder extends SingletonFactory implements ICacheBu
 	/**
 	 * @inheritDoc
 	 */
-	public function getData(array $parameters = array(), $arrayIndex = '') {
+	public function getData(array $parameters = [], $arrayIndex = '') {
 		$index = CacheHandler::getInstance()->getCacheIndex($parameters);
 		
 		if (!isset($this->cache[$index])) {
@@ -65,7 +63,7 @@ abstract class AbstractCacheBuilder extends SingletonFactory implements ICacheBu
 	/**
 	 * @inheritDoc
 	 */
-	public function reset(array $parameters = array()) {
+	public function reset(array $parameters = []) {
 		CacheHandler::getInstance()->flush($this, $parameters);
 	}
 	

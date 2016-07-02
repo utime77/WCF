@@ -1,6 +1,7 @@
 <?php
 namespace wcf\data;
 use wcf\data\category\AbstractDecoratedCategory;
+use wcf\system\exception\ParentClassException;
 use wcf\system\exception\SystemException;
 use wcf\system\WCF;
 
@@ -16,11 +17,9 @@ use wcf\system\WCF;
  * 		see IStorableObject::getDatabaseTableIndexName()
  *
  * @author	Matthias Schmidt, Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data
  */
 trait TMultiCategoryObject {
 	/**
@@ -33,7 +32,7 @@ trait TMultiCategoryObject {
 	 * ids of the object's categories
 	 * @var	integer[]
 	 */
-	protected $categoryIDs = array();
+	protected $categoryIDs = [];
 	
 	/**
 	 * list of the object's leaf categories
@@ -58,15 +57,16 @@ trait TMultiCategoryObject {
 	 */
 	public function getCategories() {
 		if ($this->categories === null) {
-			$this->categories = array();
+			$this->categories = [];
 			
 			$className = static::getCategoryClassName();
 			if (!is_subclass_of($className, AbstractDecoratedCategory::class)) {
-				throw new SystemException("'".$className."' does not extend '".AbstractDecoratedCategory::class."'.");
+				throw new ParentClassException($className, AbstractDecoratedCategory::class);
 			}
 			
 			if (!empty($this->categoryIDs)) {
 				foreach ($this->categoryIDs as $categoryID) {
+					/** @noinspection PhpUndefinedMethodInspection */
 					$this->categories[$categoryID] = $className::getCategory($categoryID);
 				}
 			}
@@ -80,8 +80,9 @@ trait TMultiCategoryObject {
 							)
 					ORDER BY	parentCategoryID, showOrder";
 				$statement = WCF::getDB()->prepareStatement($sql);
-				$statement->execute(array($this->getObjectID()));
+				$statement->execute([$this->getObjectID()]);
 				while ($categoryID = $statement->fetchColumn()) {
+					/** @noinspection PhpUndefinedMethodInspection */
 					$this->categories[$categoryID] = $className::getCategory($categoryID);
 				}
 			}

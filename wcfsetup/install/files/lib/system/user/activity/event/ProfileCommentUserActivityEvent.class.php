@@ -11,9 +11,7 @@ use wcf\system\WCF;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.user.activity.event
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\User\Activity\Event
  */
 class ProfileCommentUserActivityEvent extends SingletonFactory implements IUserActivityEvent {
 	/**
@@ -24,7 +22,7 @@ class ProfileCommentUserActivityEvent extends SingletonFactory implements IUserA
 			return;
 		}
 		
-		$comments = $commentIDs = array();
+		$commentIDs = [];
 		foreach ($events as $event) {
 			$commentIDs[] = $event->objectID;
 		}
@@ -36,7 +34,7 @@ class ProfileCommentUserActivityEvent extends SingletonFactory implements IUserA
 		$comments = $commentList->getObjects();
 		
 		// fetch users
-		$userIDs = $users = array();
+		$userIDs = $users = [];
 		foreach ($comments as $comment) {
 			$userIDs[] = $comment->objectID;
 		}
@@ -54,7 +52,7 @@ class ProfileCommentUserActivityEvent extends SingletonFactory implements IUserA
 						$event->setIsAccessible();
 						
 						$user = $users[$comment->objectID];
-						$text = WCF::getLanguage()->getDynamicVariable('wcf.user.profile.recentActivity.profileComment', array('user' => $user));
+						$text = WCF::getLanguage()->getDynamicVariable('wcf.user.profile.recentActivity.profileComment', ['user' => $user]);
 						$event->setTitle($text);
 						
 						// output

@@ -1,17 +1,14 @@
 <?php
 namespace wcf\system\label\object\type;
-use wcf\data\object\type\ObjectType;
 use wcf\data\object\type\ObjectTypeCache;
 
 /**
  * Label object type container.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.label.object.type
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Label\Object\Type
  */
 class LabelObjectTypeContainer implements \Countable, \Iterator {
 	/**
@@ -22,9 +19,9 @@ class LabelObjectTypeContainer implements \Countable, \Iterator {
 	
 	/**
 	 * list of object types
-	 * @var	ObjectType[]
+	 * @var	LabelObjectType[]
 	 */
-	public $objectTypes = array();
+	public $objectTypes = [];
 	
 	/**
 	 * object type id
@@ -103,42 +100,43 @@ class LabelObjectTypeContainer implements \Countable, \Iterator {
 	}
 	
 	/**
-	 * @see	\Iterator::current()
+	 * @inheritDoc
+	 * @return	LabelObjectType
 	 */
 	public function current() {
 		return $this->objectTypes[$this->position];
 	}
 	
 	/**
-	 * @see	\Iterator::key()
+	 * @inheritDoc
 	 */
 	public function key() {
 		return $this->position;
 	}
 	
 	/**
-	 * @see	\Iterator::next()
+	 * @inheritDoc
 	 */
 	public function next() {
 		$this->position++;
 	}
 	
 	/**
-	 * @see	\Iterator::rewind()
+	 * @inheritDoc
 	 */
 	public function rewind() {
 		$this->position = 0;
 	}
 	
 	/**
-	 * @see	\Iterator::valid()
+	 * @inheritDoc
 	 */
 	public function valid() {
 		return isset($this->objectTypes[$this->position]);
 	}
 	
 	/**
-	 * @see	\Countable::count()
+	 * @inheritDoc
 	 */
 	public function count() {
 		return count($this->objectTypes);

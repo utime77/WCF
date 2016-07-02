@@ -1,5 +1,7 @@
 <?php
 namespace wcf\data\user\profile\menu\item;
+use wcf\system\exception\ImplementationException;
+use wcf\system\exception\ParentClassException;
 use wcf\system\menu\user\profile\content\IUserProfileMenuContent;
 use wcf\data\DatabaseObject;
 use wcf\data\TDatabaseObjectOptions;
@@ -11,11 +13,9 @@ use wcf\system\SingletonFactory;
  * Represents an user profile menu item.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.profile.menu.item
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Profile\Menu\Item
  *
  * @property-read	integer		$menuItemID		unique id of the user profile menu item
  * @property-read	integer		$packageID		id of the package which delivers the user profile menu item
@@ -67,14 +67,14 @@ class UserProfileMenuItem extends DatabaseObject {
 			}
 			
 			if (!is_subclass_of($this->className, SingletonFactory::class)) {
-				throw new SystemException("'".$this->className."' does not extend 'wcf\system\SingletonFactory'");
+				throw new ParentClassException($this->className, SingletonFactory::class);
 			}
 			
 			if (!is_subclass_of($this->className, IUserProfileMenuContent::class)) {
-				throw new SystemException("'".$this->className."' does not implement 'wcf\system\menu\user\profile\content\IUserProfileMenuContent'");
+				throw new ImplementationException($this->className, IUserProfileMenuContent::class);
 			}
 			
-			$this->contentManager = call_user_func(array($this->className, 'getInstance'));
+			$this->contentManager = call_user_func([$this->className, 'getInstance']);
 		}
 		
 		return $this->contentManager;

@@ -8,11 +8,9 @@ use wcf\system\WCF;
  * Represents a user's avatar.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.avatar
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Avatar
  *
  * @property-read	integer		$avatarID		unique id of the user avatar
  * @property-read	string		$avatarName		name of the original avatar file
@@ -29,15 +27,15 @@ class UserAvatar extends DatabaseObject implements IUserAvatar {
 	 * needed avatar thumbnail sizes
 	 * @var	integer[]
 	 */
-	public static $avatarThumbnailSizes = array(32, 96, 128);
+	public static $avatarThumbnailSizes = [32, 96, 128, 256];
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'user_avatar';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'avatarID';
 	
@@ -85,13 +83,22 @@ class UserAvatar extends DatabaseObject implements IUserAvatar {
 					$size = null;
 				}
 			break;
+			
+			case 160:
+				if ($this->width > 256 || $this->height > 256) {
+					$size = 256;
+				}
+				else {
+					$size = null;
+				}
+			break;
 		}
 		
 		return substr($this->fileHash, 0, 2) . '/' . ($this->avatarID) . '-' . $this->fileHash . ($size !== null ? ('-' . $size) : '') . '.' . $this->avatarExtension;
 	}
 	
 	/**
-	 * @see	\wcf\data\user\avatar\IUserAvatar::getURL()
+	 * @inheritDoc
 	 */
 	public function getURL($size = null) {
 		if ($size !== null && $size !== 'resized') {
@@ -102,7 +109,7 @@ class UserAvatar extends DatabaseObject implements IUserAvatar {
 	}
 	
 	/**
-	 * @see	\wcf\data\user\avatar\IUserAvatar::getImageTag()
+	 * @inheritDoc
 	 */
 	public function getImageTag($size = null) {
 		$width = $this->width;
@@ -144,13 +151,19 @@ class UserAvatar extends DatabaseObject implements IUserAvatar {
 					$retinaSize = 128;
 				}
 			break;
+			
+			case 128:
+				if ($this->width >= 128 && $this->height >= 128) {
+					$retinaSize = 256;
+				}
+			break;
 		}
 		
-		return '<img src="'.StringUtil::encodeHTML($this->getURL($size)).'" '.($retinaSize !== null ? ('srcset="'.StringUtil::encodeHTML($this->getURL($retinaSize)).' 2x" ') : '').'style="width: '.$width.'px; height: '.$height.'px" alt="" class="userAvatarImage" />';
+		return '<img src="'.StringUtil::encodeHTML($this->getURL($size)).'" '.($retinaSize !== null ? ('srcset="'.StringUtil::encodeHTML($this->getURL($retinaSize)).' 2x" ') : '').'style="width: '.$width.'px; height: '.$height.'px" alt="" class="userAvatarImage">';
 	}
 	
 	/**
-	 * @see	\wcf\data\user\avatar\IUserAvatar::getCropImageTag()
+	 * @inheritDoc
 	 */
 	public function getCropImageTag($size = null) {
 		$imageTag = $this->getImageTag($size);
@@ -162,21 +175,21 @@ class UserAvatar extends DatabaseObject implements IUserAvatar {
 	}
 	
 	/**
-	 * @see	\wcf\data\user\avatar\IUserAvatar::getWidth()
+	 * @inheritDoc
 	 */
 	public function getWidth() {
 		return $this->width;
 	}
 	
 	/**
-	 * @see	\wcf\data\user\avatar\IUserAvatar::getHeight()
+	 * @inheritDoc
 	 */
 	public function getHeight() {
 		return $this->height;
 	}
 	
 	/**
-	 * @see	\wcf\data\user\avatar\IUserAvatar::canCrop()
+	 * @inheritDoc
 	 */
 	public function canCrop() {
 		return $this->width != $this->height && $this->width > self::$maxThumbnailSize && $this->height > self::$maxThumbnailSize;

@@ -1,10 +1,9 @@
 <?php
 /**
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @category	Community Framework
+ * @package	WoltLabSuite\Core
  */
 namespace {
 	use wcf\system\WCF;
@@ -21,6 +20,45 @@ namespace {
 	// define escape string shortcut
 	function escapeString($string) {
 		return WCF::getDB()->escapeString($string);
+	}
+	
+	/**
+	 * Helper method to output debug data for all passed variables,
+	 * uses `print_r()` for arrays and objects, `var_dump()` otherwise.
+	 */
+	function wcfDebug() {
+		echo "<pre>";
+		
+		$args = func_get_args();
+		$length = count($args);
+		if ($length === 0) {
+			echo "ERROR: No arguments provided.<hr>";
+		}
+		else {
+			for ($i = 0; $i < $length; $i++) {
+				$arg = $args[$i];
+				
+				echo "<h2>Argument {$i} (" . gettype($arg) . ")</h2>";
+				
+				if (is_array($arg) || is_object($arg)) {
+					print_r($arg);
+				}
+				else {
+					var_dump($arg);
+				}
+				
+				echo "<hr>";
+			}
+		}
+		
+		$backtrace = debug_backtrace();
+		
+		// output call location to help finding these debug outputs again
+		echo "wcfDebug() called in {$backtrace[0]['file']} on line {$backtrace[0]['line']}";
+		
+		echo "</pre>";
+		
+		exit;
 	}
 
 	// define DOCUMENT_ROOT on IIS if not set
@@ -52,8 +90,9 @@ namespace wcf\functions\exception {
 	function logThrowable($e, &$logFile = null) {
 		if ($logFile === null) $logFile = WCF_DIR . 'log/' . gmdate('Y-m-d', TIME_NOW) . '.txt';
 		touch($logFile);
-
+		
 		// don't forget to update ExceptionLogViewPage, when changing the log file format
+		/** @noinspection PhpUndefinedMethodInspection */
 		$message = gmdate('r', TIME_NOW)."\n".
 			'Message: '.str_replace("\n", ' ', $e->getMessage())."\n".
 			'PHP version: '.phpversion()."\n".
@@ -62,7 +101,9 @@ namespace wcf\functions\exception {
 			'Referrer: '.(isset($_SERVER['HTTP_REFERER']) ? str_replace("\n", ' ', $_SERVER['HTTP_REFERER']) : '')."\n".
 			'User Agent: '.(isset($_SERVER['HTTP_USER_AGENT']) ? str_replace("\n", ' ', $_SERVER['HTTP_USER_AGENT']) : '')."\n".
 			'Peak Memory Usage: '.memory_get_peak_usage().'/'.FileUtil::getMemoryLimit()."\n";
+		/** @noinspection PhpUndefinedMethodInspection */
 		do {
+			/** @noinspection PhpUndefinedMethodInspection */
 			$message .= "======\n".
 			'Error Class: '.get_class($e)."\n".
 			'Error Message: '.str_replace("\n", ' ', $e->getMessage())."\n".
@@ -82,16 +123,16 @@ namespace wcf\functions\exception {
 							return $item;
 					}
 				}, $item['args']);
-
+				
 				return $item;
 			}, sanitizeStacktrace($e, true))))."\n";
 		}
 		while ($e = $e->getPrevious());
-
+		
 		// calculate Exception-ID
 		$exceptionID = sha1($message);
 		$entry = "<<<<<<<<".$exceptionID."<<<<\n".$message."<<<<\n\n";
-
+		
 		file_put_contents($logFile, $entry, FILE_APPEND);
 		return $exceptionID;
 	}
@@ -178,7 +219,7 @@ EXPLANATION;
 				
 				.exceptionHeader {
 					background-color: rgb(44, 62, 80);
-					padding: 20px 0;
+					padding: 30px 0;
 				}
 				
 				.exceptionTitle {
@@ -362,7 +403,7 @@ EXPLANATION;
 								<p class="exceptionFieldValue"><?php echo StringUtil::encodeHTML(phpversion()); ?></p>
 							</li>
 							<li class="exceptionSystemInformation3">
-								<p class="exceptionFieldTitle">WCF Version<span class="exceptionColon">:</span></p>
+								<p class="exceptionFieldTitle">WoltLab Suite Core<span class="exceptionColon">:</span></p>
 								<p class="exceptionFieldValue"><?php echo StringUtil::encodeHTML(WCF_VERSION); ?></p>
 							</li>
 							<li class="exceptionSystemInformation5">
@@ -442,9 +483,6 @@ EXPLANATION;
 								<ul class="exceptionStacktrace">
 									<?php
 									$trace = sanitizeStacktrace($e);
-									$pathLength = array_reduce($trace, function ($carry, $item) {
-										return max($carry, mb_strlen($item['file'].$item['line']));
-									}, 0) + 3;
 									for ($i = 0, $max = count($trace); $i < $max; $i++) {
 										?>
 										<li class="exceptionStacktraceFile"><?php echo '#'.$i.' '.StringUtil::encodeHTML($trace[$i]['file']).' ('.$trace[$i]['line'].')'.':'; ?></li>
@@ -508,30 +546,30 @@ EXPLANATION;
 					}, $item['args']);
 				}
 			}
-
+			
 			if (!$ignorePaths) {
 				$item['args'] = array_map(function ($item) {
 					if (!is_string($item)) return $item;
-
-					if (preg_match('~^'.preg_quote($_SERVER['DOCUMENT_ROOT'], '~').'~', $item)) {
+					
+					if (preg_match('~^('.preg_quote($_SERVER['DOCUMENT_ROOT'], '~').'|'.preg_quote(WCF_DIR, '~').')~', $item)) {
 						$item = sanitizePath($item);
 					}
 
-					return preg_replace('~^'.preg_quote(WCF_DIR, '~').'~', '*/', $item);
+					return $item;
 				}, $item['args']);
-
+				
 				$item['file'] = sanitizePath($item['file']);
 			}
-
+			
 			return $item;
 		}, $trace);
 	}
-
+	
 	function sanitizePath($path) {
 		if (WCF::debugModeIsEnabled() && defined('EXCEPTION_PRIVACY') && EXCEPTION_PRIVACY === 'public') {
 			return $path;
 		}
-
+		
 		return '*/'.FileUtil::removeTrailingSlash(FileUtil::getRelativePath(WCF_DIR, $path));
 	}
 }

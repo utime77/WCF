@@ -1,7 +1,3 @@
-{capture assign='pageTitle'}{lang}wcf.user.signature.edit{/lang}{/capture}
-
-{capture assign='contentTitle'}{lang}wcf.user.signature.edit{/lang}{/capture}
-
 {include file='userMenuSidebar'}
 
 {include file='header'}
@@ -61,7 +57,7 @@
 	
 	{if !$__wcf->user->disableSignature}
 		<div class="formSubmit">
-			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s">
 			<button id="previewButton" class="jsOnly" accesskey="p">{lang}wcf.global.button.preview{/lang}</button>
 			{@SECURITY_TOKEN_INPUT_TAG}
 		</div>

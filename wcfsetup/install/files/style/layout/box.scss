@@ -22,17 +22,49 @@
 }
 
 .boxContent {
-	& + .boxContent,
+	& + .boxContent {
+		margin-top: 20px;
+	}
+}
+
+.boxContent {
 	& + .boxTitle {
 		margin-top: 30px;
 	}
 }
 
+.boxContentSeparator {
+	background: $wcfContentBorderInner;
+	border: 0;
+	height: 1px;
+	margin: 30px auto;
+	width: 60%;
+}
+
 /* styling for boxes in <hero> position */
 .boxesHero {
+	.boxContainer {
+		@include screen-md-down {
+			padding: 40px 0;
+		}
+		
+		@include screen-lg {
+			padding: 60px 0;
+		}
+	}
+	
 	.box {
-		padding: 40px;
 		text-align: center;
+		
+		&:not(:last-child) {
+			@include screen-md-down {
+				margin-bottom: 40px;
+			}
+			
+			@include screen-lg {
+				margin-bottom: 60px;
+			}
+		}	
 	}
 	
 	.boxTitle {
@@ -50,70 +82,134 @@
 		}
 		
 		.boxImage {
+			align-items: center;
+			display: flex;
+			justify-content: center;
+			max-height: 750px;
 			order: 3;
-			margin-top: 40px;
+			overflow: hidden;
+			
+			@include screen-md-down {
+				margin-top: 20px;
+			}
+			
+			@include screen-lg {
+				margin-top: 30px;
+			}
 		}
 	}
 }
 
 /* styling for boxes in <headerBoxes> position */
 .boxesHeaderBoxes {
-	background-color: rgb(247, 248, 250); // @todo
+	background-color: $wcfFooterBoxBackground;
+	color: $wcfFooterBoxText;
+	
+	a {
+		color: $wcfFooterBoxLink;
+		
+		&:hover {
+			color: $wcfFooterBoxLinkActive;
+		}
+	}
+	
+	.icon {
+		color: $wcfFooterBoxText;
+	}
 	
 	.boxContainer {
-		display: flex;
-		flex-wrap: wrap;
-		margin-left: -10px;
-		margin-right: -10px;
-		padding: 40px 0;
+		margin-left: -15px;
+		margin-right: -15px;
+		
+		@include screen-sm-up {
+			display: flex;
+			flex-wrap: wrap;
+		}
+		
+		@include screen-md-down {
+			padding: 40px 0;
+			margin-bottom: -40px;
+		}
+		
+		@include screen-lg {
+			padding: 60px 0;
+			margin-bottom: -60px;
+		}
 	}
 	
 	.box {
-		flex: 0 0 25%;
 		overflow: hidden;
-		padding-left: 10px;
-		padding-right: 10px;
+		padding-left: 15px;
+		padding-right: 15px;
+		text-align: center;
 		
-		&:nth-child(4n+1):not(:first-child) {
-			margin-top: 20px;
+		@include screen-md-down {
+			margin-bottom: 40px;
 		}
 		
-		/* one item */
-		&:first-child:nth-last-child(1) {
-			flex-basis: 100%;
+		@include screen-sm-md {
+			flex: 0 0 50%;
+			
+			&.boxFullWidth {
+				flex-basis: 100%;
+			}
+			
+			/* one item */
+			&:first-child:nth-last-child(1) {
+				flex-basis: 100%;
+			}
 		}
 		
-		/* two items */
-		&:first-child:nth-last-child(2),
-		&:first-child:nth-last-child(2) ~ .box {
-			flex-basis: 50%;
-		}
-		
-		/* three items */
-		&:first-child:nth-last-child(3),
-		&:first-child:nth-last-child(3) ~ .box {
-			flex-basis: 33.3333%;
-		}
-		
-		a:hover {
-			text-decoration: underline;
+		@include screen-lg {
+			flex: 0 0 25%;
+			margin-bottom: 60px;
+			
+			&.boxFullWidth {
+				flex-basis: 100%;
+			}
+			
+			/* one item */
+			&:first-child:nth-last-child(1) {
+				flex-basis: 100%;
+			}
+			
+			/* two items */
+			&:first-child:nth-last-child(2),
+			&:first-child:nth-last-child(2) ~ .box {
+				flex-basis: 50%;
+			}
+			
+			/* three items */
+			&:first-child:nth-last-child(3),
+			&:first-child:nth-last-child(3) ~ .box {
+				flex-basis: 33.3333%;
+			}
 		}
 	}
 	
 	.boxImage {
-		margin-bottom: 10px;
-		text-align: center;
+		align-items: center;
+		display: flex;
+		justify-content: center;
+		margin-bottom: 20px;
+		max-height: 100px;
+		overflow: hidden;
 	}
 }
 
 /* styling for boxes in <top>/<bottom> position */
 .boxesTop,
 .boxesBottom {
-	flex: 0 0 auto;
-	
 	.box {
-		margin-bottom: 40px;
-		margin-top: 40px;
+		@include screen-md-down {
+			margin-bottom: 40px;
+			margin-top: 40px;
+		}
+		
+		@include screen-lg {
+			margin-bottom: 60px;
+			margin-top: 60px;
+		}
 	}
 	
 	.boxTitle {
@@ -130,19 +226,60 @@
 		}
 	}
 	
-	.boxWithImage {
-		@include clearfix;
-		
-		.boxTitle,
-		.boxContent {
-			margin-left: calc(20% + 30px);
+	@include screen-xs {
+		.boxImage {
+			align-items: center;
+			display: flex;
+			justify-content: center;
+			margin-bottom: 20px;
+			max-height: 100px;
+			overflow: hidden;
 		}
 	}
 	
-	.boxImage {
-		float: left;
-		width: 20%;
-	}
+	@include screen-sm-up {
+		.boxImage {
+			width: 30%;
+		}
+		
+		.boxWithImage {
+			@include clearfix;
+			
+			&:nth-child(odd) {
+				.boxImage {
+					float: left;
+				}
+				
+				.boxTitle,
+				.boxContent {
+					@include screen-md-down {
+						margin-left: calc(30% + 15px);
+					}
+					
+					@include screen-lg {
+						margin-left: calc(30% + 30px);
+					}
+				}
+			}
+			
+			&:nth-child(even) {
+				.boxImage {
+					float: right;
+				}
+				
+				.boxTitle,
+				.boxContent {
+					@include screen-md-down {
+						margin-right: calc(30% + 15px);
+					}
+					
+					@include screen-lg {
+						margin-right: calc(30% + 30px);
+					}
+				}
+			}
+		}
+	}	
 }
 
 .boxesTop {
@@ -161,17 +298,14 @@
 	a {
 		color: $wcfSidebarLink;
 		
-		> .icon {
-			color: $wcfSidebarLink;
-		}
-		
 		&:hover {
 			color: $wcfSidebarLinkActive;
-			
-			> .icon {
-				color: $wcfSidebarLinkActive;
-			}
+		
 		}
+	}
+	
+	.icon {
+		color: $wcfSidebarText;
 	}
 	
 	small,
@@ -271,19 +405,43 @@
 		}
 	}
 	
-	.boxWithImage {
-		@include clearfix;
-		
-		.boxTitle,
-		.boxContent {
-			margin-left: calc(20% + 10px);
+	@include screen-xs {
+		.boxImage {
+			align-items: center;
+			display: flex;
+			justify-content: center;
+			margin-bottom: 20px;
+			max-height: 100px;
+			overflow: hidden;
 		}
 	}
 	
-	.boxImage {
-		float: left;
-		width: 20%;
+	@include screen-sm-md {
+		.boxWithImage {
+			@include clearfix;
+			
+			.boxTitle,
+			.boxContent {
+				margin-left: calc(30% + 15px);
+			}
+		}
+		
+		.boxImage {
+			float: left;
+			width: 30%;
+		}
 	}
+	
+	@include screen-lg {
+		.boxImage {
+			align-items: center;
+			display: flex;
+			justify-content: center;
+			margin-bottom: 20px;
+			max-height: 100px;
+			overflow: hidden;
+		}
+	}	
 }
 
 /* styling for boxes in <contentTop>/<contentBottom> position */
@@ -295,20 +453,11 @@
 		}
 	}
 	
-	.boxWithImage {
-		@include clearfix;
-		
-		.boxTitle,
-		.boxContent {
-			margin-left: calc(20% + 20px);
-		}
-	}
-	
 	.boxTitle {
 		color: $wcfContentHeadlineText;
 		
 		@include wcfFontSection;
-				
+		
 		a {
 			color: $wcfContentHeadlineLink;
 			
@@ -318,14 +467,42 @@
 		}
 	}
 	
-	.boxImage {
-		float: left;
-		width: 20%;
+	@include screen-xs {
+		.boxImage {
+			align-items: center;
+			display: flex;
+			justify-content: center;
+			margin-bottom: 20px;
+			max-height: 100px;
+			overflow: hidden;
+		}
 	}
+	
+	@include screen-sm-up {
+		.boxWithImage {
+			@include clearfix;
+			
+			.boxTitle,
+			.boxContent {
+				@include screen-md-down {
+					margin-left: calc(30% + 15px);
+				}
+				
+				@include screen-lg {
+					margin-left: calc(30% + 30px);
+				}
+			}
+		}
+		
+		.boxImage {
+			float: left;
+			width: 30%;
+		}
+	}	
 }
 
-.boxesContentTop {
-	margin-bottom: 40px;
+.boxesContentTop:not(:first-child) {
+	margin-top: 40px;
 }
 
 .boxesContentBottom {
@@ -336,23 +513,12 @@
 .boxesFooterBoxes {
 	background-color: $wcfFooterBoxBackground;
 	color: $wcfFooterBoxText;
-	flex: 0 0 auto;
-	z-index: 40;
 	
 	a {
 		color: $wcfFooterBoxLink;
 		
-		.icon {
-			color: $wcfFooterBoxLink;
-		}
-		
 		&:hover {
 			color: $wcfFooterBoxLinkActive;
-			text-decoration: underline;
-			
-			.icon {
-				color: $wcfFooterBoxLinkActive;
-			}
 		}
 	}
 	
@@ -361,35 +527,35 @@
 	}
 	
 	.boxContainer {
-		margin-left: -10px;
-		margin-right: -10px;
+		margin-left: -15px;
+		margin-right: -15px;
 		
 		@include screen-sm-down {
-			padding: 20px 0;
+			padding: 40px 0;
 		}
 		
 		@include screen-md-up {
 			display: flex;
 			flex-wrap: wrap;
-			margin-bottom: -40px;
-			padding: 40px 0;
+			margin-bottom: -60px;
+			padding: 60px 0;
 		}
 	}
 	
 	.box {
 		overflow: hidden;
-		padding-left: 10px;
-		padding-right: 10px;
+		padding-left: 15px;
+		padding-right: 15px;
 		
 		@include screen-sm-down {
-			& + .box {
-				margin-top: 40px;
-			}
+			&:not(:last-child) {
+				margin-bottom: 40px;
+			}	
 		}
 		
 		@include screen-md-up {
 			flex: 0 0 50%;
-			margin-bottom: 40px;
+			margin-bottom: 60px;
 			
 			&.boxFullWidth {
 				flex-basis: 100%;
@@ -410,31 +576,70 @@
 	}
 	
 	.boxImage {
-		margin-bottom: 10px;
-		text-align: center;
+		align-items: center;
+		display: flex;
+		justify-content: center;
+		margin-bottom: 20px;
+		max-height: 100px;
+		overflow: hidden;
 	}
 }
 
 /* styling for boxes in <footer> position */
 .boxesFooter {
+	background-color: $wcfFooterBackground;
+	color: $wcfFooterText;
+	padding: 20px 0;
+	
+	.icon {
+		color: $wcfFooterText;
+	}
+	
+	a {
+		color: $wcfFooterLink;
+		
+		&:hover {
+			color: $wcfFooterLinkActive;
+		}
+	}
+	
 	.box {
 		&:not(:first-child) {
 			margin-top: 20px;
 		}
 	}
 	
-	.boxWithImage {
-		@include clearfix;
-		
-		.boxTitle,
-		.boxContent {
-			margin-left: calc(20% + 30px);
+	@include screen-xs {
+		.boxImage {
+			align-items: center;
+			display: flex;
+			justify-content: center;
+			margin-bottom: 20px;
+			max-height: 100px;
+			overflow: hidden;
 		}
 	}
 	
-	.boxImage {
-		float: left;
-		width: 20%;
+	@include screen-sm-up {
+		.boxWithImage {
+			@include clearfix;
+			
+			.boxTitle,
+			.boxContent {
+				@include screen-md-down {
+					margin-left: calc(30% + 15px);
+				}
+				
+				@include screen-lg {
+					margin-left: calc(30% + 30px);
+				}
+			}
+		}
+		
+		.boxImage {
+			float: left;
+			width: 30%;
+		}
 	}
 	
 	.boxMenu {

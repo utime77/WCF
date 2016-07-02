@@ -26,7 +26,7 @@
 		<dl{if $errorField == 'categoryName'} class="formError"{/if}>
 			<dt><label for="categoryName">{lang}wcf.global.name{/lang}</label></dt>
 			<dd>
-				<input type="text" id="categoryName" name="categoryName" value="{$i18nPlainValues['categoryName']}" required="required" autofocus="autofocus" class="long" />
+				<input type="text" id="categoryName" name="categoryName" value="{$i18nPlainValues['categoryName']}" required autofocus class="long">
 				{if $errorField == 'categoryName'}
 					<small class="innerError">
 						{if $errorType == 'multilingual'}
@@ -41,9 +41,9 @@
 		{include file='multipleLanguageInputJavascript' elementIdentifier='categoryName' forceSelection=true}
 		
 		<dl>
-			<dt><label for="showOrder">{lang}wcf.acp.user.option.category.showOrder{/lang}</label></dt>
+			<dt><label for="showOrder">{lang}wcf.global.showOrder{/lang}</label></dt>
 			<dd>
-				<input type="number" id="showOrder" name="showOrder" value="{@$showOrder}" class="short" />
+				<input type="number" id="showOrder" name="showOrder" value="{@$showOrder}" class="short">
 			</dd>
 		</dl>
 		
@@ -53,7 +53,7 @@
 	{event name='sections'}
 	
 	<div class="formSubmit">
-		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s">
 		{@SECURITY_TOKEN_INPUT_TAG}
 	</div>
 </form>

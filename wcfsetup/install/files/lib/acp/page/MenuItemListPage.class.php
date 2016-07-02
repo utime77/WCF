@@ -10,23 +10,21 @@ use wcf\system\WCF;
  * Shows a list of menu items.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.page
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Page
+ * @since	3.0
  */
 class MenuItemListPage extends AbstractPage {
 	/**
-	 * @see	\wcf\page\AbstractPage::$activeMenuItem
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.cms.menu.list';
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededPermissions
+	 * @inheritDoc
 	 */
-	public $neededPermissions = array('admin.content.cms.canManageMenu');
+	public $neededPermissions = ['admin.content.cms.canManageMenu'];
 	
 	/**
 	 * menu item list
@@ -53,7 +51,7 @@ class MenuItemListPage extends AbstractPage {
 	public $menu = null;
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -66,7 +64,7 @@ class MenuItemListPage extends AbstractPage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		parent::readData();
@@ -75,15 +73,15 @@ class MenuItemListPage extends AbstractPage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'menuID' => $this->menuID,
 			'menu' => $this->menu,
 			'menuItemNodeList' => $this->menuItems->getNodeList()
-		));
+		]);
 	}
 }

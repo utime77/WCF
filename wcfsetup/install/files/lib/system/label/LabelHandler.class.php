@@ -1,5 +1,6 @@
 <?php
 namespace wcf\system\label;
+use wcf\data\label\group\LabelGroup;
 use wcf\data\label\group\ViewableLabelGroup;
 use wcf\data\object\type\ObjectTypeCache;
 use wcf\system\cache\builder\LabelCacheBuilder;
@@ -12,11 +13,9 @@ use wcf\system\WCF;
  * Manages labels and label-to-object associations.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.label
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Label
  */
 class LabelHandler extends SingletonFactory {
 	/**
@@ -27,18 +26,18 @@ class LabelHandler extends SingletonFactory {
 	
 	/**
 	 * list of label groups
-	 * @var	ViewableLabelGroup[]
+	 * @var	mixed[][]
 	 */
 	protected $labelGroups = null;
 	
 	/**
-	 * @see	\wcf\system\SingletonFactory::init()
+	 * @inheritDoc
 	 */
 	protected function init() {
-		$this->cache = array(
-			'objectTypes' => array(),
-			'objectTypeNames' => array()
-		);
+		$this->cache = [
+			'objectTypes' => [],
+			'objectTypeNames' => []
+		];
 		
 		$cache = ObjectTypeCache::getInstance()->getObjectTypes('com.woltlab.wcf.label.object');
 		foreach ($cache as $objectType) {
@@ -115,12 +114,12 @@ class LabelHandler extends SingletonFactory {
 	public function getPermissions($optionName, array $labelIDs) {
 		if (empty($labelIDs)) {
 			// nothing to validate anyway
-			return array();
+			return [];
 		}
 		
 		if (empty($this->labelGroups['groups'])) {
 			// pretend given label ids aren't valid
-			$data = array();
+			$data = [];
 			foreach ($labelIDs as $labelID) $data[$labelID] = false;
 			
 			return $data;
@@ -132,7 +131,7 @@ class LabelHandler extends SingletonFactory {
 		}
 		
 		// validate each label
-		$data = array();
+		$data = [];
 		foreach ($labelIDs as $labelID) {
 			$isValid = false;
 			
@@ -167,9 +166,9 @@ class LabelHandler extends SingletonFactory {
 		
 		// delete previous labels
 		$conditions = new PreparedStatementConditionBuilder();
-		if ($validatePermissions) $conditions->add("labelID IN (?)", array($accessibleLabelIDs));
-		$conditions->add("objectTypeID = ?", array($objectTypeID));
-		$conditions->add("objectID = ?", array($objectID));
+		if ($validatePermissions) $conditions->add("labelID IN (?)", [$accessibleLabelIDs]);
+		$conditions->add("objectTypeID = ?", [$objectTypeID]);
+		$conditions->add("objectID = ?", [$objectID]);
 		
 		if (!$validatePermissions || ($validatePermissions && !empty($accessibleLabelIDs))) {
 			$sql = "DELETE FROM	wcf".WCF_N."_label_object
@@ -185,11 +184,11 @@ class LabelHandler extends SingletonFactory {
 				VALUES		(?, ?, ?)";
 			$statement = WCF::getDB()->prepareStatement($sql);
 			foreach ($labelIDs as $labelID) {
-				$statement->execute(array(
+				$statement->execute([
 					$labelID,
 					$objectTypeID,
 					$objectID
-				));
+				]);
 			}
 		}
 	}
@@ -204,18 +203,18 @@ class LabelHandler extends SingletonFactory {
 	 */
 	public function getAssignedLabels($objectTypeID, array $objectIDs, $validatePermissions = true) {
 		$conditions = new PreparedStatementConditionBuilder();
-		$conditions->add("objectTypeID = ?", array($objectTypeID));
-		$conditions->add("objectID IN (?)", array($objectIDs));
+		$conditions->add("objectTypeID = ?", [$objectTypeID]);
+		$conditions->add("objectID IN (?)", [$objectIDs]);
 		$sql = "SELECT	objectID, labelID
 			FROM	wcf".WCF_N."_label_object
 			".$conditions;
 		$statement = WCF::getDB()->prepareStatement($sql);
 		$statement->execute($conditions->getParameters());
 		
-		$labels = array();
+		$labels = [];
 		while ($row = $statement->fetchArray()) {
 			if (!isset($labels[$row['labelID']])) {
-				$labels[$row['labelID']] = array();
+				$labels[$row['labelID']] = [];
 			}
 			
 			$labels[$row['labelID']][] = $row['objectID'];
@@ -234,11 +233,11 @@ class LabelHandler extends SingletonFactory {
 		}
 		
 		// reorder the array by object id
-		$data = array();
+		$data = [];
 		foreach ($labels as $labelID => $objectIDs) {
 			foreach ($objectIDs as $objectID) {
 				if (!isset($data[$objectID])) {
-					$data[$objectID] = array();
+					$data[$objectID] = [];
 				}
 				
 				foreach ($this->labelGroups['groups'] as $group) {
@@ -278,9 +277,10 @@ class LabelHandler extends SingletonFactory {
 	 * @return	ViewableLabelGroup[]
 	 * @throws	SystemException
 	 */
-	public function getLabelGroups(array $groupIDs = array(), $validatePermissions = true, $permission = 'canSetLabel') {
-		$data = array();
+	public function getLabelGroups(array $groupIDs = [], $validatePermissions = true, $permission = 'canSetLabel') {
+		$data = [];
 		
+		$optionID = null;
 		if ($validatePermissions) {
 			$optionID = $this->getOptionID($permission);
 			if ($optionID === null) {
@@ -305,7 +305,7 @@ class LabelHandler extends SingletonFactory {
 			$data[$groupID] = $this->labelGroups['groups'][$groupID];
 		}
 		
-		uasort($data, array('\wcf\data\label\group\LabelGroup', 'sortLabelGroups'));
+		uasort($data, [LabelGroup::class, 'sortLabelGroups']);
 		
 		return $data;
 	}
@@ -316,7 +316,7 @@ class LabelHandler extends SingletonFactory {
 	 * @return	integer[]
 	 */
 	public function getAccessibleLabelIDs() {
-		$labelIDs = array();
+		$labelIDs = [];
 		$groups = $this->getLabelGroups();
 		
 		foreach ($groups as $group) {
@@ -348,8 +348,8 @@ class LabelHandler extends SingletonFactory {
 	 */
 	public function removeLabels($objectTypeID, array $objectIDs) {
 		$conditions = new PreparedStatementConditionBuilder();
-		$conditions->add("objectTypeID = ?", array($objectTypeID));
-		$conditions->add("objectID IN (?)", array($objectIDs));
+		$conditions->add("objectTypeID = ?", [$objectTypeID]);
+		$conditions->add("objectID IN (?)", [$objectIDs]);
 		$sql = "DELETE FROM	wcf".WCF_N."_label_object
 			".$conditions;
 		$statement = WCF::getDB()->prepareStatement($sql);

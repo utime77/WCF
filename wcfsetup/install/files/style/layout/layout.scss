@@ -18,6 +18,8 @@ html, body {
 }
 
 body {
+	background-color: $wcfContentBackground;
+	color: $wcfContentText;
 	font-family: $wcfFontFamily;
 	position: relative;
 	width: 100%;
@@ -25,50 +27,48 @@ body {
 }
 
 a {
+	color: $wcfContentLink;
 	cursor: pointer;
 	text-decoration: none;
 	
 	&:hover {
+		color: $wcfContentLinkActive;
 		text-decoration: none;
 	}
 }
 
-#pageContainer {
+.pageContainer {
 	display: flex;
 	height: 100%;
 	flex-direction: column;
 }
 
 /* COLUMN LAYOUT */
-.pageHeaderContainer {
+.pageHeaderContainer,
+.boxesHeaderBoxes,
+.pageNavigation,
+.pageFooter,
+.boxesTop,
+.boxesBottom,
+.boxesFooterBoxes {
 	flex: 0 0 auto;
 }
 
 .main {
-	background-color: $wcfContentBackground;
-	color: $wcfContentText;
 	flex: 1 0 auto;
 	
 	@include screen-md-down {
-		padding: 30px 0;
+		padding: 40px 0;
 		width: 100%;
 	}
 	
 	@include screen-lg {
 		padding: 60px 0;
 	}
-	
-	a {
-		color: $wcfContentLink;
-		
-		&:hover {
-			color: $wcfContentLinkActive;
-		}
-	}
 }
 
 /* use flex-box to enforce a proper side-by-side layout on desktop */
-@include screen-md-up {
+@include screen-lg {
 	.main > div {
 		display: flex;
 	}
@@ -118,7 +118,7 @@ a {
    <content>
    <rightSidebar>
 */
-@include screen-sm-down {
+@include screen-md-down {
 	.sidebar {
 		margin: 0 -10px;
 	}

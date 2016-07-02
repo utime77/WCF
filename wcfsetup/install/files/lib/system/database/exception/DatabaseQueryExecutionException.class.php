@@ -6,12 +6,10 @@ use wcf\system\exception\IExtraInformationException;
  * Denotes an error that is related to a specific database query.
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.database.exception
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Database\Exception
+ * @since	3.0
  */
 class DatabaseQueryExecutionException extends DatabaseQueryException implements IExtraInformationException {
 	/**
@@ -20,8 +18,9 @@ class DatabaseQueryExecutionException extends DatabaseQueryException implements 
 	 */
 	protected $parameters = [];
 	
+	/** @noinspection PhpMissingParentConstructorInspection */
 	/**
-	 * @see	\Exception::__construct()
+	 * @inheritDoc
 	 */
 	public function __construct($message, $parameters, \PDOException $previous = null) {
 		\Exception::__construct($message, 0, $previous);
@@ -39,7 +38,7 @@ class DatabaseQueryExecutionException extends DatabaseQueryException implements 
 	}
 	
 	/**
-	 * @see	\wcf\system\exception\IExtraInformationException::getExtraInformation()
+	 * @inheritDoc
 	 */
 	public function getExtraInformation() {
 		return array_map(function ($val) {

@@ -5,24 +5,24 @@ use wcf\data\user\notification\event\UserNotificationEvent;
 use wcf\data\user\notification\UserNotification;
 use wcf\data\user\UserProfile;
 use wcf\data\DatabaseObjectDecorator;
+use wcf\data\IFeedEntry;
 use wcf\system\user\notification\object\IUserNotificationObject;
 use wcf\system\WCF;
 use wcf\util\DateUtil;
+use wcf\util\StringUtil;
 
 /**
  * Provides a default implementation for user notification events.
  * 
- * @author	Marcel Werk, Oliver Kliebisch
+ * @author	Joshua Ruesweg, Marcel Werk, Oliver Kliebisch
  * @copyright	2001-2016 WoltLab GmbH, Oliver Kliebisch
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.user.notification.event
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\User\Notification\Event
  * 
  * @method	UserNotificationEvent	getDecoratedObject()
  * @mixin	UserNotificationEvent
  */
-abstract class AbstractUserNotificationEvent extends DatabaseObjectDecorator implements IUserNotificationEvent {
+abstract class AbstractUserNotificationEvent extends DatabaseObjectDecorator implements IUserNotificationEvent, IFeedEntry {
 	/**
 	 * @inheritDoc
 	 */
@@ -232,5 +232,70 @@ abstract class AbstractUserNotificationEvent extends DatabaseObjectDecorator imp
 	 */
 	public function getNotification() {
 		return $this->notification;
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function getUserNotificationObject() {
+		return $this->userNotificationObject;
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function getComments() {
+		return 0; 
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function getCategories() {
+		return [
+			$this->notification->objectType
+		];
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function getExcerpt($maxLength = 255) {
+		return StringUtil::truncateHTML($this->getFormattedMessage(), $maxLength);
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function getFormattedMessage() {
+		return $this->getMessage(); 
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function __toString() {
+		return $this->getFormattedMessage(); 
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function getTime() {
+		return $this->getNotification()->time; 
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function getUserID() {
+		return $this->getAuthorID(); 
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function getUsername() {
+		return $this->getAuthor()->username; 
 	}
 }

@@ -5,15 +5,13 @@ namespace wcf\system\form\container;
  * Provides a group form element container.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Form
  */
 class GroupFormElementContainer extends AbstractFormElementContainer {
 	/**
-	 * @see	\wcf\system\form\IFormElementContainer::getHTML()
+	 * @inheritDoc
 	 */
 	public function getHTML($formName) {
 		$content = '';

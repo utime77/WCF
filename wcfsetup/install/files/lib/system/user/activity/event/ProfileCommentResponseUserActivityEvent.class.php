@@ -12,9 +12,7 @@ use wcf\system\WCF;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.user.activity.event
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\User\Activity\Event
  */
 class ProfileCommentResponseUserActivityEvent extends SingletonFactory implements IUserActivityEvent {
 	/**
@@ -25,7 +23,7 @@ class ProfileCommentResponseUserActivityEvent extends SingletonFactory implement
 			return;
 		}
 		
-		$responses = $responseIDs = [];
+		$responseIDs = [];
 		foreach ($events as $event) {
 			$responseIDs[] = $event->objectID;
 		}

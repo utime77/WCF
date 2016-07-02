@@ -8,19 +8,17 @@ namespace wcf\system\request;
  * the Microsoft Public License (MS-PL) http://www.opensource.org/licenses/ms-pl.html
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.request
- * @category	Community Framework
- * @deprecated  2.2:2.3 Consider using \wcf\system\request\route\DynamicRequestRoute
+ * @package	WoltLabSuite\Core\System\Request
+ * @deprecated  3.0 Consider using \wcf\system\request\route\DynamicRequestRoute
  */
 class FlexibleRoute implements IRoute {
 	/**
 	 * schema for outgoing links
 	 * @var	mixed[][]
 	 */
-	protected $buildSchema = array();
+	protected $buildSchema = [];
 	
 	/**
 	 * route is restricted to ACP
@@ -38,13 +36,13 @@ class FlexibleRoute implements IRoute {
 	 * list of required components
 	 * @var	string[]
 	 */
-	protected $requireComponents = array();
+	protected $requireComponents = [];
 	
 	/**
 	 * parsed request data
 	 * @var	mixed[]
 	 */
-	protected $routeData = array();
+	protected $routeData = [];
 	
 	/**
 	 * Creates a new flexible route instace.
@@ -77,11 +75,10 @@ class FlexibleRoute implements IRoute {
 	 * @param	string		$buildSchema
 	 */
 	public function setBuildSchema($buildSchema) {
-		$this->buildSchema = array();
+		$this->buildSchema = [];
 		
 		$buildSchema = ltrim($buildSchema, '/');
 		$components = preg_split('~({(?:[a-z]+)})~', $buildSchema, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-		$delimiters = array('/', '-', '.', '_');
 		
 		foreach ($components as $component) {
 			$type = 'component';
@@ -92,10 +89,10 @@ class FlexibleRoute implements IRoute {
 				$type = 'separator';
 			}
 			
-			$this->buildSchema[] = array(
+			$this->buildSchema[] = [
 				'type' => $type,
 				'value' => $component
-			);
+			];
 		}
 	}
 	
@@ -118,7 +115,7 @@ class FlexibleRoute implements IRoute {
 	}
 	
 	/**
-	 * @see	\wcf\system\request\IRoute::buildLink()
+	 * @inheritDoc
 	 */
 	public function buildLink(array $components) {
 		$application = (isset($components['application'])) ? $components['application'] : null;
@@ -241,7 +238,7 @@ class FlexibleRoute implements IRoute {
 	}
 	
 	/**
-	 * @see	\wcf\system\request\IRoute::canHandle()
+	 * @inheritDoc
 	 */
 	public function canHandle(array $components) {
 		if (!empty($this->requireComponents)) {
@@ -260,21 +257,21 @@ class FlexibleRoute implements IRoute {
 	}
 	
 	/**
-	 * @see	\wcf\system\request\IRoute::getRouteData()
+	 * @inheritDoc
 	 */
 	public function getRouteData() {
 		return $this->routeData;
 	}
 	
 	/**
-	 * @see	\wcf\system\request\IRoute::isACP()
+	 * @inheritDoc
 	 */
 	public function isACP() {
 		return $this->isACP;
 	}
 	
 	/**
-	 * @see	\wcf\system\request\IRoute::matches()
+	 * @inheritDoc
 	 */
 	public function matches($requestURL) {
 		if (preg_match($this->pattern, $requestURL, $matches)) {

@@ -60,7 +60,7 @@
 						<select name="application" id="application">
 							<option value="">{lang}wcf.acp.template.application{/lang}</option>
 							{foreach from=$availableApplications key=abbreviation item=availableApplication}
-								<option value="{$abbreviation}"{if $abbreviation == $application} selected="selected"{/if}>{$availableApplication}</option>
+								<option value="{$abbreviation}"{if $abbreviation == $application} selected{/if}>{$availableApplication}</option>
 							{/foreach}
 						</select>
 					</dd>
@@ -70,7 +70,7 @@
 			<dl class="col-xs-12 col-md-4">
 				<dt></dt>
 				<dd>
-					<input type="text" id="searchTemplateName" name="searchTemplateName" value="{$searchTemplateName}" placeholder="{lang}wcf.global.name{/lang}" class="long" />
+					<input type="text" id="searchTemplateName" name="searchTemplateName" value="{$searchTemplateName}" placeholder="{lang}wcf.global.name{/lang}" class="long">
 				</dd>
 			</dl>
 			
@@ -78,7 +78,7 @@
 		</div>
 		
 		<div class="formSubmit">
-			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s">
 			{@SECURITY_TOKEN_INPUT_TAG}
 		</div>
 	</section>
@@ -119,7 +119,7 @@
 							{if $template->templateGroupID}
 								<a href="{link controller='TemplateDiff' id=$template->templateID}{/link}" title="{lang}wcf.acp.template.diff{/lang}" class="jsTooltip"><span class="icon icon16 fa-exchange"></span></a>
 								<a href="{link controller='TemplateEdit' id=$template->templateID}{/link}" title="{lang}wcf.global.button.edit{/lang}" class="jsTooltip"><span class="icon icon16 fa-pencil"></span></a>
-								<span class="icon icon16 fa-times jsDeleteButton jsTooltip pointer" title="{lang}wcf.global.button.delete{/lang}" data-object-id="{@$template->templateID}" data-confirm-message="{lang}wcf.acp.template.delete.sure{/lang}"></span>
+								<span class="icon icon16 fa-times jsDeleteButton jsTooltip pointer" title="{lang}wcf.global.button.delete{/lang}" data-object-id="{@$template->templateID}" data-confirm-message-html="{lang __encode=true}wcf.acp.template.delete.sure{/lang}"></span>
 							{else}
 								<span class="icon icon16 fa-exchange disabled" title="{lang}wcf.acp.template.diff{/lang}"></span>
 								<span class="icon icon16 fa-pencil disabled" title="{lang}wcf.global.button.edit{/lang}"></span>

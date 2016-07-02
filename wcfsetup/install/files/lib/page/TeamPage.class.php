@@ -2,6 +2,7 @@
 namespace wcf\page;
 use wcf\data\user\TeamList;
 use wcf\system\page\PageLocationManager;
+use wcf\system\request\LinkHandler;
 use wcf\system\WCF;
 
 /**
@@ -10,9 +11,9 @@ use wcf\system\WCF;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	page
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Page
+ * 
+ * @property	TeamList	$objectList
  */
 class TeamPage extends MultipleLinkPage {
 	/**
@@ -24,11 +25,6 @@ class TeamPage extends MultipleLinkPage {
 	 * @inheritDoc
 	 */
 	public $neededModules = ['MODULE_TEAM_PAGE'];
-	
-	/**
-	 * @inheritDoc
-	 */
-	public $enableTracking = true;
 	
 	/**
 	 * @inheritDoc
@@ -49,6 +45,15 @@ class TeamPage extends MultipleLinkPage {
 	 * @inheritDoc
 	 */
 	public $objectListClassName = TeamList::class;
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function readParameters() {
+		parent::readParameters();
+		
+		$this->canonicalURL = LinkHandler::getInstance()->getLink('Team');
+	}
 	
 	/**
 	 * @inheritDoc

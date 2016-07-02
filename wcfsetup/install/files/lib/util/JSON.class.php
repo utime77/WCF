@@ -6,11 +6,9 @@ use wcf\system\exception\SystemException;
  * Provides methods for JSON.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	util
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Util
  */
 final class JSON {
 	/**
@@ -51,5 +49,10 @@ final class JSON {
 		return json_last_error();
 	}
 	
-	private function __construct() { }
+	/**
+	 * Forbid creation of JSON objects.
+	 */
+	private function __construct() {
+		// does nothing
+	}
 }

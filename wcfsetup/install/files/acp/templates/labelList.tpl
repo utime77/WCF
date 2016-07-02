@@ -52,7 +52,7 @@
 				<dl class="col-xs-12 col-md-4">
 					<dt><label for="label">{lang}wcf.acp.label.label{/lang}</label></dt>
 					<dd>
-						<input type="text" id="label" name="label" value="{$labelSearch}" class="long" />
+						<input type="text" id="label" name="label" value="{$labelSearch}" class="long">
 					</dd>
 				</dl>
 				
@@ -62,7 +62,7 @@
 						<select id="groupID" name="groupID">
 							<option value="0">{lang}wcf.global.noSelection{/lang}</option>
 							{foreach from=$labelGroupList item=group}
-								<option value="{@$group->groupID}"{if $group->groupID == $groupID} selected="selected"{/if}>{$group}{if $group->groupDescription} / {$group->groupDescription}{/if}</option>
+								<option value="{@$group->groupID}"{if $group->groupID == $groupID} selected{/if}>{$group}{if $group->groupDescription} / {$group->groupDescription}{/if}</option>
 							{/foreach}
 						</select>
 					</dd>
@@ -71,14 +71,14 @@
 				<dl class="col-xs-12 col-md-4">
 					<dt><label for="cssClassName">{lang}wcf.acp.label.cssClassName{/lang}</label></dt>
 					<dd>
-						<input type="text" id="cssClassName" name="cssClassName" value="{$cssClassName}" class="long" />
+						<input type="text" id="cssClassName" name="cssClassName" value="{$cssClassName}" class="long">
 					</dd>
 				</dl>
 			</div>
 		</section>
 		
 		<div class="formSubmit">
-			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s">
 			{@SECURITY_TOKEN_INPUT_TAG}
 		</div>
 	</form>
@@ -123,7 +123,7 @@
 					<tr class="jsLabelRow{if $labelGroup && !$labelSearch && !$cssClassName && $items > 1} sortableNode" data-object-id="{@$label->labelID}{/if}">
 						<td class="columnIcon">
 							<a href="{link controller='LabelEdit' object=$label}{/link}" title="{lang}wcf.global.button.edit{/lang}" class="jsTooltip"><span class="icon icon16 fa-pencil"></span></a>
-							<span class="icon icon16 fa-times jsDeleteButton jsTooltip pointer" title="{lang}wcf.global.button.delete{/lang}" data-object-id="{@$label->labelID}" data-confirm-message="{lang}wcf.acp.label.delete.sure{/lang}"></span>
+							<span class="icon icon16 fa-times jsDeleteButton jsTooltip pointer" title="{lang}wcf.global.button.delete{/lang}" data-object-id="{@$label->labelID}" data-confirm-message-html="{lang __encode=true}wcf.acp.label.delete.sure{/lang}"></span>
 							
 							{event name='rowButtons'}
 						</td>

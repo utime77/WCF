@@ -10,9 +10,7 @@ use wcf\system\WCF;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.acp.session
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Acp\Session
  * 
  * @method	ACPSession	getDecoratedObject()
  * @mixin	ACPSession
@@ -35,7 +33,7 @@ class ACPSessionEditor extends DatabaseObjectEditor {
 	}
 	
 	/**
-	 * @see	\wcf\data\DatabaseObjectEditor::create()
+	 * @inheritDoc
 	 */
 	public function update(array $parameters = []) {
 		if (isset($parameters['userID']) && !$parameters['userID']) {

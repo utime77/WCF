@@ -12,26 +12,24 @@ use wcf\util\XML;
  * Installs, updates and deletes languages, their categories and items.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.package.plugin
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Package\Plugin
  */
 class LanguagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin {
 	/**
-	 * @see	\wcf\system\package\plugin\AbstractPackageInstallationPlugin::$tableName
+	 * @inheritDoc
 	 */
 	public $tableName = 'language_item';
 	
 	/**
-	 * @see	\wcf\system\package\plugin\IPackageInstallationPlugin::install()
+	 * @inheritDoc
 	 */
 	public function install() {
 		AbstractPackageInstallationPlugin::install();
 		
 		// get language files
-		$languageFiles = array();
+		$languageFiles = [];
 		$multipleFiles = false;
 		$filename = $this->instruction['value'];
 		if (strpos($filename, '*') !== false) {
@@ -69,7 +67,7 @@ class LanguagePackageInstallationPlugin extends AbstractXMLPackageInstallationPl
 		}
 		
 		// get installed languages
-		$installedLanguages = array();
+		$installedLanguages = [];
 		$sql = "SELECT		*
 			FROM		wcf".WCF_N."_language
 			ORDER BY	isDefault DESC";
@@ -137,7 +135,7 @@ class LanguagePackageInstallationPlugin extends AbstractXMLPackageInstallationPl
 	}
 	
 	/**
-	 * @see	\wcf\system\package\plugin\IPackageInstallationPlugin::uninstall()
+	 * @inheritDoc
 	 */
 	public function uninstall() {
 		parent::uninstall();
@@ -149,9 +147,9 @@ class LanguagePackageInstallationPlugin extends AbstractXMLPackageInstallationPl
 			FROM	wcf".WCF_N."_language_item
 			WHERE	packageID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($this->installation->getPackageID()));
-		$itemIDs = array();
-		$categoryIDs = array();
+		$statement->execute([$this->installation->getPackageID()]);
+		$itemIDs = [];
+		$categoryIDs = [];
 		while ($row = $statement->fetchArray()) {
 			$itemIDs[] = $row['languageItemID'];
 			
@@ -166,10 +164,10 @@ class LanguagePackageInstallationPlugin extends AbstractXMLPackageInstallationPl
 			$statement = WCF::getDB()->prepareStatement($sql);
 			
 			foreach ($itemIDs as $itemID) {
-				$statement->execute(array(
+				$statement->execute([
 					$itemID,
 					$this->installation->getPackageID()
-				));
+				]);
 			}
 			
 			$this->deleteEmptyCategories(array_keys($categoryIDs), $this->installation->getPackageID());
@@ -207,7 +205,7 @@ class LanguagePackageInstallationPlugin extends AbstractXMLPackageInstallationPl
 	protected function deleteEmptyCategories(array $categoryIDs, $packageID) {
 		// Get empty categories which where changed by this package.
 		$conditions = new PreparedStatementConditionBuilder();
-		$conditions->add("language_category.languageCategoryID IN (?)", array($categoryIDs));
+		$conditions->add("language_category.languageCategoryID IN (?)", [$categoryIDs]);
 		
 		$sql = "SELECT		COUNT(item.languageItemID) AS count,
 					language_category.languageCategoryID,
@@ -220,7 +218,7 @@ class LanguagePackageInstallationPlugin extends AbstractXMLPackageInstallationPl
 					language_category.languageCategory ASC";
 		$statement = WCF::getDB()->prepareStatement($sql);
 		$statement->execute($conditions->getParameters());
-		$categoriesToDelete = array();
+		$categoriesToDelete = [];
 		while ($row = $statement->fetchArray()) {
 			if ($row['count'] == 0) {
 				$categoriesToDelete[$row['languageCategoryID']] = $row['languageCategory'];
@@ -234,35 +232,35 @@ class LanguagePackageInstallationPlugin extends AbstractXMLPackageInstallationPl
 			$statement = WCF::getDB()->prepareStatement($sql);
 			
 			foreach ($categoriesToDelete as $category) {
-				$statement->execute(array($category));
+				$statement->execute([$category]);
 			}
 		}
 	}
 	
 	/**
-	 * @see	\wcf\system\package\plugin\AbstractXMLPackageInstallationPlugin::handleDelete()
+	 * @inheritDoc
 	 */
 	protected function handleDelete(array $items) { }
 	
 	/**
-	 * @see	\wcf\system\package\plugin\AbstractXMLPackageInstallationPlugin::prepareImport()
+	 * @inheritDoc
 	 */
 	protected function prepareImport(array $data) { }
 	
 	/**
-	 * @see	\wcf\system\package\plugin\AbstractXMLPackageInstallationPlugin::findExistingItem()
+	 * @inheritDoc
 	 */
 	protected function findExistingItem(array $data) { }
 	
 	/**
 	 * @see	\wcf\system\package\plugin\IPackageInstallationPlugin::getDefaultFilename()
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	public static function getDefaultFilename() {
 		return 'language/*.xml';
 	}
 	/**
-	 * @see	\wcf\system\package\plugin\IPackageInstallationPlugin::isValid()
+	 * @inheritDoc
 	 */
 	public static function isValid(PackageArchive $archive, $instruction) {
 		return true;

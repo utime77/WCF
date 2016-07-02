@@ -12,12 +12,10 @@ use wcf\system\WCF;
  * Shows the menu edit form.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Form
+ * @since	3.0
  */
 class MenuEditForm extends MenuAddForm {
 	/**
@@ -75,29 +73,29 @@ class MenuEditForm extends MenuAddForm {
 		}
 	
 		// update menu
-		$this->objectAction = new MenuAction(array($this->menuID), 'update', array('data' => array_merge($this->additionalFields, array(
+		$this->objectAction = new MenuAction([$this->menuID], 'update', ['data' => array_merge($this->additionalFields, [
 			'title' => $this->title
-		))));
+		])]);
 		$this->objectAction->executeAction();
 		
 		// update box
 		if ($this->menu->identifier != 'com.woltlab.wcf.MainMenu') {
-			$boxAction = new BoxAction(array($this->menu->getBox()->boxID), 'update', array('data' => array_merge($this->additionalFields, array(
+			$boxAction = new BoxAction([$this->menu->getBox()->boxID], 'update', ['data' => array_merge($this->additionalFields, [
 				'position' => $this->position,
 				'visibleEverywhere' => ($this->visibleEverywhere) ? 1 : 0,
 				'showHeader' => ($this->showHeader) ? 1 : 0,
 				'showOrder' => $this->showOrder,
 				'cssClassName' => $this->cssClassName
-			)), 'pageIDs' => $this->pageIDs));
+			]), 'pageIDs' => $this->pageIDs]);
 			$boxAction->executeAction();
 		}
 		
 		$this->saved();
 	
 		// show success
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'success' => true
-		));
+		]);
 	}
 	
 	/**
@@ -127,10 +125,10 @@ class MenuEditForm extends MenuAddForm {
 		
 		I18nHandler::getInstance()->assignVariables(!empty($_POST));
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'action' => 'edit',
 			'menuID' => $this->menuID,
 			'menu' => $this->menu
-		));
+		]);
 	}
 }

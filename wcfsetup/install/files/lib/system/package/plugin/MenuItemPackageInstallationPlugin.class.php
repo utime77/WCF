@@ -9,12 +9,10 @@ use wcf\system\WCF;
  * Installs, updates and deletes menu items.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.package.plugin
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Package\Plugin
+ * @since	3.0
  */
 class MenuItemPackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin {
 	/**
@@ -99,6 +97,8 @@ class MenuItemPackageInstallationPlugin extends AbstractXMLPackageInstallationPl
 				WHERE	identifier = ?";
 			$statement = WCF::getDB()->prepareStatement($sql, 1);
 			$statement->execute([$data['elements']['parent']]);
+			
+			/** @var MenuItem|null $parent */
 			$parent = $statement->fetchObject(MenuItem::class);
 			if ($parent === null) {
 				throw new SystemException("Unable to find parent menu item '" . $data['elements']['parent'] . "' for menu item '" . $data['attributes']['identifier'] . "'");
@@ -156,15 +156,15 @@ class MenuItemPackageInstallationPlugin extends AbstractXMLPackageInstallationPl
 			FROM	wcf".WCF_N."_menu_item
 			WHERE	identifier = ?
 				AND packageID = ?";
-		$parameters = array(
+		$parameters = [
 			$data['identifier'],
 			$this->installation->getPackageID()
-		);
+		];
 		
-		return array(
+		return [
 			'sql' => $sql,
 			'parameters' => $parameters
-		);
+		];
 	}
 	
 	/**

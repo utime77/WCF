@@ -16,15 +16,13 @@ use wcf\util\FileUtil;
  * Shows the package install and update form.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Form
  */
 class PackageStartInstallForm extends AbstractForm {
 	/**
-	 * @see	\wcf\page\AbstractPage::$activeMenuItem
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.package.install';
 	
@@ -59,7 +57,7 @@ class PackageStartInstallForm extends AbstractForm {
 	public $stylePackageImportLocation = '';
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -71,7 +69,7 @@ class PackageStartInstallForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::readFormParameters()
+	 * @inheritDoc
 	 */
 	public function readFormParameters() {
 		parent::readFormParameters();
@@ -82,7 +80,7 @@ class PackageStartInstallForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::validate()
+	 * @inheritDoc
 	 */
 	public function validate() {
 		parent::validate();
@@ -145,7 +143,7 @@ class PackageStartInstallForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		parent::save();
@@ -156,6 +154,7 @@ class PackageStartInstallForm extends AbstractForm {
 		// obey foreign key
 		$packageID = ($this->package) ? $this->package->packageID : null;
 		
+		$archive = null;
 		if ($this->stylePackageImportLocation) {
 			$archive = $this->stylePackageImportLocation;
 		}
@@ -165,7 +164,7 @@ class PackageStartInstallForm extends AbstractForm {
 		
 		// insert queue
 		$isApplication = PackageValidationManager::getInstance()->getPackageValidationArchive()->getArchive()->getPackageInfo('isApplication');
-		$this->queue = PackageInstallationQueueEditor::create(array(
+		$this->queue = PackageInstallationQueueEditor::create([
 			'processNo' => $processNo,
 			'userID' => WCF::getUser()->userID,
 			'package' => PackageValidationManager::getInstance()->getPackageValidationArchive()->getArchive()->getPackageInfo('name'),
@@ -174,7 +173,7 @@ class PackageStartInstallForm extends AbstractForm {
 			'archive' => $archive,
 			'action' => ($this->package != null ? 'update' : 'install'),
 			'isApplication' => (!$isApplication ? '0' : '1')
-		));
+		]);
 		
 		$this->saved();
 		
@@ -183,19 +182,19 @@ class PackageStartInstallForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'package' => $this->package,
 			'installingImportedStyle' => $this->stylePackageImportLocation != ''
-		));
+		]);
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::show()
+	 * @inheritDoc
 	 */
 	public function show() {
 		if (!WCF::getSession()->getPermission('admin.configuration.package.canInstallPackage') && !WCF::getSession()->getPermission('admin.configuration.package.canUpdatePackage')) {

@@ -13,22 +13,20 @@ use wcf\system\WCF;
  * Handles modification logs.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.log.modification
- * @category	Community Framework
- * @deprecated	since 2.2, use AbstractModificationLogHandler
+ * @package	WoltLabSuite\Core\System\Log\Modification
+ * @deprecated	3.0, use AbstractModificationLogHandler
  */
 class ModificationLogHandler extends SingletonFactory {
 	/**
 	 * list of object types
 	 * @var	ObjectType[]
 	 */
-	protected $cache = array();
+	protected $cache = [];
 	
 	/**
-	 * @see	\wcf\system\SingletonFactory::init()
+	 * @inheritDoc
 	 */
 	protected function init() {
 		$this->cache = ObjectTypeCache::getInstance()->getObjectTypes('com.woltlab.wcf.modifiableContent');
@@ -63,7 +61,7 @@ class ModificationLogHandler extends SingletonFactory {
 	 * @return	ModificationLog
 	 * @throws	SystemException
 	 */
-	protected function _add($objectType, $objectID, $action, array $additionalData = array(), $time = TIME_NOW, $userID = null, $username = null) {
+	protected function _add($objectType, $objectID, $action, array $additionalData = [], $time = TIME_NOW, $userID = null, $username = null) {
 		$objectTypeObj = $this->getObjectType($objectType);
 		if ($objectTypeObj === null) {
 			throw new SystemException("Object type '".$objectType."' not found within definition 'com.woltlab.wcf.modifiableContent'");
@@ -82,7 +80,7 @@ class ModificationLogHandler extends SingletonFactory {
 			else $username = '';
 		}
 		
-		return ModificationLogEditor::create(array(
+		return ModificationLogEditor::create([
 			'objectTypeID' => $objectTypeObj->objectTypeID,
 			'objectID' => $objectID,
 			'action' => $action,
@@ -90,7 +88,7 @@ class ModificationLogHandler extends SingletonFactory {
 			'username' => $username,
 			'time' => $time,
 			'additionalData' => serialize($additionalData)
-		));
+		]);
 	}
 	
 	/**
@@ -107,8 +105,8 @@ class ModificationLogHandler extends SingletonFactory {
 		}
 		
 		$conditions = new PreparedStatementConditionBuilder();
-		$conditions->add("objectTypeID = ?", array($objectTypeObj->objectTypeID));
-		$conditions->add("objectID IN (?)", array($objectIDs));
+		$conditions->add("objectTypeID = ?", [$objectTypeObj->objectTypeID]);
+		$conditions->add("objectID IN (?)", [$objectIDs]);
 		
 		$sql = "DELETE FROM	wcf".WCF_N."_modification_log
 			".$conditions;

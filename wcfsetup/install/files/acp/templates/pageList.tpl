@@ -31,21 +31,21 @@
 			<dl class="col-xs-12 col-md-4">
 				<dt></dt>
 				<dd>
-					<input type="text" id="name" name="name" value="{$name}" placeholder="{lang}wcf.global.name{/lang}" class="long" />
+					<input type="text" id="name" name="name" value="{$name}" placeholder="{lang}wcf.global.name{/lang}" class="long">
 				</dd>
 			</dl>
 			
 			<dl class="col-xs-12 col-md-4">
 				<dt></dt>
 				<dd>
-					<input type="text" id="pageTitle" name="title" value="{$title}" placeholder="{lang}wcf.acp.page.title{/lang}" class="long" />
+					<input type="text" id="pageTitle" name="title" value="{$title}" placeholder="{lang}wcf.global.title{/lang}" class="long">
 				</dd>
 			</dl>
 			
 			<dl class="col-xs-12 col-md-4">
 				<dt></dt>
 				<dd>
-					<input type="text" id="pageContent" name="content" value="{$content}" placeholder="{lang}wcf.acp.page.content{/lang}" class="long" />
+					<input type="text" id="pageContent" name="content" value="{$content}" placeholder="{lang}wcf.acp.page.content{/lang}" class="long">
 				</dd>
 			</dl>
 			
@@ -54,9 +54,9 @@
 				<dd>
 					<label class="selectDropdown">
 						<select name="applicationPackageID" id="applicationPackageID">
-							<option value="0">{lang}wcf.acp.page.applicationPackageID{/lang}</option>
+							<option value="0">{lang}wcf.acp.page.application{/lang}</option>
 							{foreach from=$availableApplications item=availableApplication}
-								<option value="{@$availableApplication->packageID}"{if $availableApplication->packageID == $applicationPackageID} selected="selected"{/if}>{$availableApplication->getAbbreviation()}: {$availableApplication->domainName}{$availableApplication->domainPath}</option>
+								<option value="{@$availableApplication->packageID}"{if $availableApplication->packageID == $applicationPackageID} selected{/if}>{$availableApplication->domainName}{$availableApplication->domainPath}</option>
 							{/foreach}
 						</select>
 					</label>
@@ -68,9 +68,11 @@
 				<dd>
 					<label class="selectDropdown">
 						<select name="pageType" id="pageType">
-							<option value="">{lang}wcf.acp.page.pageType{/lang}</option>
-							<option value="static"{if $pageType == 'static'} selected="selected"{/if}>{lang}wcf.acp.page.pageType.static{/lang}</option>
-							<option value="system"{if $pageType == 'system'} selected="selected"{/if}>{lang}wcf.acp.page.pageType.system{/lang}</option>
+							<option value="">{lang}wcf.acp.page.type{/lang}</option>
+							<option value="text"{if $pageType == 'text'} selected{/if}>{lang}wcf.acp.page.type.text{/lang}</option>
+							<option value="html"{if $pageType == 'html'} selected{/if}>{lang}wcf.acp.page.type.html{/lang}</option>
+							<option value="tpl"{if $pageType == 'tpl'} selected{/if}>{lang}wcf.acp.page.type.tpl{/lang}</option>
+							<option value="system"{if $pageType == 'system'} selected{/if}>{lang}wcf.acp.page.type.system{/lang}</option>
 						</select>
 					</label>
 				</dd>
@@ -80,7 +82,7 @@
 		</div>
 		
 		<div class="formSubmit">
-			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s">
 			{@SECURITY_TOKEN_INPUT_TAG}
 		</div>
 	</section>
@@ -89,14 +91,14 @@
 {hascontent}
 	<div class="paginationTop">
 		{content}
-		{assign var='linkParameters' value=''}
-		{if $name}{capture append=linkParameters}&name={@$name|rawurlencode}{/capture}{/if}
-		{if $title}{capture append=linkParameters}&title={@$title|rawurlencode}{/capture}{/if}
-		{if $content}{capture append=linkParameters}&content={@$content|rawurlencode}{/capture}{/if}
-		{if $applicationPackageID}{capture append=linkParameters}&applicationPackageID={@$applicationPackageID}{/capture}{/if}
-		{if $pageType}{capture append=linkParameters}&pageType={@$pageType|rawurlencode}{/capture}{/if}
-		
-		{pages print=true assign=pagesLinks controller="PageList" link="pageNo=%d&sortField=$sortField&sortOrder=$sortOrder$linkParameters"}
+			{assign var='linkParameters' value=''}
+			{if $name}{capture append=linkParameters}&name={@$name|rawurlencode}{/capture}{/if}
+			{if $title}{capture append=linkParameters}&title={@$title|rawurlencode}{/capture}{/if}
+			{if $content}{capture append=linkParameters}&content={@$content|rawurlencode}{/capture}{/if}
+			{if $applicationPackageID}{capture append=linkParameters}&applicationPackageID={@$applicationPackageID}{/capture}{/if}
+			{if $pageType}{capture append=linkParameters}&pageType={@$pageType|rawurlencode}{/capture}{/if}
+			
+			{pages print=true assign=pagesLinks controller="PageList" link="pageNo=%d&sortField=$sortField&sortOrder=$sortOrder$linkParameters"}
 		{/content}
 	</div>
 {/hascontent}
@@ -108,7 +110,8 @@
 				<tr>
 					<th class="columnPageID{if $sortField == 'pageID'} active {@$sortOrder}{/if}" colspan="2"><a href="{link controller='PageList'}pageNo={@$pageNo}&sortField=pageID&sortOrder={if $sortField == 'pageID' && $sortOrder == 'ASC'}DESC{else}ASC{/if}{@$linkParameters}{/link}">{lang}wcf.global.objectID{/lang}</a></th>
 					<th class="columnTitle columnName{if $sortField == 'name'} active {@$sortOrder}{/if}"><a href="{link controller='PageList'}pageNo={@$pageNo}&sortField=name&sortOrder={if $sortField == 'name' && $sortOrder == 'ASC'}DESC{else}ASC{/if}{@$linkParameters}{/link}">{lang}wcf.global.name{/lang}</a></th>
-					<th class="columnText columnURL" colspan="2">{lang}wcf.acp.page.url{/lang}</th>
+					<th class="columnText columnURL">{lang}wcf.acp.page.url{/lang}</th>
+					<th class="columnText columnPageType{if $sortField == 'pageType'} active {@$sortOrder}{/if}"><a href="{link controller='PageList'}pageNo={@$pageNo}&sortField=pageType&sortOrder={if $sortField == 'pageType' && $sortOrder == 'ASC'}DESC{else}ASC{/if}{@$linkParameters}{/link}">{lang}wcf.acp.page.type{/lang}</a></th>
 					<th class="columnDate columnLastUpdateTime{if $sortField == 'lastUpdateTime'} active {@$sortOrder}{/if}"><a href="{link controller='PageList'}pageNo={@$pageNo}&sortField=lastUpdateTime&sortOrder={if $sortField == 'lastUpdateTime' && $sortOrder == 'ASC'}DESC{else}ASC{/if}{@$linkParameters}{/link}">{lang}wcf.acp.page.lastUpdateTime{/lang}</a></th>
 					
 					{event name='columnHeads'}
@@ -120,30 +123,30 @@
 					<tr class="jsPageRow">
 						<td class="columnIcon">
 							{if $page->canDisable()}
-								<span class="icon icon16 fa-{if !$page->isDisabled}check-{/if}square-o jsToggleButton jsTooltip pointer" title="{lang}wcf.global.button.{if !$page->isDisabled}disable{else}enable{/if}{/lang}" data-object-id="{@$page->pageID}"></span>
+								<span class="icon icon24 fa-{if !$page->isDisabled}check-{/if}square-o jsToggleButton jsTooltip pointer" title="{lang}wcf.global.button.{if !$page->isDisabled}disable{else}enable{/if}{/lang}" data-object-id="{@$page->pageID}"></span>
 							{else}
-								<span class="icon icon16 fa-{if !$page->isDisabled}check-{/if}square-o disabled" title="{lang}wcf.global.button.{if !$page->isDisabled}disable{else}enable{/if}{/lang}"></span>
+								<span class="icon icon24 fa-{if !$page->isDisabled}check-{/if}square-o disabled" title="{lang}wcf.global.button.{if !$page->isDisabled}disable{else}enable{/if}{/lang}"></span>
 							{/if}
-							<a href="{link controller='PageEdit' id=$page->pageID}{/link}" title="{lang}wcf.global.button.edit{/lang}" class="jsTooltip"><span class="icon icon16 fa-pencil"></span></a>
+							<a href="{link controller='PageEdit' id=$page->pageID}{/link}" title="{lang}wcf.global.button.edit{/lang}" class="jsTooltip"><span class="icon icon24 fa-pencil"></span></a>
 							{if $page->canDelete()}
-								<span class="icon icon16 fa-times jsDeleteButton jsTooltip pointer" title="{lang}wcf.global.button.delete{/lang}" data-object-id="{@$page->pageID}" data-confirm-message="{lang}wcf.acp.page.delete.confirmMessage{/lang}"></span>
+								<span class="icon icon24 fa-times jsDeleteButton jsTooltip pointer" title="{lang}wcf.global.button.delete{/lang}" data-object-id="{@$page->pageID}" data-confirm-message-html="{lang __encode=true}wcf.acp.page.delete.confirmMessage{/lang}"></span>
 							{else}
-								<span class="icon icon16 fa-times disabled" title="{lang}wcf.global.button.delete{/lang}"></span>
+								<span class="icon icon24 fa-times disabled" title="{lang}wcf.global.button.delete{/lang}"></span>
 							{/if}
 							{if !$page->requireObjectID}
-								<a href="{$page->getLink()}" title="{lang}wcf.acp.page.button.viewPage{/lang}" class="jsTooltip"><span class="icon icon16 fa-search"></span></a>
+								<a href="{$page->getLink()}" title="{lang}wcf.acp.page.button.viewPage{/lang}" class="jsTooltip"><span class="icon icon24 fa-search"></span></a>
 							{else}
-								<span class="icon icon16 fa-search disabled" title="{lang}wcf.acp.page.button.viewPage{/lang}"></span>
+								<span class="icon icon24 fa-search disabled" title="{lang}wcf.acp.page.button.viewPage{/lang}"></span>
 							{/if}
 							
 							{event name='rowButtons'}
 						</td>
 						<td class="columnID columnPageID">{@$page->pageID}</td>
 						<td class="columnTitle columnName">{if $page->isLandingPage}<span class="icon icon16 fa-home jsTooltip" title="{lang}wcf.acp.page.isLandingPage{/lang}"></span> {/if}<a href="{link controller='PageEdit' id=$page->pageID}{/link}">{$page->name}</a></td>
-						<td class="columnIcon"><span class="badge label">{$page->getApplication()->getAbbreviation()}</span></td>
 						<td class="columnText columnURL">
 							{$page->getDisplayLink()}
 						</td>
+						<td class="columnText columnPageType">{lang}wcf.acp.page.type.{@$page->pageType}{/lang}</td>
 						<td class="columnDate columnLastUpdateTime">{@$page->lastUpdateTime|time}</td>
 						
 						{event name='columns'}
@@ -168,6 +171,8 @@
 			</ul>
 		</nav>
 	</footer>
+{else}
+	<p class="info">{lang}wcf.global.noItems{/lang}</p>
 {/if}
 
 {include file='pageAddDialog'}

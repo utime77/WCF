@@ -7,215 +7,171 @@
 		padding: 0 2px;
 	}
 </style>
+
 <script data-relocate="true">
-(function() {
-	var buttons = ['format', 'wcfSeparator', 'bold', 'italic', 'underline', 'deleted', 'wcfSeparator', 'lists', 'image', 'link'];
-	
-	var elementId = '{if $wysiwygSelector|isset}{$wysiwygSelector|encodeJS}{else}text{/if}';
-	var callbackIdentifier = 'Redactor2_' + elementId;
-	
-	WCF.System.Dependency.Manager.setup(callbackIdentifier, function() {
-		// TODO: Should the media stuff be here?
-		{include file='mediaJavaScript'}
-		
-		var element = elById(elementId);
-		var autosave = elData(element, 'autosave') || '';
-		if (autosave) {
-			element.removeAttribute('data-autosave');
-		}
-		
-		var config = {
-			buttons: buttons,
-			minHeight: 200,
-			plugins: ['WoltLabButton', 'WoltLabColor', 'WoltLabDropdown', 'WoltLabEvent', 'WoltLabLink', 'WoltLabQuote'],
-			toolbarFixed: false,
-			woltlab: {
-				autosave: autosave
-			}
-		};
-		
-		// user mentions
-		if (elDataBool(element, 'support-mention')) {
-			config.plugins.push('WoltLabMention');
-		}
-		
-		// media
-		{if $__wcf->session->getPermission('admin.content.cms.canUseMedia')}
-			config.plugins.push('WoltLabMedia');
-		{/if}
-		
-		$(element).redactor(config);
-	});
-		
 	head.load([
-		'{@$__wcf->getPath()}js/3rdParty/redactor2/redactor.js?v={@LAST_UPDATE_TIME}',
-		
-		{* WoltLab *}
-		'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabButton.js?v={@LAST_UPDATE_TIME}',
-		'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabColor.js?v={@LAST_UPDATE_TIME}',
-		'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabDropdown.js?v={@LAST_UPDATE_TIME}', 
-		'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabEvent.js?v={@LAST_UPDATE_TIME}',
-		'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabLink.js?v={@LAST_UPDATE_TIME}',
-		{if $__wcf->session->getPermission('admin.content.cms.canUseMedia')}'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabMedia.js?v={@LAST_UPDATE_TIME}',{/if}
-		'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabMention.js?v={@LAST_UPDATE_TIME}',
-		'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabQuote.js?v={@LAST_UPDATE_TIME}'
-		
-		], function() {
-			WCF.System.Dependency.Manager.invoke(callbackIdentifier);
-		}
-	);
-})();
+		{if ENABLE_DEBUG_MODE}
+			{* Imperavi *}
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/redactor.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/alignment.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/source.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/table.js?v={@LAST_UPDATE_TIME}',
+			
+			{* WoltLab *}
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabAlignment.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabAttachment.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabBlock.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabButton.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabCode.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabColor.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabDropdown.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabEvent.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabImage.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabInlineCode.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabLink.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabMedia.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabMention.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabModal.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabQuote.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabSize.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabSmiley.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/WoltLabSpoiler.js?v={@LAST_UPDATE_TIME}'
+		{else}
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/redactor.min.js?v={@LAST_UPDATE_TIME}',
+			'{@$__wcf->getPath()}js/3rdParty/redactor2/plugins/combined.min.js?v={@LAST_UPDATE_TIME}'
+		{/if}
+	], function () {
+		require(['Language', 'WoltLab/WCF/Ui/Redactor/Metacode'], function(Language, UiRedactorMetacode) {
+			Language.addObject({
+				'wcf.editor.code.edit': '{lang}wcf.editor.code.edit{/lang}',
+				'wcf.editor.code.file': '{lang}wcf.editor.code.file{/lang}',
+				'wcf.editor.code.file.description': '{lang}wcf.editor.code.file.description{/lang}',
+				'wcf.editor.code.highlighter': '{lang}wcf.editor.code.highlighter{/lang}',
+				'wcf.editor.code.highlighter.description': '{lang}wcf.editor.code.highlighter.description{/lang}',
+				'wcf.editor.code.highlighter.detect': '{lang}wcf.editor.code.highlighter.detect{/lang}',
+				'wcf.editor.code.line': '{lang}wcf.editor.code.line{/lang}',
+				'wcf.editor.code.line.description': '{lang}wcf.editor.code.line.description{/lang}',
+				'wcf.editor.code.title': '{lang __literal=true}wcf.editor.code.title{/lang}',
+				
+				'wcf.editor.image.edit': '{lang}wcf.editor.image.edit{/lang}',
+				'wcf.editor.image.insert': '{lang}wcf.editor.image.insert{/lang}',
+				'wcf.editor.image.link': '{lang}wcf.editor.image.link{/lang}',
+				'wcf.editor.image.link.error.invalid': '{lang}wcf.editor.image.link.error.invalid{/lang}',
+				'wcf.editor.image.float': '{lang}wcf.editor.image.float{/lang}',
+				'wcf.editor.image.float.left': '{lang}wcf.editor.image.float.left{/lang}',
+				'wcf.editor.image.float.right': '{lang}wcf.editor.image.float.right{/lang}',
+				'wcf.editor.image.source': '{lang}wcf.editor.image.source{/lang}',
+				'wcf.editor.image.source.error.invalid': '{lang}wcf.editor.image.source.error.invalid{/lang}',
+				
+				'wcf.editor.link.add': '{lang}wcf.editor.link.add{/lang}',
+				'wcf.editor.link.edit': '{lang}wcf.editor.link.edit{/lang}',
+				'wcf.editor.link.url': '{lang}wcf.editor.link.url{/lang}',
+				'wcf.editor.link.text': '{lang}wcf.editor.link.text{/lang}',
+				
+				'wcf.editor.quote.author': '{lang}wcf.editor.quote.author{/lang}',
+				'wcf.editor.quote.edit': '{lang}wcf.editor.quote.edit{/lang}',
+				'wcf.editor.quote.title': '{lang __literal=true}wcf.editor.quote.title{/lang}',
+				'wcf.editor.quote.url': '{lang}wcf.editor.quote.url{/lang}',
+				'wcf.editor.quote.url.description': '{lang}wcf.editor.quote.url.description{/lang}',
+				
+				'wcf.editor.spoiler.label': '{lang}wcf.editor.spoiler.label{/lang}',
+				'wcf.editor.spoiler.label.description': '{lang}wcf.editor.spoiler.label.description{/lang}',
+				'wcf.editor.spoiler.edit': '{lang}wcf.editor.spoiler.edit{/lang}',
+				'wcf.editor.spoiler.title': '{lang __literal=true}wcf.editor.spoiler.title{/lang}'
+			});
+			
+			var buttons = [], buttonOptions = [], customButtons = [];
+			{include file='wysiwygToolbar'}
+			
+			var highlighters = { {implode from=$__wcf->getBBCodeHandler()->getHighlighters() item=__highlighter}'{$__highlighter}': '{lang}wcf.bbcode.code.{@$__highlighter}.title{/lang}'{/implode} };
+			
+			// TODO: Should the media stuff be here?
+			{include file='mediaJavaScript'}
+			
+			var element = elById('{if $wysiwygSelector|isset}{$wysiwygSelector|encodeJS}{else}text{/if}');
+			UiRedactorMetacode.convert(element);
+			
+			var autosave = elData(element, 'autosave') || '';
+			if (autosave) {
+				element.removeAttribute('data-autosave');
+			}
+			
+			var config = {
+				buttons: buttons,
+				formatting: ['p', 'h2', 'h3', 'h4'],
+				imageCaption: false,
+				lang: 'wsc', // fake language to offload phrases
+				langs: {
+					wsc: {
+						// formatting dropdown
+						heading2: '{lang}wcf.editor.format.heading2{/lang}',
+						heading3: '{lang}wcf.editor.format.heading3{/lang}',
+						heading4: '{lang}wcf.editor.format.heading4{/lang}',
+						paragraph: '{lang}wcf.editor.format.paragraph{/lang}',
+						
+						'align-center': '{lang}wcf.editor.alignment.center{/lang}',
+						'align-justify': '{lang}wcf.editor.alignment.justify{/lang}',
+						'align-left': '{lang}wcf.editor.alignment.left{/lang}',
+						'align-right': '{lang}wcf.editor.alignment.right{/lang}',
+						
+						// table plugin
+						'add-head': '{lang}wcf.editor.table.addHead{/lang}',
+						'delete-column': '{lang}wcf.editor.table.deleteColumn{/lang}',
+						'delete-head': '{lang}wcf.editor.table.deleteHead{/lang}',
+						'delete-row': '{lang}wcf.editor.table.deleteRow{/lang}',
+						'delete-table': '{lang}wcf.editor.table.deleteTable{/lang}',
+						'insert-table': '{lang}wcf.editor.table.insertTable{/lang}',
+						'insert-column-left': '{lang}wcf.editor.table.insertColumnLeft{/lang}',
+						'insert-column-right': '{lang}wcf.editor.table.insertColumnRight{/lang}',
+						'insert-row-above': '{lang}wcf.editor.table.insertRowAbove{/lang}',
+						'insert-row-below': '{lang}wcf.editor.table.insertRowBelow{/lang}'
+					}
+				},
+				minHeight: 200,
+				plugins: [
+					'alignment',
+					'source',
+					'table',
+					'WoltLabAlignment',
+					'WoltLabAttachment',
+					'WoltLabBlock',
+					'WoltLabCode',
+					'WoltLabColor',
+					'WoltLabDropdown',
+					'WoltLabEvent',
+					'WoltLabImage',
+					'WoltLabInlineCode',
+					'WoltLabLink',
+					'WoltLabModal',
+					'WoltLabQuote',
+					'WoltLabSize',
+					'WoltLabSmiley',
+					'WoltLabSpoiler'
+				],
+				toolbarFixed: false,
+				woltlab: {
+					autosave: autosave,
+					buttons: buttonOptions,
+					customButtons: customButtons,
+					highlighters: highlighters
+				}
+			};
+			
+			// user mentions
+			if (elDataBool(element, 'support-mention')) {
+				config.plugins.push('WoltLabMention');
+			}
+			
+			// media
+			{if $__wcf->session->getPermission('admin.content.cms.canUseMedia')}
+				config.plugins.push('WoltLabMedia');
+			{/if}
+			
+			// load the button plugin last to ensure all buttons have been initialized
+			// already and we can safely add all icons
+			config.plugins.push('WoltLabButton');
+			
+			$(element).redactor(config);
+		});
+	});
 </script>
-
-{*
-<script data-relocate="true">
-var __REDACTOR_ICON_PATH = '{@$__wcf->getPath()}icon/';
-var __REDACTOR_BUTTONS = [ {implode from=$__wcf->getBBCodeHandler()->getButtonBBCodes() item=__bbcode}{ icon: '{$__bbcode->wysiwygIcon}', label: '{$__bbcode->buttonLabel|language}', name: '{$__bbcode->bbcodeTag}' }{/implode} ];
-var __REDACTOR_SMILIES = { {implode from=$__wcf->getSmileyCache()->getCategorySmilies() item=smiley}'{@$smiley->smileyCode|encodeJS}': '{@$smiley->getURL()|encodeJS}'{/implode} };
-var __REDACTOR_BBCODES = [ {implode from=$__wcf->getBBCodeHandler()->getBBCodes() item=__bbcode}'{@$__bbcode->bbcodeTag}'{/implode} ];
-var __REDACTOR_SOURCE_BBCODES = [ {implode from=$__wcf->getBBCodeHandler()->getSourceBBCodes() item=__bbcode}'{@$__bbcode->bbcodeTag}'{/implode} ];
-var __REDACTOR_CODE_HIGHLIGHTERS = { {implode from=$__wcf->getBBCodeHandler()->getHighlighters() item=__highlighter}'{@$__highlighter}': '{lang}wcf.bbcode.code.{@$__highlighter}.title{/lang}'{/implode} };
-var __REDACTOR_AMD_DEPENDENCIES = { };
-
-require(['Language', 'WoltLab/WCF/Bbcode/FromHtml', 'WoltLab/WCF/Bbcode/ToHtml'], function(Language, BbcodeFromHTML, BbcodeToHTML) {
-__REDACTOR_AMD_DEPENDENCIES = {
-BbcodeFromHTML: BbcodeFromHTML,
-BbcodeToHTML: BbcodeToHTML
-};
-
-Language.addObject({
-'wcf.attachment.dragAndDrop.dropHere': '{lang}wcf.attachment.dragAndDrop.dropHere{/lang}',
-'wcf.attachment.dragAndDrop.dropNow': '{lang}wcf.attachment.dragAndDrop.dropNow{/lang}',
-'wcf.bbcode.button.fontColor': '{lang}wcf.bbcode.button.fontColor{/lang}',
-'wcf.bbcode.button.fontFamily': '{lang}wcf.bbcode.button.fontFamily{/lang}',
-'wcf.bbcode.button.fontSize': '{lang}wcf.bbcode.button.fontSize{/lang}',
-'wcf.bbcode.button.image': '{lang}wcf.bbcode.button.image{/lang}',
-'wcf.bbcode.button.redo': '{lang}wcf.bbcode.button.redo{/lang}',
-'wcf.bbcode.button.subscript': '{lang}wcf.bbcode.button.subscript{/lang}',
-'wcf.bbcode.button.superscript': '{lang}wcf.bbcode.button.superscript{/lang}',
-'wcf.bbcode.button.toggleBBCode': '{lang}wcf.bbcode.button.toggleBBCode{/lang}',
-'wcf.bbcode.button.toggleHTML': '{lang}wcf.bbcode.button.toggleHTML{/lang}',
-'wcf.bbcode.button.undo': '{lang}wcf.bbcode.button.undo{/lang}',
-'wcf.bbcode.code': '{lang}wcf.bbcode.code{/lang}',
-'wcf.bbcode.code.edit': '{lang}wcf.bbcode.code.edit{/lang}',
-'wcf.bbcode.code.filename': '{lang}wcf.bbcode.code.filename{/lang}',
-'wcf.bbcode.code.filename.description': '{lang}wcf.bbcode.code.filename.description{/lang}',
-'wcf.bbcode.code.highlighter': '{lang}wcf.bbcode.code.highlighter{/lang}',
-'wcf.bbcode.code.highlighter.description': '{lang}wcf.bbcode.code.highlighter.description{/lang}',
-'wcf.bbcode.code.highlighter.none': '{lang}wcf.bbcode.code.highlighter.none{/lang}',
-'wcf.bbcode.code.insert': '{lang}wcf.bbcode.code.insert{/lang}',
-'wcf.bbcode.code.lineNumber': '{lang}wcf.bbcode.code.lineNumber{/lang}',
-'wcf.bbcode.code.lineNumber.description': '{lang}wcf.bbcode.code.lineNumber.description{/lang}',
-'wcf.bbcode.code.settings': '{lang}wcf.bbcode.code.settings{/lang}',
-'wcf.bbcode.image.source': '{lang}wcf.bbcode.image.source{/lang}',
-'wcf.bbcode.quote.edit': '{lang}wcf.bbcode.quote.edit{/lang}',
-'wcf.bbcode.quote.edit.author': '{lang}wcf.bbcode.quote.edit.author{/lang}',
-'wcf.bbcode.quote.edit.link': '{lang}wcf.bbcode.quote.edit.link{/lang}',
-'wcf.bbcode.quote.insert': '{lang}wcf.bbcode.quote.insert{/lang}',
-'wcf.bbcode.quote.title.clickToSet': '{lang}wcf.bbcode.quote.title.clickToSet{/lang}',
-'wcf.bbcode.quote.title.javascript': '{lang}wcf.bbcode.quote.title.javascript{/lang}',
-'wcf.global.noSelection': '{lang}wcf.global.noSelection{/lang}',
-'wcf.message.autosave.prompt': '{lang}wcf.message.autosave.prompt{/lang}',
-'wcf.message.autosave.prompt.confirm': '{lang}wcf.message.autosave.prompt.confirm{/lang}',
-'wcf.message.autosave.prompt.discard': '{lang}wcf.message.autosave.prompt.discard{/lang}',
-'wcf.message.autosave.restored': '{lang}wcf.message.autosave.restored{/lang}',
-'wcf.message.autosave.restored.confirm': '{lang}wcf.message.autosave.restored.confirm{/lang}',
-'wcf.message.autosave.restored.revert': '{lang}wcf.message.autosave.restored.revert{/lang}',
-'wcf.message.autosave.restored.revert.confirmMessage': '{lang}wcf.message.autosave.restored.revert.confirmMessage{/lang}',
-'wcf.message.autosave.restored.version': '{lang __literal=true}wcf.message.autosave.restored.version{/lang}',
-'wcf.message.autosave.saved': '{lang}wcf.message.autosave.saved{/lang}'
-});
-
-var $editorName = '{if $wysiwygSelector|isset}{$wysiwygSelector|encodeJS}{else}text{/if}';
-var $callbackIdentifier = 'Redactor_' + $editorName;
-
-WCF.System.Dependency.Manager.setup($callbackIdentifier, function() {
-var $textarea = $('#' + $editorName);
-var $buttons = [ ];
-
-{include file='wysiwygToolbar'}
-
-var $autosave = $textarea.data('autosave');
-var $autosaveLastEditTime = ($autosave && $textarea.data('autosaveLastEditTime')) ? (parseInt($textarea.data('autosaveLastEditTime')) || 0) : 0;
-var $autosavePrompt = ($autosave && $textarea.data('autosavePrompt')) ? true : false;
-var $config = {
-	autosave: false,
-	buttons: $buttons,
-	convertImageLinks: false,
-	convertUrlLinks: false,
-	convertVideoLinks: false,
-	direction: '{lang}wcf.global.pageDirection{/lang}',
-	lang: '{@$__wcf->getLanguage()->getFixedLanguageCode()}',
-	linebreaks: true,
-	maxHeight: 500,
-	minHeight: 200,
-	plugins: [ 'wutil', 'wautosave', 'wmonkeypatch', 'wbutton', 'wbbcode', 'wfontcolor', 'wfontfamily', 'wfontsize' ],
-	removeEmpty: false,
-	replaceDivs: false,
-	source: true,
-	tabifier: false,
-	toolbarFixed: false,
-	woltlab: {
-		autosave: {
-			active: ($autosave) ? true : false,
-			key: ($autosave) ? '{@$__wcf->getAutosavePrefix()}_' + $autosave : '',
-			lastEditTime: $autosaveLastEditTime,
-			prefix: '{@$__wcf->getAutosavePrefix()}',
-			prompt: $autosavePrompt,
-			saveOnInit: {if !$errorField|empty}true{else}false{/if}
-		},
-		originalValue: $textarea.val()
-	}
-};
-
-{if $__wcf->getBBCodeHandler()->isAvailableBBCode('table')}
-	$config.plugins.splice(2, 0, 'table');
-{/if}
-
-// TODO: is this still required?
-if ($.browser.iOS) {
-	// using a zero-width space breaks iOS' detection of the start of a sentence, causing the first word to be lowercased
-	$config.emptyHtml = '<p><br></p>';
-}
-
-{if MODULE_ATTACHMENT && !$attachmentHandler|empty && $attachmentHandler->canUpload()}
-	$config.plugins.push('wupload');
-	$config.woltlab.attachmentUrl = '{link controller='Attachment' id=987654321}{/link}';
-	$config.woltlab.attachmentThumbnailUrl = '{link controller='Attachment' id=987654321}thumbnail=1{/link}';
-{/if}
-
-{event name='javascriptInit'}
-
-// clear textarea before init
-$textarea.val('');
-
-$textarea.redactor($config);
-});
-
-head.load([
-'{@$__wcf->getPath()}js/3rdParty/redactor/redactor{if !ENABLE_DEBUG_MODE}.min{/if}.js?v={@LAST_UPDATE_TIME}',
-{if $__wcf->getLanguage()->getFixedLanguageCode() != 'en'}'{@$__wcf->getPath()}js/3rdParty/redactor/languages/{@$__wcf->getLanguage()->getFixedLanguageCode()}.js?v={@LAST_UPDATE_TIME}',{/if}
-{if !ENABLE_DEBUG_MODE}
-	'{@$__wcf->getPath()}js/3rdParty/redactor/plugins/wcombined.min.js?v={@LAST_UPDATE_TIME}'
-{else}
-	{* official *}{*
-	'{@$__wcf->getPath()}js/3rdParty/redactor/plugins/table.js?v={@LAST_UPDATE_TIME}',
-	
-	{* WoltLab *}{*
-	'{@$__wcf->getPath()}js/3rdParty/redactor/plugins/wautosave.js?v={@LAST_UPDATE_TIME}',
-	'{@$__wcf->getPath()}js/3rdParty/redactor/plugins/wbbcode.js?v={@LAST_UPDATE_TIME}',
-	'{@$__wcf->getPath()}js/3rdParty/redactor/plugins/wbutton.js?v={@LAST_UPDATE_TIME}',
-	'{@$__wcf->getPath()}js/3rdParty/redactor/plugins/wfontcolor.js?v={@LAST_UPDATE_TIME}',
-	'{@$__wcf->getPath()}js/3rdParty/redactor/plugins/wfontfamily.js?v={@LAST_UPDATE_TIME}',
-	'{@$__wcf->getPath()}js/3rdParty/redactor/plugins/wfontsize.js?v={@LAST_UPDATE_TIME}',
-	'{@$__wcf->getPath()}js/3rdParty/redactor/plugins/wmonkeypatch.js?v={@LAST_UPDATE_TIME}',
-	'{@$__wcf->getPath()}js/3rdParty/redactor/plugins/wutil.js?v={@LAST_UPDATE_TIME}',
-	'{@$__wcf->getPath()}js/3rdParty/redactor/plugins/wupload.js?v={@LAST_UPDATE_TIME}'
-{/if}
-{event name='javascriptFiles'}
-], function() {
-WCF.System.Dependency.Manager.invoke($callbackIdentifier);
-});
-});
-</script>
-*}

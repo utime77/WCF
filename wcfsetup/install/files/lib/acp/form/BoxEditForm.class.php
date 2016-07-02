@@ -4,6 +4,7 @@ use wcf\data\box\Box;
 use wcf\data\box\BoxAction;
 use wcf\data\object\type\ObjectTypeCache;
 use wcf\form\AbstractForm;
+use wcf\system\acl\simple\SimpleAclHandler;
 use wcf\system\box\IConditionBoxController;
 use wcf\system\exception\IllegalLinkException;
 use wcf\system\language\LanguageFactory;
@@ -13,12 +14,10 @@ use wcf\system\WCF;
  * Shows the box edit form.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Form
+ * @since	3.0
  */
 class BoxEditForm extends BoxAddForm {
 	/**
@@ -59,6 +58,13 @@ class BoxEditForm extends BoxAddForm {
 	/**
 	 * @inheritDoc
 	 */
+	protected function readBoxType() {
+		// not required for editing
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
 	protected function validateName() {
 		if (mb_strtolower($this->name) != mb_strtolower($this->box->name)) {
 			parent::validateName();
@@ -72,19 +78,21 @@ class BoxEditForm extends BoxAddForm {
 		AbstractForm::save();
 		
 		$content = [];
-		if ($this->isMultilingual) {
+		if ($this->boxType == 'system' || $this->isMultilingual) {
 			foreach (LanguageFactory::getInstance()->getLanguages() as $language) {
 				$content[$language->languageID] = [
-					'title' => (!empty($_POST['title'][$language->languageID]) ? $_POST['title'][$language->languageID] : ''),
-					'content' => (!empty($_POST['content'][$language->languageID]) ? $_POST['content'][$language->languageID] : ''),
+					'title' => (!empty($this->title[$language->languageID]) ? $this->title[$language->languageID] : ''),
+					'content' => (!empty($this->content[$language->languageID]) ? $this->content[$language->languageID] : ''),
+					'htmlInputProcessor' => (isset($this->htmlInputProcessors[$language->languageID]) ? $this->htmlInputProcessors[$language->languageID] : null),
 					'imageID' => (!empty($this->imageID[$language->languageID]) ? $this->imageID[$language->languageID] : null)
 				];
 			}
 		}
 		else {
 			$content[0] = [
-				'title' => (!empty($_POST['title'][0]) ? $_POST['title'][0] : ''),
-				'content' => (!empty($_POST['content'][0]) ? $_POST['content'][0] : ''),
+				'title' => (!empty($this->title[0]) ? $this->title[0] : ''),
+				'content' => (!empty($this->content[0]) ? $this->content[0] : ''),
+				'htmlInputProcessor' => (isset($this->htmlInputProcessors[0]) ? $this->htmlInputProcessors[0] : null),
 				'imageID' => (!empty($this->imageID[0]) ? $this->imageID[0] : null)
 			];
 		}
@@ -114,6 +122,8 @@ class BoxEditForm extends BoxAddForm {
 			$this->boxController->getProcessor()->saveConditions();
 		}
 		
+		SimpleAclHandler::getInstance()->setValues('com.woltlab.wcf.box', $this->box->boxID, $this->aclValues);
+		
 		// call saved event
 		$this->saved();
 		
@@ -126,8 +136,8 @@ class BoxEditForm extends BoxAddForm {
 	 */
 	public function readData() {
 		if (!empty($_POST) && !WCF::getSession()->getPermission('admin.content.cms.canUseMedia')) {
-			foreach ($this->box->getBoxContent() as $languageID => $content) {
-				$this->imageID[$languageID] = $content['imageID'];
+			foreach ($this->box->getBoxContents() as $languageID => $content) {
+				$this->imageID[$languageID] = $content->imageID;
 			}
 			
 			$this->readBoxImages();
@@ -143,6 +153,7 @@ class BoxEditForm extends BoxAddForm {
 			$this->cssClassName = $this->box->cssClassName;
 			$this->boxControllerID = $this->box->objectTypeID;
 			if ($this->box->showHeader) $this->showHeader = 1;
+			else $this->showHeader = 0;
 			if ($this->box->visibleEverywhere) $this->visibleEverywhere = 1;
 			else $this->visibleEverywhere = 0;
 			$this->pageIDs = $this->box->getPageIDs();
@@ -152,10 +163,10 @@ class BoxEditForm extends BoxAddForm {
 			if ($this->linkPageID) $this->linkType = 'internal';
 			if ($this->externalURL) $this->linkType = 'external';
 			
-			foreach ($this->box->getBoxContent() as $languageID => $content) {
-				$this->title[$languageID] = $content['title'];
-				$this->content[$languageID] = $content['content'];
-				$this->imageID[$languageID] = $content['imageID'];
+			foreach ($this->box->getBoxContents() as $languageID => $content) {
+				$this->title[$languageID] = $content->title;
+				$this->content[$languageID] = $content->content;
+				$this->imageID[$languageID] = $content->imageID;
 			}
 			
 			if ($this->boxControllerID) {
@@ -164,6 +175,8 @@ class BoxEditForm extends BoxAddForm {
 					$this->boxController->getProcessor()->setBox($this->box);
 				}
 			}
+			
+			$this->aclValues = SimpleAclHandler::getInstance()->getValues('com.woltlab.wcf.box', $this->box->boxID);
 			
 			$this->readBoxImages();
 		}

@@ -14,11 +14,9 @@ use wcf\util\UserUtil;
  * among them, while the individual clients are tracked within wcf1_session_virtual.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.acp.session.virtual
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Acp\Session\Virtual
  *
  * @property-read	integer		$virtualSessionID
  * @property-read	string		$sessionID
@@ -51,11 +49,11 @@ class ACPSessionVirtual extends DatabaseObject {
 				AND ipAddress = ?
 				AND userAgent = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array(
+		$statement->execute([
 			$sessionID,
 			UserUtil::getIpAddress(),
 			UserUtil::getUserAgent()
-		));
+		]);
 		
 		return $statement->fetchObject(static::class);
 	}
@@ -71,7 +69,7 @@ class ACPSessionVirtual extends DatabaseObject {
 			FROM	".static::getDatabaseTableName()."
 			WHERE	sessionID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($sessionID));
+		$statement->execute([$sessionID]);
 		
 		return $statement->fetchColumn();
 	}

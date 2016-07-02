@@ -22,9 +22,7 @@ use wcf\util\StringUtil;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.template.plugin
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Template\Plugin
  */
 class PagesFunctionTemplatePlugin implements IFunctionTemplatePlugin {
 	const SHOW_LINKS = 11;
@@ -88,6 +86,7 @@ class PagesFunctionTemplatePlugin implements IFunctionTemplatePlugin {
 	 * 
 	 * @param	string		$link
 	 * @param	integer		$pageNo
+	 * @param	integer		$pages
 	 * @return	string
 	 */
 	protected function makeNextLink($link, $pageNo, $pages) {

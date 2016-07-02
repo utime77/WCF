@@ -27,7 +27,7 @@
 			<dl{if $errorField == 'optionName'} class="formError"{/if}>
 				<dt><label for="optionName">{lang}wcf.global.name{/lang}</label></dt>
 				<dd>
-					<input type="text" id="optionName" name="optionName" value="{$i18nPlainValues['optionName']}" required="required" autofocus="autofocus" class="long" />
+					<input type="text" id="optionName" name="optionName" value="{$i18nPlainValues['optionName']}" required autofocus class="long">
 					{if $errorField == 'optionName'}
 						<small class="innerError">
 							{if $errorType == 'multilingual'}
@@ -67,7 +67,7 @@
 				<dd>
 					<select name="categoryName" id="categoryName">
 						{foreach from=$availableCategories item=availableCategory}
-							<option value="{$availableCategory->categoryName}"{if $availableCategory->categoryName == $categoryName} selected="selected"{/if}>{lang}wcf.user.option.category.{$availableCategory->categoryName}{/lang}</option>
+							<option value="{$availableCategory->categoryName}"{if $availableCategory->categoryName == $categoryName} selected{/if}>{lang}wcf.user.option.category.{$availableCategory->categoryName}{/lang}</option>
 						{/foreach}
 					</select>
 					
@@ -84,9 +84,9 @@
 			</dl>
 			
 			<dl>
-				<dt><label for="showOrder">{lang}wcf.acp.user.option.showOrder{/lang}</label></dt>
+				<dt><label for="showOrder">{lang}wcf.global.showOrder{/lang}</label></dt>
 				<dd>
-					<input type="number" id="showOrder" name="showOrder" value="{@$showOrder}" class="short" />
+					<input type="number" id="showOrder" name="showOrder" value="{@$showOrder}" class="short">
 				</dd>
 			</dl>
 			
@@ -101,7 +101,7 @@
 				<dd>
 					<select name="optionType" id="optionType">
 						{foreach from=$availableOptionTypes item=availableOptionType}
-							<option value="{$availableOptionType}"{if $availableOptionType == $optionType} selected="selected"{/if}>{$availableOptionType}</option>
+							<option value="{$availableOptionType}"{if $availableOptionType == $optionType} selected{/if}>{$availableOptionType}</option>
 						{/foreach}
 					</select>
 					{if $errorField == 'optionType'}
@@ -120,7 +120,7 @@
 			<dl>
 				<dt><label for="defaultValue">{lang}wcf.acp.user.option.defaultValue{/lang}</label></dt>
 				<dd>
-					<input type="text" id="defaultValue" name="defaultValue" value="{$defaultValue}" class="long" />
+					<input type="text" id="defaultValue" name="defaultValue" value="{$defaultValue}" class="long">
 					<small>{lang}wcf.acp.user.option.defaultValue.description{/lang}</small>
 				</dd>
 			</dl>
@@ -145,7 +145,7 @@
 			<dl{if $errorField == 'outputClass'} class="formError"{/if}>
 				<dt><label for="outputClass">{lang}wcf.acp.user.option.outputClass{/lang}</label></dt>
 				<dd>
-					<input type="text" id="outputClass" name="outputClass" value="{$outputClass}" class="long" />
+					<input type="text" id="outputClass" name="outputClass" value="{$outputClass}" class="long">
 					{if $errorField == 'outputClass'}
 						<small class="innerError">
 							{if $errorType == 'empty'}
@@ -169,10 +169,10 @@
 				<dt><label for="editable">{lang}wcf.acp.user.option.editable{/lang}</label></dt>
 				<dd>
 					<select name="editable" id="editable">
-						<option value="1"{if $editable == 1} selected="selected"{/if}>{lang}wcf.acp.user.option.editable.1{/lang}</option>
-						<option value="2"{if $editable == 2} selected="selected"{/if}>{lang}wcf.acp.user.option.editable.2{/lang}</option>
-						<option value="3"{if $editable == 3} selected="selected"{/if}>{lang}wcf.acp.user.option.editable.3{/lang}</option>
-						<option value="6"{if $editable == 6} selected="selected"{/if}>{lang}wcf.acp.user.option.editable.6{/lang}</option>
+						<option value="1"{if $editable == 1} selected{/if}>{lang}wcf.acp.user.option.editable.1{/lang}</option>
+						<option value="2"{if $editable == 2} selected{/if}>{lang}wcf.acp.user.option.editable.2{/lang}</option>
+						<option value="3"{if $editable == 3} selected{/if}>{lang}wcf.acp.user.option.editable.3{/lang}</option>
+						<option value="6"{if $editable == 6} selected{/if}>{lang}wcf.acp.user.option.editable.6{/lang}</option>
 					</select>
 				</dd>
 			</dl>
@@ -181,12 +181,12 @@
 				<dt><label for="visible">{lang}wcf.acp.user.option.visible{/lang}</label></dt>
 				<dd>
 					<select name="visible" id="visible">
-						<option value="0"{if $visible == 0} selected="selected"{/if}>{lang}wcf.acp.user.option.visible.0{/lang}</option>
-						<option value="1"{if $visible == 1} selected="selected"{/if}>{lang}wcf.acp.user.option.visible.1{/lang}</option>
-						<option value="2"{if $visible == 2} selected="selected"{/if}>{lang}wcf.acp.user.option.visible.2{/lang}</option>
-						<option value="3"{if $visible == 3} selected="selected"{/if}>{lang}wcf.acp.user.option.visible.3{/lang}</option>
-						<option value="7"{if $visible == 7} selected="selected"{/if}>{lang}wcf.acp.user.option.visible.7{/lang}</option>
-						<option value="15"{if $visible == 15} selected="selected"{/if}>{lang}wcf.acp.user.option.visible.15{/lang}</option>
+						<option value="0"{if $visible == 0} selected{/if}>{lang}wcf.acp.user.option.visible.0{/lang}</option>
+						<option value="1"{if $visible == 1} selected{/if}>{lang}wcf.acp.user.option.visible.1{/lang}</option>
+						<option value="2"{if $visible == 2} selected{/if}>{lang}wcf.acp.user.option.visible.2{/lang}</option>
+						<option value="3"{if $visible == 3} selected{/if}>{lang}wcf.acp.user.option.visible.3{/lang}</option>
+						<option value="7"{if $visible == 7} selected{/if}>{lang}wcf.acp.user.option.visible.7{/lang}</option>
+						<option value="15"{if $visible == 15} selected{/if}>{lang}wcf.acp.user.option.visible.15{/lang}</option>
 					</select>
 				</dd>
 			</dl>
@@ -194,7 +194,7 @@
 			<dl{if $errorField == 'validationPattern'} class="formError"{/if}>
 				<dt><label for="validationPattern">{lang}wcf.acp.user.option.validationPattern{/lang}</label></dt>
 				<dd>
-					<input type="text" id="validationPattern" name="validationPattern" value="{$validationPattern}" class="long" />
+					<input type="text" id="validationPattern" name="validationPattern" value="{$validationPattern}" class="long">
 					{if $errorField == 'validationPattern'}
 						<small class="innerError">
 							{if $errorType == 'empty'}
@@ -211,9 +211,9 @@
 			<dl>
 				<dt></dt>
 				<dd>
-					<label><input type="checkbox" name="required" id="required" value="1" {if $required == 1}checked="checked" {/if}/> {lang}wcf.acp.user.option.required{/lang}</label>
-					<label><input type="checkbox" name="askDuringRegistration" id="askDuringRegistration" value="1" {if $askDuringRegistration == 1}checked="checked" {/if}/> {lang}wcf.acp.user.option.askDuringRegistration{/lang}</label>
-					<label><input type="checkbox" name="searchable" id="searchable" value="1" {if $searchable == 1}checked="checked" {/if}/> {lang}wcf.acp.user.option.searchable{/lang}</label>
+					<label><input type="checkbox" name="required" id="required" value="1"{if $required == 1} checked{/if}> {lang}wcf.acp.user.option.required{/lang}</label>
+					<label><input type="checkbox" name="askDuringRegistration" id="askDuringRegistration" value="1"{if $askDuringRegistration == 1} checked{/if}> {lang}wcf.acp.user.option.askDuringRegistration{/lang}</label>
+					<label><input type="checkbox" name="searchable" id="searchable" value="1"{if $searchable == 1} checked{/if}> {lang}wcf.acp.user.option.searchable{/lang}</label>
 				</dd>
 			</dl>
 			
@@ -223,7 +223,7 @@
 		{event name='sections'}
 		
 		<div class="formSubmit">
-			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s">
 			{@SECURITY_TOKEN_INPUT_TAG}
 		</div>
 	</form>

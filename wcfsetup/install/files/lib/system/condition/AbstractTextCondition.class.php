@@ -9,9 +9,7 @@ use wcf\util\StringUtil;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.condition
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Condition
  */
 abstract class AbstractTextCondition extends AbstractSingleFieldCondition {
 	/**
@@ -41,7 +39,7 @@ abstract class AbstractTextCondition extends AbstractSingleFieldCondition {
 	 * @inheritDoc
 	 */
 	protected function getFieldElement() {
-		return '<input type="text" name="'.$this->fieldName.'" value="'.StringUtil::encodeHTML($this->fieldValue).'" class="long" />';
+		return '<input type="text" name="'.$this->fieldName.'" value="'.StringUtil::encodeHTML($this->fieldValue).'" class="long">';
 	}
 	
 	/**

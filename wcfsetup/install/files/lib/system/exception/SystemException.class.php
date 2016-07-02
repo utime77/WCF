@@ -5,11 +5,9 @@ namespace wcf\system\exception;
  * A SystemException is thrown when an unexpected error occurs.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.exception
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Exception
  */
 class SystemException extends LoggedException {
 	/**
@@ -53,7 +51,7 @@ class SystemException extends LoggedException {
 	}
 	
 	/**
-	 * @see	\wcf\system\exception\IPrintableException::show()
+	 * @inheritDoc
 	 */
 	public function show() { }
 }

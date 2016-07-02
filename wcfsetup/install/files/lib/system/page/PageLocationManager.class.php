@@ -12,10 +12,8 @@ use wcf\system\SingletonFactory;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.page
- * @category	Community Framework
- * @since       2.2
+ * @package	WoltLabSuite\Core\System\Page
+ * @since	3.0
  */
 class PageLocationManager extends SingletonFactory {
 	/**
@@ -66,12 +64,13 @@ class PageLocationManager extends SingletonFactory {
 	 * Appends a parent location to the stack, the later it is added the lower
 	 * is its assumed priority when matching suitable menu items.
 	 * 
-	 * @param	string		        $identifier	        internal page identifier
-	 * @param	integer		        $pageObjectID	        page object id
-	 * @param       ITitledLinkObject       $locationObject         optional label for breadcrumbs usage
+	 * @param	string			$identifier		internal page identifier
+	 * @param	integer			$pageObjectID		page object id
+	 * @param	ITitledLinkObject	$locationObject		optional label for breadcrumbs usage
+	 * @param       boolean                 $useAsParentLocation
 	 * @throws	SystemException
 	 */
-	public function addParentLocation($identifier, $pageObjectID = 0, ITitledLinkObject $locationObject = null) {
+	public function addParentLocation($identifier, $pageObjectID = 0, ITitledLinkObject $locationObject = null, $useAsParentLocation = false) {
 		$page = PageCache::getInstance()->getPageByIdentifier($identifier);
 		if ($page === null) {
 			throw new SystemException("Unknown page identifier '".$identifier."'.");
@@ -98,7 +97,8 @@ class PageLocationManager extends SingletonFactory {
 			'link' => $link,
 			'pageID' => $page->pageID,
 			'pageObjectID' => $pageObjectID,
-			'title' => $title
+			'title' => $title,
+			'useAsParentLocation' => $useAsParentLocation
 		];
 	}
 	

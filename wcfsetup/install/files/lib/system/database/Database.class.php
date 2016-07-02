@@ -1,6 +1,7 @@
 <?php
 namespace wcf\system\database;
 use wcf\system\benchmark\Benchmark;
+use wcf\system\database\editor\DatabaseEditor;
 use wcf\system\database\exception\DatabaseException as GenericDatabaseException;
 use wcf\system\database\exception\DatabaseQueryException;
 use wcf\system\database\exception\DatabaseTransactionException;
@@ -11,24 +12,22 @@ use wcf\system\WCF;
  * Abstract implementation of a database access class using PDO.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.database
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Database
  */
 abstract class Database {
 	/**
 	 * name of the class used for prepared statements
 	 * @var	string
 	 */
-	protected $preparedStatementClassName = 'wcf\system\database\statement\PreparedStatement';
+	protected $preparedStatementClassName = PreparedStatement::class;
 	
 	/**
 	 * name of the database editor class
 	 * @var	string
 	 */
-	protected $editorClassName = 'wcf\system\database\editor\DatabaseEditor';
+	protected $editorClassName = DatabaseEditor::class;
 	
 	/**
 	 * sql server hostname
@@ -98,6 +97,7 @@ abstract class Database {
 	 * @param	string		$password		SQL database server password
 	 * @param	string		$database		SQL database server database name
 	 * @param	integer		$port			SQL database server port
+	 * @param	boolean		$failsafeTest
 	 */
 	public function __construct($host, $user, $password, $database, $port, $failsafeTest = false) {
 		$this->host = $host;

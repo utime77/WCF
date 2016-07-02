@@ -16,9 +16,11 @@ use wcf\system\WCF;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.ignore
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Ignore
+ * 
+ * @method	UserIgnore		create()
+ * @method	UserIgnoreEditor[]	getObjects()
+ * @method	UserIgnoreEditor	getSingleObject()
  */
 class UserIgnoreAction extends AbstractDatabaseObjectAction {
 	/**
@@ -50,15 +52,15 @@ class UserIgnoreAction extends AbstractDatabaseObjectAction {
 			UserIgnoreEditor::create([
 				'ignoreUserID' => $this->parameters['data']['userID'],
 				'time' => TIME_NOW,
-				'userID' => WCF::getUser()->userID,
+				'userID' => WCF::getUser()->userID
 			]);
 			
 			UserStorageHandler::getInstance()->reset([WCF::getUser()->userID], 'ignoredUserIDs');
 			
 			// check if target user is following the current user
-			$sql = "SELECT  *
-				FROM    wcf".WCF_N."_user_follow
-				WHERE   userID = ?
+			$sql = "SELECT	*
+				FROM	wcf".WCF_N."_user_follow
+				WHERE	userID = ?
 					AND followUserID = ?";
 			$statement = WCF::getDB()->prepareStatement($sql);
 			$statement->execute([
@@ -113,7 +115,7 @@ class UserIgnoreAction extends AbstractDatabaseObjectAction {
 	}
 	
 	/**
-	 * @see	\wcf\data\AbstractDatabaseObjectAction::validateDelete()
+	 * @inheritDoc
 	 */
 	public function validateDelete() {
 		// read objects
@@ -126,7 +128,7 @@ class UserIgnoreAction extends AbstractDatabaseObjectAction {
 		}
 		
 		// validate ownership
-		foreach ($this->objects as $ignore) {
+		foreach ($this->getObjects() as $ignore) {
 			if ($ignore->userID != WCF::getUser()->userID) {
 				throw new PermissionDeniedException();
 			}
@@ -134,7 +136,7 @@ class UserIgnoreAction extends AbstractDatabaseObjectAction {
 	}
 	
 	/**
-	 * @see	\wcf\data\AbstractDatabaseObjectAction::delete()
+	 * @inheritDoc
 	 */
 	public function delete() {
 		$returnValues = parent::delete();

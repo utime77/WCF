@@ -16,9 +16,7 @@ use wcf\util\ArrayUtil;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.condition
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Condition
  */
 class UserGroupCondition extends AbstractMultipleFieldsCondition implements IContentCondition, IObjectListCondition, IUserCondition {
 	use TObjectListUserCondition;
@@ -144,7 +142,8 @@ HTML;
 		
 		$returnValue = "";
 		foreach ($userGroups as $userGroup) {
-			$returnValue .= "<label><input type=\"checkbox\" name=\"".$identifier."[]\" value=\"".$userGroup->groupID."\"".(in_array($userGroup->groupID, $this->$identifier) ? ' checked="checked"' : "")." /> ".$userGroup->getName()."</label>";
+			/** @noinspection PhpVariableVariableInspection */
+			$returnValue .= "<label><input type=\"checkbox\" name=\"".$identifier."[]\" value=\"".$userGroup->groupID."\"".(in_array($userGroup->groupID, $this->$identifier) ? ' checked' : "")."> ".$userGroup->getName()."</label>";
 		}
 		
 		return $returnValue;

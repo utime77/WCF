@@ -15,9 +15,7 @@ use wcf\system\WCF;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.comment.response
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Comment\Response
  * 
  * @method	CommentResponse		getDecoratedObject()
  * @mixin	CommentResponse
@@ -64,10 +62,9 @@ class LikeableCommentResponse extends AbstractLikeObject {
 	 * @inheritDoc
 	 */
 	public function sendNotification(Like $like) {
-		$comment = new Comment($this->object->commentID);
+		$comment = new Comment($this->getDecoratedObject()->commentID);
 		$objectType = CommentHandler::getInstance()->getObjectType($comment->objectTypeID);
 		if (UserNotificationHandler::getInstance()->getObjectTypeID($objectType->objectType.'.response.like.notification')) {
-			$notificationObjectType = UserNotificationHandler::getInstance()->getObjectTypeProcessor($objectType->objectType.'.response.like.notification');
 			if ($this->userID != WCF::getUser()->userID) {
 				$notificationObject = new LikeUserNotificationObject($like);
 				UserNotificationHandler::getInstance()->fireEvent('like', $objectType->objectType.'.response.like.notification', $notificationObject, [$this->userID], [

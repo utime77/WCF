@@ -8,21 +8,19 @@ use wcf\system\WCF;
  * Clipboard action implementation for media files.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.clipboard.action
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Clipboard\Action
+ * @since	3.0
  */
 class MediaClipboardAction extends AbstractClipboardAction {
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected $actionClassActions = ['delete'];
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected $supportedActions = [
 		'delete',
@@ -30,7 +28,7 @@ class MediaClipboardAction extends AbstractClipboardAction {
 	];
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function execute(array $objects, ClipboardAction $action) {
 		$item = parent::execute($objects, $action);
@@ -52,14 +50,14 @@ class MediaClipboardAction extends AbstractClipboardAction {
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function getClassName() {
 		return MediaAction::class;
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function getTypeName() {
 		return 'com.woltlab.wcf.media';

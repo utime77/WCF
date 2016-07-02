@@ -11,12 +11,12 @@ use wcf\util\StringUtil;
  * Shows the list of media entries.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.page
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Page
+ * @since	3.0
+ * 
+ * @property	ViewableMediaList	$objectList
  */
 class MediaListPage extends SortablePage {
 	/**

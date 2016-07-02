@@ -25,8 +25,8 @@ define(['Core', 'Dictionary', 'Language', 'ObjectMap', 'StringUtil', 'Dom/Traver
 		 * Initializes an input field.
 		 * 
 		 * @param	{string}			elementId		input element id
-		 * @param	{object<integer, string>}	values			preset values per language id
-		 * @param	{object<integer, string>}	availableLanguages	language names per language id
+		 * @param	{object<int, string>}		values			preset values per language id
+		 * @param	{object<int, string>}		availableLanguages	language names per language id
 		 * @param	{boolean}			forceSelection		require i18n input
 		 */
 		init: function(elementId, values, availableLanguages, forceSelection) {
@@ -71,7 +71,7 @@ define(['Core', 'Dictionary', 'Language', 'ObjectMap', 'StringUtil', 'Dom/Traver
 		 * @param	{string}			elementId		input element id
 		 * @param	{Element}			element			input or textarea element
 		 * @param	{Dictionary}			values			preset values per language id
-		 * @param	{object<integer, string>}	availableLanguages	language names per language id
+		 * @param	{object<int, string>}		availableLanguages	language names per language id
 		 * @param	{boolean}			forceSelection		require i18n input
 		 */
 		_initElement: function(elementId, element, values, availableLanguages, forceSelection) {
@@ -120,7 +120,7 @@ define(['Core', 'Dictionary', 'Language', 'ObjectMap', 'StringUtil', 'Dom/Traver
 					span.textContent = availableLanguages[languageId];
 					
 					listItem.appendChild(span);
-					listItem.addEventListener('click', callbackClick);
+					listItem.addEventListener(WCF_CLICK_EVENT, callbackClick);
 					dropdownMenu.appendChild(listItem);
 				}
 			}
@@ -135,7 +135,7 @@ define(['Core', 'Dictionary', 'Language', 'ObjectMap', 'StringUtil', 'Dom/Traver
 				span = elCreate('span');
 				span.textContent = Language.get('wcf.global.button.disabledI18n');
 				listItem.appendChild(span);
-				listItem.addEventListener('click', callbackClick);
+				listItem.addEventListener(WCF_CLICK_EVENT, callbackClick);
 				dropdownMenu.appendChild(listItem);
 			}
 			
@@ -183,7 +183,7 @@ define(['Core', 'Dictionary', 'Language', 'ObjectMap', 'StringUtil', 'Dom/Traver
 		 * Selects a language or non-i18n from the dropdown list.
 		 * 
 		 * @param	{string}	elementId	input element id
-		 * @param	{integer}	languageId	language id or `0` to disable i18n
+		 * @param	{int}		languageId	language id or `0` to disable i18n
 		 * @param	{boolean}	isInit		triggers pre-selection on init
 		 */
 		_select: function(elementId, languageId, isInit) {

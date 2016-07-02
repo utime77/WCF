@@ -9,21 +9,20 @@ use wcf\system\WCF;
  * Requeues stuck queue items.
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.cronjob
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Cronjob
+ * @since	3.0
  */
 class BackgroundQueueCleanUpCronjob extends AbstractCronjob {
 	/**
-	 * @see	\wcf\system\cronjob\ICronjob::execute()
+	 * @inheritDoc
 	 */
 	public function execute(Cronjob $cronjob) {
 		parent::execute($cronjob);
 		
 		WCF::getDB()->beginTransaction();
+		/** @noinspection PhpUnusedLocalVariableInspection */
 		$commited = false;
 		try {
 			$sql = "SELECT		jobID, job

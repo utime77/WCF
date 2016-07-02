@@ -1,9 +1,7 @@
-{capture assign='pageTitle'}{lang}wcf.user.notification.notifications{/lang} - {lang}wcf.user.usercp{/lang}{/capture}
-
 {capture assign='contentHeader'}
 	<header class="contentHeader">
 		<div class="contentHeaderTitle">
-			<h1 class="contentTitle">{lang}wcf.user.notification.notifications{/lang} <span class="badge jsNotificationsBadge">{#$__wcf->getUserNotificationHandler()->countAllNotifications()}</span></h1>
+			<h1 class="contentTitle">{$__wcf->getActivePage()->getTitle()} <span class="badge jsNotificationsBadge">{#$__wcf->getUserNotificationHandler()->countAllNotifications()}</span></h1>
 		</div>
 		
 		{hascontent}
@@ -17,6 +15,14 @@
 			</nav>
 		{/hascontent}
 	</header>
+{/capture}
+
+{capture assign='headContent'}
+	<link rel="alternate" type="application/rss+xml" title="{lang}wcf.global.button.rss{/lang}" href="{link controller='NotificationFeed' appendSession=false}at={@$__wcf->getUser()->userID}-{@$__wcf->getUser()->accessToken}{/link}">
+{/capture}
+
+{capture assign='headerNavigation'}
+	<li><a rel="alternate" href="{link controller='NotificationFeed' appendSession=false}at={@$__wcf->getUser()->userID}-{@$__wcf->getUser()->accessToken}{/link}" title="{lang}wcf.global.button.rss{/lang}" class="jsTooltip"><span class="icon icon16 fa-rss"></span> <span class="invisible">{lang}wcf.global.button.rss{/lang}</span></a></li>
 {/capture}
 
 {include file='userMenuSidebar'}

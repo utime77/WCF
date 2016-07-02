@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package name="com.woltlab.wcf" xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/maelstrom/package.xsd">
 	<packageinformation>
-		<packagename>WoltLab Community Framework</packagename>
-		<packagedescription><![CDATA[Free web-framework, designed and developed for complex community applications.]]></packagedescription>
-		<packagedescription language="de"><![CDATA[Freies Web-Framework, das für komplexe Community-Anwendungen entworfen und entwickelt wurde.]]></packagedescription>
+		<packagename>WoltLab Suite Core</packagename>
+		<packagedescription><![CDATA[Free CMS and web-framework, designed for awesome websites and communities.]]></packagedescription>
+		<packagedescription language="de"><![CDATA[Freies CMS und Web-Framework, das eindrucksvolle Websites und Communities ermöglicht.]]></packagedescription>
 		<isapplication>1</isapplication>
-		<version>2.2.0 Alpha 2</version> <!-- codename: vortex -->
-		<date>2015-10-22</date>
+		<version>3.0.0 Alpha 2</version> <!-- codename: vortex -->
+		<date>2016-06-14</date>
 	</packageinformation>
 	
 	<authorinformation>
@@ -32,7 +32,6 @@
 		<instruction type="userOption" />
 		<instruction type="bbcode" />
 		<instruction type="smiley" />
-		<instruction type="sitemap" />
 		<instruction type="userProfileMenu" />
 		<instruction type="userMenu" />
 		<instruction type="userNotificationEvent" />
@@ -49,5 +48,5 @@
 		<instruction type="menuItem" />
 	</instructions>
 	
-	<!-- TODO for updates: remember update_com.woltlab.wcf_2.2.0.php -->
+	<!-- TODO for updates: remember update_com.woltlab.wcf_3.0.0.php -->
 </package>

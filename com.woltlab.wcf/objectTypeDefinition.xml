@@ -6,6 +6,10 @@
 		</definition>
 		
 		<definition>
+			<name>com.woltlab.wcf.acl.simple</name>
+		</definition>
+		
+		<definition>
 			<name>com.woltlab.wcf.collapsibleContent</name>
 		</definition>
 		
@@ -146,10 +150,6 @@
 		</definition>
 		
 		<definition>
-			<name>com.woltlab.wcf.page</name>
-		</definition>
-		
-		<definition>
 			<name>com.woltlab.wcf.condition.notice</name>
 			<interfacename><![CDATA[wcf\system\condition\IContentCondition]]></interfacename>
 		</definition>
@@ -212,7 +212,18 @@
 			<interfacename>wcf\system\box\IBoxController</interfacename>
 		</definition>
 		
+		<!-- box conditions -->
+		<definition>
+			<name>com.woltlab.wcf.box.articleList.condition</name>
+			<interfacename>wcf\system\condition\IObjectListCondition</interfacename>
+		</definition>
+		<!-- /box conditions -->
+		
 		<!-- deprecated -->
+		<definition>
+			<name>com.woltlab.wcf.page</name>
+		</definition>
+		
 		<definition>
 			<name>com.woltlab.wcf.user.online.location</name>
 			<interfacename><![CDATA[wcf\system\user\online\location\IUserOnlineLocation]]></interfacename>

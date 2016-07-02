@@ -3,6 +3,7 @@ namespace wcf\data\user\option;
 use wcf\data\user\User;
 use wcf\data\DatabaseObjectDecorator;
 use wcf\system\cache\builder\UserOptionCacheBuilder;
+use wcf\system\exception\ImplementationException;
 use wcf\system\exception\SystemException;
 use wcf\system\option\user\IUserOptionOutput;
 use wcf\util\StringUtil;
@@ -13,9 +14,7 @@ use wcf\util\StringUtil;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.option
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Option
  * 
  * @method	UserOption	getDecoratedObject()
  * @mixin	UserOption
@@ -30,13 +29,13 @@ class ViewableUserOption extends DatabaseObjectDecorator {
 	 * list of output objects
 	 * @var	IUserOptionOutput[]
 	 */
-	public static $outputObjects = array();
+	public static $outputObjects = [];
 	
 	/**
 	 * cached user options
 	 * @var	ViewableUserOption[]
 	 */
-	public static $userOptions = array();
+	public static $userOptions = [];
 	
 	/**
 	 * user option value
@@ -78,7 +77,7 @@ class ViewableUserOption extends DatabaseObjectDecorator {
 			
 			// validate interface
 			if (!is_subclass_of($this->outputClass, IUserOptionOutput::class)) {
-				throw new SystemException("'".$this->outputClass."' does not implement '".IUserOptionOutput::class."'");
+				throw new ImplementationException($this->outputClass, IUserOptionOutput::class);
 			}
 			
 			self::$outputObjects[$this->outputClass] = new $this->outputClass();
@@ -95,7 +94,7 @@ class ViewableUserOption extends DatabaseObjectDecorator {
 	 */
 	public static function getUserOption($name) {
 		if (!isset(self::$userOptions[$name])) {
-			$options = UserOptionCacheBuilder::getInstance()->getData(array(), 'options');
+			$options = UserOptionCacheBuilder::getInstance()->getData([], 'options');
 			self::$userOptions[$name] = new ViewableUserOption($options[$name]);
 		}
 		

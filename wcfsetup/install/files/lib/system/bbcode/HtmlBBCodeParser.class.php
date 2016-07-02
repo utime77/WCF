@@ -16,9 +16,8 @@ use wcf\util\StringUtil;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.bbcode
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Bbcode
+ * @since	3.0
  */
 class HtmlBBCodeParser extends BBCodeParser {
 	/**
@@ -62,7 +61,7 @@ class HtmlBBCodeParser extends BBCodeParser {
 		$buffer =& $this->parsedText;
 		
 		// stack of buffered tags
-		$bufferedTagStack = array();
+		$bufferedTagStack = [];
 		
 		// loop through the tags
 		$i = -1;
@@ -141,12 +140,98 @@ class HtmlBBCodeParser extends BBCodeParser {
 	}
 	
 	/**
+	 * Builds the bbcode output.
+	 * 
+	 * @param	string		$name		bbcode identifier
+	 * @param	array		$attributes	list of attributes
+	 * @return	string		parsed bbcode
+	 */
+	public function getHtmlOutput($name, array $attributes) {
+		if (isset($this->bbcodes[$name])) {
+			$openingTag = ['attributes' => $attributes, 'name' => $name];
+			$closingTag = ['name' => $name];
+			
+			if ($this->bbcodes[$name]->getProcessor()) {
+				/** @var IBBCode $processor */
+				$processor = $this->bbcodes[$name]->getProcessor();
+				return $processor->getParsedTag($openingTag, '<!-- META_CODE_INNER_CONTENT -->', $closingTag, $this);
+			}
+			else {
+				return parent::buildOpeningTag($openingTag) . '<!-- META_CODE_INNER_CONTENT -->' . parent::buildClosingTag($closingTag);
+			}
+		}
+		
+		// unknown bbcode, output plain tags
+		return $this->buildBBCodeTag($name, $attributes);
+	}
+	
+	/**
+	 * Builds a plain bbcode string, used for unknown bbcodes.
+	 * 
+	 * @param	string		$name			bbcode identifier
+	 * @param	array		$attributes		list of attributes
+	 * @param	boolean		$openingTagOnly		only render the opening tag
+	 * @return	string
+	 */
+	public function buildBBCodeTag($name, $attributes, $openingTagOnly = false) {
+		if (!empty($attributes)) {
+			foreach ($attributes as &$attribute) {
+				$attribute = "'" . addcslashes($attribute, "'") . "'";
+			}
+			unset($attribute);
+			
+			$attributes = '=' . implode(",", $attributes);
+		}
+		else {
+			$attributes = '';
+		}
+		
+		if ($openingTagOnly) {
+			return '[' . $name . $attributes . ']';
+		}
+		
+		return '[' . $name . $attributes . ']<!-- META_CODE_INNER_CONTENT -->[/' . $name . ']';
+	}
+	
+	/**
+	 * Returns the list of bbcodes that represent block elements.
+	 * 
+	 * @return	string[]	list of bbcode block elements
+	 */
+	public function getBlockBBCodes() {
+		$bbcodes = [];
+		foreach ($this->bbcodes as $name => $bbcode) {
+			if ($bbcode->isBlockElement) {
+				$bbcodes[] = $name;
+			}
+		}
+		
+		return $bbcodes;
+	}
+	
+	/**
+	 * Returns the list of bbcodes that represent source code elements.
+	 * 
+	 * @return	string[]	list of bbcode source code elements
+	 */
+	public function getSourceBBCodes() {
+		$bbcodes = [];
+		foreach ($this->bbcodes as $name => $bbcode) {
+			if ($bbcode->isSourceCode) {
+				$bbcodes[] = $name;
+			}
+		}
+		
+		return $bbcodes;
+	}
+	
+	/**
 	 * Compiles tag fragments into the custom HTML element.
 	 * 
-	 * @param       array   $openingTag     opening tag data
-	 * @param       string  $content        content between opening and closing tag
-	 * @param       array   $closingTag     closing tag data
-	 * @return      string  custom HTML element
+	 * @param	array   $openingTag	opening tag data
+	 * @param	string  $content	content between opening and closing tag
+	 * @param	array   $closingTag	closing tag data
+	 * @return	string  custom HTML element
 	 */
 	protected function compileTag(array $openingTag, $content, array $closingTag) {
 		return $this->buildOpeningTag($openingTag) . $content . $this->buildClosingTag($closingTag);
@@ -169,6 +254,15 @@ class HtmlBBCodeParser extends BBCodeParser {
 		
 		$attributes = '';
 		if (!empty($tag['attributes'])) {
+			// strip outer quote tags
+			$tag['attributes'] = array_map(function($attribute) {
+				if (preg_match('~^([\'"])(?P<content>.*)(\1)$~', $attribute, $matches)) {
+					return $matches['content'];
+				}
+				
+				return $attribute;
+			}, $tag['attributes']);
+			
 			// uses base64 encoding to avoid an "escape" nightmare
 			$attributes = ' data-attributes="' . base64_encode(JSON::encode($tag['attributes'])) . '"';
 		}
@@ -196,8 +290,8 @@ class HtmlBBCodeParser extends BBCodeParser {
 	/**
 	 * Returns true if provided name is a valid bbcode identifier.
 	 * 
-	 * @param       string          $name           bbcode identifier
-	 * @return      boolean         true if provided name is a valid bbcode identifier
+	 * @param	string		$name		bbcode identifier
+	 * @return	boolean		true if provided name is a valid bbcode identifier
 	 */
 	protected function isValidBBCodeName($name) {
 		return preg_match($this->validBBCodePattern, $name) === 1;

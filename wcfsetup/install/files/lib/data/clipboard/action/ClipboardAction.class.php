@@ -6,11 +6,9 @@ use wcf\data\DatabaseObject;
  * Represents a clipboard action.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.clipboard.action
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Clipboard\Action
  *
  * @property-read	integer		$actionID
  * @property-read	integer		$packageID
@@ -20,12 +18,12 @@ use wcf\data\DatabaseObject;
  */
 class ClipboardAction extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'clipboard_action';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'actionID';
 }

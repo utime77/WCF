@@ -1,6 +1,7 @@
 <?php
 namespace wcf\data\clipboard\item;
 use wcf\data\AbstractDatabaseObjectAction;
+use wcf\system\clipboard\ClipboardEditorItem;
 use wcf\system\clipboard\ClipboardHandler;
 use wcf\system\event\EventHandler;
 use wcf\system\exception\UserInputException;
@@ -10,12 +11,10 @@ use wcf\system\WCF;
  * Clipboard API handler.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.clipboard.item
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Data\Clipboard\Item
+ * @since	3.0
  */
 class ClipboardItemAction extends AbstractDatabaseObjectAction {
 	/**
@@ -24,13 +23,14 @@ class ClipboardItemAction extends AbstractDatabaseObjectAction {
 	 */
 	public $objectTypeID = 0;
 	
+	/** @noinspection PhpMissingParentConstructorInspection */
 	/**
 	 * This is a heavily modified constructor which behaves differently from other DBOActions,
 	 * primarily because this class just masquerades as a regular DBOAction.
 	 * 
-	 * @see	\wcf\data\AbstractDatabaseObjectAction
+	 * @inheritDoc
 	 */
-	public function __construct(array $objects, $action, array $parameters = array()) {
+	public function __construct(array $objects, $action, array $parameters = []) {
 		$this->action = $action;
 		$this->parameters = $parameters;
 		
@@ -153,6 +153,7 @@ class ClipboardItemAction extends AbstractDatabaseObjectAction {
 				'items' => []
 			];
 			
+			/** @var ClipboardEditorItem $item */
 			foreach ($itemData['items'] as $showOrder => $item) {
 				$items['items'][$showOrder] = [
 					'actionName' => $item->getName(),

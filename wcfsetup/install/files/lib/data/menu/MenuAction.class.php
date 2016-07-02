@@ -9,12 +9,13 @@ use wcf\system\exception\PermissionDeniedException;
  * Executes menu related actions.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.menu
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Data\Menu
+ * @since	3.0
+ * 
+ * @method	MenuEditor[]	getObjects()
+ * @method	MenuEditor	getSingleObject()
  */
 class MenuAction extends AbstractDatabaseObjectAction {
 	/**
@@ -43,10 +44,11 @@ class MenuAction extends AbstractDatabaseObjectAction {
 	protected $requireACP = ['create', 'delete', 'update'];
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
+	 * @return	Menu
 	 */
 	public function create() {
-		// create menu
+		/** @var Menu $menu */
 		$menu = parent::create();
 		
 		// create box
@@ -72,7 +74,7 @@ class MenuAction extends AbstractDatabaseObjectAction {
 	public function validateDelete() {
 		parent::validateDelete();
 		
-		foreach ($this->objects as $object) {
+		foreach ($this->getObjects() as $object) {
 			if (!$object->canDelete()) {
 				throw new PermissionDeniedException();
 			}

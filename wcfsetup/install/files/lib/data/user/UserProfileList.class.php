@@ -7,9 +7,7 @@ namespace wcf\data\user;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User
  *
  * @method	UserProfile		current()
  * @method	UserProfile[]		getObjects()
@@ -43,7 +41,7 @@ class UserProfileList extends UserList {
 		}
 		
 		// get current location
-		$this->sqlSelects .= ", session.controller, session.objectID AS locationObjectID, session.lastActivityTime AS sessionLastActivityTime";
+		$this->sqlSelects .= ", session.pageID, session.pageObjectID, session.lastActivityTime AS sessionLastActivityTime";
 		$this->sqlJoins .= " LEFT JOIN wcf".WCF_N."_session session ON (session.userID = user_table.userID)";
 	}
 	

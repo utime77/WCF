@@ -11,11 +11,9 @@ use wcf\system\WCF;
  * Provides functions to edit ads.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.ad
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Ad
  * 
  * @method	Ad	getDecoratedObject()
  * @mixin	Ad
@@ -32,8 +30,6 @@ class AdEditor extends DatabaseObjectEditor implements IEditableCachedObject {
 	 * @param	integer		$showOrder
 	 */
 	public function setShowOrder($showOrder = 0) {
-		$newShowOrder = 1;
-		
 		$sql = "SELECT	MAX(showOrder)
 			FROM	wcf".WCF_N."_ad";
 		$statement = WCF::getDB()->prepareStatement($sql);
@@ -50,25 +46,25 @@ class AdEditor extends DatabaseObjectEditor implements IEditableCachedObject {
 				SET	showOrder = showOrder + 1
 				WHERE	showOrder >= ?";
 			$statement = WCF::getDB()->prepareStatement($sql);
-			$statement->execute(array(
+			$statement->execute([
 				$showOrder
-			));
+			]);
 			
 			$newShowOrder = $showOrder;
 		}
 		
-		$this->update(array(
+		$this->update([
 			'showOrder' => $newShowOrder
-		));
+		]);
 	}
 	
 	/**
-	 * @see	\wcf\data\IEditableCachedObject::resetCache()
+	 * @inheritDoc
 	 */
 	public static function resetCache() {
 		AdCacheBuilder::getInstance()->reset();
-		ConditionCacheBuilder::getInstance()->reset(array(
+		ConditionCacheBuilder::getInstance()->reset([
 			'definitionID' => ObjectTypeCache::getInstance()->getDefinitionByName('com.woltlab.wcf.condition.ad')->definitionID
-		));
+		]);
 	}
 }

@@ -3,7 +3,6 @@ namespace wcf\data\media;
 use wcf\data\DatabaseObject;
 use wcf\data\ILinkableObject;
 use wcf\data\IThumbnailFile;
-use wcf\system\exception\SystemException;
 use wcf\system\request\IRouteController;
 use wcf\system\request\LinkHandler;
 use wcf\system\WCF;
@@ -12,13 +11,11 @@ use wcf\system\WCF;
  * Represents a madia file.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.media
- * @category	Community Framework
- * @since	2.2
- *
+ * @package	WoltLabSuite\Core\Data\Media
+ * @since	3.0
+ * 
  * @property-read	integer		$mediaID		unique id of the media file
  * @property-read	string		$filename		name of the physical media file
  * @property-read	integer		$filesize		size of the physical media file
@@ -54,15 +51,21 @@ class Media extends DatabaseObject implements ILinkableObject, IRouteController,
 	 * i18n media data grouped by language id for all language
 	 * @var	string[][]
 	 */
-	protected $i18nData = null;
+	protected $i18nData;
 	
 	/**
-	 * @inheritdoc
+	 * parameters used to build the link to the media file
+	 * @var	array
+	 */
+	protected $linkParameters = [];
+	
+	/**
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'media';
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'mediaID';
 
@@ -96,11 +99,20 @@ class Media extends DatabaseObject implements ILinkableObject, IRouteController,
 	/**
 	 * @inheritDoc
 	 */
-	public function getLink() {
-		return LinkHandler::getInstance()->getLink('Media', [
+	public function getLink($articleID = null, $boxID = null, $messageObjectType = null, $messageID = null) {
+		return LinkHandler::getInstance()->getLink('Media', array_merge($this->linkParameters, [
 			'forceFrontend' => true,
 			'object' => $this
-		]);
+		]));
+	}
+	
+	/**
+	 * Sets additional parameters used to build the link to the media file.
+	 * 
+	 * @param	array		$parameters
+	 */
+	public function setLinkParameters(array $parameters) {
+		$this->linkParameters = $parameters;
 	}
 	
 	/**
@@ -115,14 +127,56 @@ class Media extends DatabaseObject implements ILinkableObject, IRouteController,
 	 */
 	public function getThumbnailLink($size) {
 		if (!isset(self::$thumbnailSizes[$size])) {
-			throw new SystemException("Unknown thumbnail size '".$size."'");
+			throw new \InvalidArgumentException("Unknown thumbnail size '".$size."'");
 		}
 		
-		return LinkHandler::getInstance()->getLink('Media', [
+		if (!$this->{$size.'ThumbnailType'}) {
+			return $this->getLink();
+		}
+		
+		return LinkHandler::getInstance()->getLink('Media', array_merge($this->linkParameters, [
 			'forceFrontend' => true,
 			'object' => $this,
 			'thumbnail' => $size
-		]);
+		]));
+	}
+	
+	/**
+	 * Returns the width of the thumbnail file with the given size.
+	 *
+	 * @param	string		$size
+	 * @return	integer
+	 * @throws	\InvalidArgumentException
+	 */
+	public function getThumbnailWidth($size) {
+		if (!isset(self::$thumbnailSizes[$size])) {
+			throw new \InvalidArgumentException("Unknown thumbnail size '".$size."'");
+		}
+		
+		if ($this->{$size.'ThumbnailType'}) {
+			return $this->{$size.'ThumbnailWidth'};
+		}
+		
+		return $this->width;
+	}
+	
+	/**
+	 * Returns the height of the thumbnail file with the given size.
+	 *
+	 * @param	string		$size
+	 * @return	integer
+	 * @throws	\InvalidArgumentException
+	 */
+	public function getThumbnailHeight($size) {
+		if (!isset(self::$thumbnailSizes[$size])) {
+			throw new \InvalidArgumentException("Unknown thumbnail size '".$size."'");
+		}
+		
+		if ($this->{$size.'ThumbnailType'}) {
+			return $this->{$size.'ThumbnailHeight'};
+		}
+		
+		return $this->height;
 	}
 	
 	/**
@@ -130,7 +184,7 @@ class Media extends DatabaseObject implements ILinkableObject, IRouteController,
 	 */
 	public function getThumbnailLocation($size) {
 		if (!isset(self::$thumbnailSizes[$size])) {
-			throw new SystemException("Unknown thumbnail size '".$size."'");
+			throw new \InvalidArgumentException("Unknown thumbnail size '".$size."'");
 		}
 		
 		return self::getStorage().substr($this->fileHash, 0, 2).'/'.$this->mediaID.'-'.$size.'-'.$this->fileHash;

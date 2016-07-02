@@ -636,7 +636,7 @@ $.fn.extend({
 });
 
 /**
- * WoltLab Community Framework core methods
+ * WoltLab Suite Core methods
  */
 $.extend(WCF, {
 	/**
@@ -838,7 +838,7 @@ WCF.Browser = {
 /**
  * Dropdown API
  * 
- * @deprecated	2.2 - please use `Ui/SimpleDropdown` instead
+ * @deprecated	3.0 - please use `Ui/SimpleDropdown` instead
  */
 WCF.Dropdown = {
 	/**
@@ -1197,6 +1197,15 @@ WCF.Dropdown.Interactive.Instance = Class.extend({
 	},
 	
 	/**
+	 * Returns true if dropdown instance is visible.
+	 * 
+	 * @returns     {boolean}
+	 */
+	isOpen: function() {
+		return this._triggerElement.hasClass('open');
+	},
+	
+	/**
 	 * Toggles the dropdown state, returns true if dropdown is open afterwards, else false.
 	 * 
 	 * @return	boolean
@@ -1268,7 +1277,7 @@ WCF.Dropdown.Interactive.Instance = Class.extend({
 /**
  * Clipboard API
  * 
- * @deprecated	2.2 - please use `WoltLab/WCF/Controller/Clipboard` instead
+ * @deprecated	3.0 - please use `WoltLab/WCF/Controller/Clipboard` instead
  */
 WCF.Clipboard = {
 	/**
@@ -1407,7 +1416,7 @@ WCF.PeriodicalExecuter = Class.extend({
 /**
  * Handler for loading overlays
  * 
- * @deprecated	2.2 - Please use WoltLab/WCF/Ajax/Status
+ * @deprecated	3.0 - Please use WoltLab/WCF/Ajax/Status
  */
 WCF.LoadingOverlayHandler = {
 	/**
@@ -1452,7 +1461,7 @@ WCF.Action = {};
 /**
  * Basic implementation for AJAX-based proxyies
  * 
- * @deprecated	2.2 - please use `WoltLab/WCF/Ajax.api()` instead
+ * @deprecated	3.0 - please use `WoltLab/WCF/Ajax.api()` instead
  * 
  * @param	object		options
  */
@@ -1704,8 +1713,8 @@ WCF.Action.Delete = Class.extend({
 		var $target = $(event.currentTarget);
 		event.preventDefault();
 		
-		if ($target.data('confirmMessage')) {
-			WCF.System.Confirmation.show($target.data('confirmMessage'), $.proxy(this._execute, this), { target: $target });
+		if ($target.data('confirmMessageHtml') || $target.data('confirmMessage')) {
+			WCF.System.Confirmation.show($target.data('confirmMessageHtml') ? $target.data('confirmMessageHtml') : $target.data('confirmMessage'), $.proxy(this._execute, this), { target: $target }, undefined, $target.data('confirmMessageHtml') ? true : false);
 		}
 		else {
 			WCF.LoadingOverlayHandler.updateIcon($target);
@@ -1914,8 +1923,8 @@ WCF.Action.Toggle = Class.extend({
 		var $target = $(event.currentTarget);
 		event.preventDefault();
 		
-		if ($target.data('confirmMessage')) {
-			WCF.System.Confirmation.show($target.data('confirmMessage'), $.proxy(this._execute, this), { target: $target });
+		if ($target.data('confirmMessageHtml') || $target.data('confirmMessage')) {
+			WCF.System.Confirmation.show($target.data('confirmMessageHtml') ? $target.data('confirmMessageHtml') : $target.data('confirmMessage'), $.proxy(this._execute, this), { target: $target }, undefined, $target.data('confirmMessageHtml') ? true : false);
 		}
 		else {
 			WCF.LoadingOverlayHandler.updateIcon($target);
@@ -2109,14 +2118,14 @@ WCF.Date = {};
 /**
  * Provides a date picker for date input fields.
  * 
- * @deprecated	2.2 - no longer required
+ * @deprecated	3.0 - no longer required
  */
 WCF.Date.Picker = { init: function() {} };
 
 /**
  * Provides utility functions for date operations.
  * 
- * @deprecated	2.2 - use `DateUtil` instead
+ * @deprecated	3.0 - use `DateUtil` instead
  */
 WCF.Date.Util = {
 	/**
@@ -2125,7 +2134,7 @@ WCF.Date.Util = {
 	 * @param	Date		date
 	 * @return	integer
 	 * 
-	 * @deprecated	2.2 - use `DateUtil::gmdate()` instead
+	 * @deprecated	3.0 - use `DateUtil::gmdate()` instead
 	 */
 	gmdate: function(date) {
 		var $date = (date) ? date : new Date();
@@ -2148,7 +2157,7 @@ WCF.Date.Util = {
 	 * @param	integer		offset
 	 * @return	Date
 	 * 
-	 * @deprecated	2.2 - use `DateUtil::getTimezoneDate()` instead
+	 * @deprecated	3.0 - use `DateUtil::getTimezoneDate()` instead
 	 */
 	getTimezoneDate: function(timestamp, offset) {
 		var $date = new Date(timestamp);
@@ -3837,7 +3846,7 @@ WCF.Effect.SmoothScroll = WCF.Effect.Scroll.extend({
  * always handle clicks on your overlay's container and return 'false' to
  * prevent bubbling.
  * 
- * @deprecated	2.2 - please use `Ui/CloseOverlay` instead
+ * @deprecated	3.0 - please use `Ui/CloseOverlay` instead
  */
 WCF.CloseOverlayHandler = {
 	/**
@@ -4410,7 +4419,7 @@ WCF.Search = {};
 /**
  * Performs a quick search.
  * 
- * @deprecated  2.2 - please use `WoltLab/WCF/Ui/Search/Input` instead
+ * @deprecated  3.0 - please use `WoltLab/WCF/Ui/Search/Input` instead
  */
 WCF.Search.Base = Class.extend({
 	/**
@@ -4939,7 +4948,7 @@ WCF.Search.Base = Class.extend({
  * Provides quick search for users and user groups.
  * 
  * @see	WCF.Search.Base
- * @deprecated  2.2 - please use `WoltLab/WCF/Ui/User/Search/Input` instead
+ * @deprecated  3.0 - please use `WoltLab/WCF/Ui/User/Search/Input` instead
  */
 WCF.Search.User = WCF.Search.Base.extend({
 	/**
@@ -5252,7 +5261,7 @@ WCF.System.Page = { };
 /**
  * System notification overlays.
  * 
- * @deprecated	2.2 - please use `Ui/Notification` instead
+ * @deprecated	3.0 - please use `Ui/Notification` instead
  * 
  * @param	string		message
  * @param	string		cssClassNames
@@ -5294,7 +5303,7 @@ WCF.System.Notification = Class.extend({
 /**
  * Provides dialog-based confirmations.
  *
- * @deprecated	2.2 - please use `Ui/Confirmation` instead
+ * @deprecated	3.0 - please use `Ui/Confirmation` instead
  */
 WCF.System.Confirmation = {
 	/**
@@ -5304,14 +5313,21 @@ WCF.System.Confirmation = {
 	 * @param	object		callback
 	 * @param	object		parameters
 	 * @param	jQuery		template
+	 * @param       boolean         messageIsHtml
 	 */
-	show: function(message, callback, parameters, template) {
+	show: function(message, callback, parameters, template, messageIsHtml) {
+		if (typeof template === 'object') {
+			var $wrapper = $('<div />');
+			$wrapper.append(template);
+			template = $wrapper.html();
+		}
 		require(['Ui/Confirmation'], function(UiConfirmation) {
 			UiConfirmation.show({
 				legacyCallback: callback,
 				message: message,
 				parameters: parameters,
-				template: (typeof template === 'object' ? template.html() : '')
+				template: (template || ''),
+				messageIsHtml: (messageIsHtml === true)
 			});
 		});
 	}
@@ -5505,7 +5521,7 @@ WCF.System.Fullscreen = {
 /**
  * Provides the 'jump to page' overlay.
  * 
- * @deprecated	2.2 - use `WoltLab/WCF/Ui/Page/JumpTo` instead
+ * @deprecated	3.0 - use `WoltLab/WCF/Ui/Page/JumpTo` instead
  */
 WCF.System.PageNavigation = {
 	init: function(selector, callback) {
@@ -5592,7 +5608,7 @@ WCF.System.PushNotification = {
 /**
  * System-wide event system.
  * 
- * @deprecated	2.2 - please use `EventHandler` instead
+ * @deprecated	3.0 - please use `EventHandler` instead
  */
 WCF.System.Event = {
 	/**
@@ -7270,7 +7286,7 @@ WCF.EditableItemList = Class.extend({
  * @param       {function}                              callback                function called after a language is selected
  * @param       {boolean}                               allowEmptyValue         true if no language may be selected
  * 
- * @deprecated  2.2 - please use `WoltLab/WCF/Language/Chooser` instead
+ * @deprecated  3.0 - please use `WoltLab/WCF/Language/Chooser` instead
  */
 WCF.Language.Chooser = Class.extend({
 	/**
@@ -7778,7 +7794,7 @@ jQuery.fn.extend({
 /**
  * jQuery widget implementation of the wcf pagination.
  * 
- * @deprecated	2.2 - use `WoltLab/WCF/Ui/Pagination` instead
+ * @deprecated	3.0 - use `WoltLab/WCF/Ui/Pagination` instead
  */
 $.widget('ui.wcfPages', {
 	_api: null,
@@ -7797,7 +7813,7 @@ $.widget('ui.wcfPages', {
 	 */
 	_create: function() {
 		require(['WoltLab/WCF/Ui/Pagination'], (function(UiPagination) {
-			this._api = new UiPagination(this.element, {
+			this._api = new UiPagination(this.element[0], {
 				activePage: this.options.activePage,
 				maxPage: this.options.maxPage,
 				
@@ -8045,89 +8061,6 @@ WCF.Category.FlexibleCategoryList = Class.extend({
  * Initializes WCF.Condition namespace.
  */
 WCF.Condition = { };
-
-/**
- * Handles displaying the a form element whose visibility depends on the selected
- * page controllers.
- */
-WCF.Condition.PageControllerDependence = Class.extend({
-	/**
-	 * select list with the available page controllers
-	 * @var	jQuery
-	 */
-	_pageControllerSelection: null,
-	
-	/**
-	 * ids of page object types that support the form element
-	 * @var	array<integer>
-	 */
-	_supportedPageObjectTypeIDs: [],
-	
-	/**
-	 * Initializes a new WCF.Condition.PageControllerDependence object.
-	 * 
-	 * @param	string			inputIdentifier
-	 * @param	array<integer>		supportedPageObjectTypeIDs
-	 */
-	init: function(inputIdentifier, supportedPageObjectTypeIDs) {
-		this._supportedPageObjectTypeIDs = supportedPageObjectTypeIDs;
-		
-		this._pageControllerSelection = $('#pageControllers').change($.proxy(this._checkVisibility, this));
-		this._pageControllerContainer = this._pageControllerSelection.parents('dl:eq(0)');
-		this._fieldset = this._pageControllerContainer.parent('fieldset');
-		this._nextFieldset = this._fieldset.next('fieldset');
-		if (this._nextFieldset) {
-			this._nextFieldset.data('margin-top', this._nextFieldset.css('margin-top'));
-		}
-		
-		this._input = $('#' + inputIdentifier);
-		this._inputContainer = this._input.parents('dl:eq(0)');
-		
-		this._checkVisibility();
-	},
-	
-	/**
-	 * Checks the visibility based on the selected page controllers.
-	 */
-	_checkVisibility: function() {
-		var $selectedPageIDs = this._pageControllerSelection.val() || [ ];
-		
-		var $display = true;
-		if ($selectedPageIDs.length) {
-			for (var $i = 0, $length = $selectedPageIDs.length; $i < $length; $i++) {
-				if (this._supportedPageObjectTypeIDs.indexOf(parseInt($selectedPageIDs[$i])) == -1) {
-					$display = false;
-					break;
-				}
-			}
-		}
-		else {
-			$display = false;
-		}
-		
-		if ($display) {
-			this._inputContainer.show();
-			this._input.enable();
-			this._fieldset.show();
-			
-			if (this._nextFieldset) {
-				this._nextFieldset.css('margin-top', this._nextFieldset.data('margin-top'));
-			}
-		}
-		else {
-			this._inputContainer.hide();
-			this._input.disable();
-			
-			if (!this._fieldset.children('dl:visible').length) {
-				this._fieldset.hide();
-				
-				if (this._nextFieldset) {
-					this._nextFieldset.css('margin-top', 0);
-				}
-			}
-		}
-	}
-});
 
 /**
  * Initialize WCF.Notice namespace.

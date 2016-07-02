@@ -6,25 +6,23 @@ use wcf\system\application\ApplicationHandler;
  * Loads and displays template in the ACP.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.template
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Template
  */
 class ACPTemplateEngine extends TemplateEngine {
 	/**
-	 * @see	\wcf\system\template\TemplateEngine::$environment
+	 * @inheritDoc
 	 */
 	protected $environment = 'admin';
 	
 	/**
-	 * @see	\wcf\system\template\TemplateEngine::__construct()
+	 * @inheritDoc
 	 */
 	protected function init() {
 		parent::init();
 		
-		$this->templatePaths = array('wcf' => WCF_DIR.'acp/templates/');
+		$this->templatePaths = ['wcf' => WCF_DIR.'acp/templates/'];
 		$this->compileDir = WCF_DIR.'acp/templates/compiled/';
 		
 		if (!defined('NO_IMPORTS')) {
@@ -44,7 +42,7 @@ class ACPTemplateEngine extends TemplateEngine {
 	}
 	
 	/**
-	 * @see	\wcf\system\template\TemplateEngine::getCompiledFilename()
+	 * @inheritDoc
 	 */
 	public function getCompiledFilename($templateName, $application) {
 		$abbreviation = 'wcf';
@@ -56,7 +54,7 @@ class ACPTemplateEngine extends TemplateEngine {
 	}
 	
 	/**
-	 * @see	\wcf\system\template\TemplateEngine::setTemplateGroupID()
+	 * @inheritDoc
 	 */
 	public final function setTemplateGroupID($templateGroupID) {
 		// template groups are not supported by the acp template engine
@@ -64,7 +62,7 @@ class ACPTemplateEngine extends TemplateEngine {
 	}
 	
 	/**
-	 * @see	\wcf\system\template\TemplateEngine::getTemplateListenerCode()
+	 * @inheritDoc
 	 */
 	public function getTemplateListenerCode($templateName, $eventName) {
 		// skip template listeners within WCFSetup

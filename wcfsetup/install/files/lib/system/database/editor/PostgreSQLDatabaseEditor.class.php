@@ -7,18 +7,16 @@ use wcf\util\ArrayUtil;
  * Database editor implementation for PostgreSQL 8.0 or higher.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.database.editor
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Database\Editor
  */
 class PostgreSQLDatabaseEditor extends DatabaseEditor {
 	/**
-	 * @see	\wcf\system\database\editor\DatabaseEditor::getTableNames()
+	 * @inheritDoc
 	 */
 	public function getTableNames() {
-		$existingTables = array();
+		$existingTables = [];
 		$sql = "SELECT		tablename
 			FROM		pg_catalog.pg_tables
 			WHERE		schemaname = 'public'
@@ -32,10 +30,10 @@ class PostgreSQLDatabaseEditor extends DatabaseEditor {
 	}
 	
 	/**
-	 * @see	\wcf\system\database\editor\DatabaseEditor::getColumns()
+	 * @inheritDoc
 	 */
 	public function getColumns($tableName) {
-		$columns = array();
+		$columns = [];
 		$sql = "SELECT	pg_attribute.*, pg_type.typname, pg_constraint.contype, pg_attribute.adsrc
 			FROM	pg_attribute,
 				pg_class,
@@ -47,31 +45,31 @@ class PostgreSQLDatabaseEditor extends DatabaseEditor {
 				AND pg_attribute.attnum > 0
 				AND pg_class.relname = ?";
 		$statement = $this->dbObj->prepareStatement($sql);
-		$statement->execute(array($tableName));
+		$statement->execute([$tableName]);
 		while ($row = $statement->fetchArray()) {
-			$columns[] = array('name' => $row['attname'], 'data' => array(
+			$columns[] = ['name' => $row['attname'], 'data' => [
 				'type' => $row['typname'],
 				'length' => $row['attlen'],
 				'notNull' => $row['attnotnull'],
 				'key' => (($row['contype'] == 'p') ? 'PRIMARY' : (($row['contype'] == 'u') ? 'UNIQUE' : '')),
 				'default' => $row['adsrc'],
 				'autoIncrement' => ($row['contype'] == 'p')
-			));
+			]];
 		}
 		
 		return $columns;
 	}
 	
 	/**
-	 * @see	\wcf\system\database\editor\DatabaseEditor::getIndices()
+	 * @inheritDoc
 	 */
 	public function getIndices($tableName) {
-		$indices = array();
+		$indices = [];
 		$sql = "SELECT	indexname
 			FROM	pg_indexes
 			WHERE	tablename = ?";
 		$statement = $this->dbObj->prepareStatement($sql);
-		$statement->execute(array($tableName));
+		$statement->execute([$tableName]);
 		while ($row = $statement->fetchArray()) {
 			$indices[] = $row['indexname'];
 		}
@@ -115,9 +113,9 @@ class PostgreSQLDatabaseEditor extends DatabaseEditor {
 	}
 	
 	/**
-	 * @see	\wcf\system\database\editor\DatabaseEditor::createTable()
+	 * @inheritDoc
 	 */
-	public function createTable($tableName, $columns, $indices = array()) {
+	public function createTable($tableName, $columns, $indices = []) {
 		$columnDefinition = $indexDefinition = '';
 		
 		// build column definition
@@ -152,7 +150,7 @@ class PostgreSQLDatabaseEditor extends DatabaseEditor {
 	}
 	
 	/**
-	 * @see	\wcf\system\database\editor\DatabaseEditor::dropTable()
+	 * @inheritDoc
 	 */
 	public function dropTable($tableName) {
 		$sql = "DROP TABLE IF EXISTS ".$tableName." CASCADE";
@@ -161,7 +159,7 @@ class PostgreSQLDatabaseEditor extends DatabaseEditor {
 	}
 	
 	/**
-	 * @see	\wcf\system\database\editor\DatabaseEditor::addColumn()
+	 * @inheritDoc
 	 */
 	public function addColumn($tableName, $columnName, $columnData) {
 		$sql = "ALTER TABLE ".$tableName." ADD COLUMN ".$this->buildColumnDefinition($columnName, $columnData);
@@ -170,7 +168,7 @@ class PostgreSQLDatabaseEditor extends DatabaseEditor {
 	}
 	
 	/**
-	 * @see	\wcf\system\database\editor\DatabaseEditor::alterColumn()
+	 * @inheritDoc
 	 */
 	public function alterColumn($tableName, $oldColumnName, $newColumnName, $newColumnData) {
 		// change column name if necessary
@@ -220,7 +218,7 @@ class PostgreSQLDatabaseEditor extends DatabaseEditor {
 	}
 	
 	/**
-	 * @see	\wcf\system\database\editor\DatabaseEditor::dropColumn()
+	 * @inheritDoc
 	 */
 	public function dropColumn($tableName, $columnName) {
 		$sql = "ALTER TABLE ".$tableName." DROP COLUMN ".$columnName." CASCADE";
@@ -229,7 +227,7 @@ class PostgreSQLDatabaseEditor extends DatabaseEditor {
 	}
 	
 	/**
-	 * @see	\wcf\system\database\editor\DatabaseEditor::addIndex()
+	 * @inheritDoc
 	 */
 	public function addIndex($tableName, $indexName, $indexData) {
 		$columns = ArrayUtil::trim(explode(',', $indexData['columns']));
@@ -283,7 +281,7 @@ class PostgreSQLDatabaseEditor extends DatabaseEditor {
 	}
 	
 	/**
-	 * @see	\wcf\system\database\editor\DatabaseEditor::addIndex()
+	 * @inheritDoc
 	 */
 	public function addForeignKey($tableName, $indexName, $indexData) {
 		$sql = "ALTER TABLE ".$tableName." ADD";
@@ -310,7 +308,7 @@ class PostgreSQLDatabaseEditor extends DatabaseEditor {
 	}
 	
 	/**
-	 * @see	\wcf\system\database\editor\DatabaseEditor::dropIndex()
+	 * @inheritDoc
 	 */
 	public function dropIndex($tableName, $indexName) {
 		$sql = "DROP INDEX IF EXISTS ".$tableName."_".$indexName."_key CASCADE";
@@ -319,7 +317,7 @@ class PostgreSQLDatabaseEditor extends DatabaseEditor {
 	}
 	
 	/**
-	 * @see	\wcf\system\database\editor\DatabaseEditor::dropForeignKey()
+	 * @inheritDoc
 	 */
 	public function dropForeignKey($tableName, $indexName) {
 		// TODO: Could it be, that this method is not required because Postgre is clever enough to delete references anyway?

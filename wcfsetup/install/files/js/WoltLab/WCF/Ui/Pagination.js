@@ -2,7 +2,7 @@
  * Callback-based pagination.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
  * @module	WoltLab/WCF/Ui/Pagination
  */
@@ -12,11 +12,11 @@ define(['Core', 'Language', 'ObjectMap', 'StringUtil', 'WoltLab/WCF/Ui/Page/Jump
 	/**
 	 * @constructor
 	 */
-	function UiPagination(element, options) { this.init(element, options); };
+	function UiPagination(element, options) { this.init(element, options); }
 	UiPagination.prototype = {
 		/**
 		 * maximum number of displayed page links, should match the PHP implementation
-		 * @var	{integer}
+		 * @var	{int}
 		 */
 		SHOW_LINKS: 11,
 		
@@ -40,7 +40,6 @@ define(['Core', 'Language', 'ObjectMap', 'StringUtil', 'WoltLab/WCF/Ui/Page/Jump
 			if (typeof this._options.callbackSwitch !== 'function') this._options.callbackSwitch = null;
 			
 			this._element.classList.add('pagination');
-			this._element.classList.add('small');
 			
 			this._rebuild(this._element);
 		},
@@ -60,7 +59,7 @@ define(['Core', 'Language', 'ObjectMap', 'StringUtil', 'WoltLab/WCF/Ui/Page/Jump
 			listItem.className = 'skip';
 			list.appendChild(listItem);
 			
-			var iconClassNames = 'icon icon16 fa-angle-double-left';
+			var iconClassNames = 'icon icon16 fa-chevron-left';
 			if (this._options.activePage > 1) {
 				link = elCreate('a');
 				link.className = iconClassNames + ' jsTooltip';
@@ -68,7 +67,7 @@ define(['Core', 'Language', 'ObjectMap', 'StringUtil', 'WoltLab/WCF/Ui/Page/Jump
 				link.title = Language.get('wcf.global.page.previous');
 				listItem.appendChild(link);
 				
-				link.addEventListener('click', this.switchPage.bind(this, this._options.activePage - 1));
+				link.addEventListener(WCF_CLICK_EVENT, this.switchPage.bind(this, this._options.activePage - 1));
 			}
 			else {
 				listItem.innerHTML = '<span class="' + iconClassNames + '"></span>';
@@ -76,7 +75,7 @@ define(['Core', 'Language', 'ObjectMap', 'StringUtil', 'WoltLab/WCF/Ui/Page/Jump
 			}
 			
 			// add first page
-			list.appendChild(this._createLink(1, this._options));
+			list.appendChild(this._createLink(1));
 			
 			// calculate page links
 			var maxLinks = this.SHOW_LINKS - 4;
@@ -118,10 +117,10 @@ define(['Core', 'Language', 'ObjectMap', 'StringUtil', 'WoltLab/WCF/Ui/Page/Jump
 			var jumpToHtml = '<a class="jsTooltip" title="' + Language.get('wcf.global.page.jumpTo') + '">&hellip;</a>';
 			if (left > 1) {
 				if (left - 1 < 2) {
-					list.appendChild(this._createLink(2, this._options));
+					list.appendChild(this._createLink(2));
 				}
 				else {
-					var listItem = elCreate('li');
+					listItem = elCreate('li');
 					listItem.className = 'jumpTo';
 					listItem.innerHTML = jumpToHtml;
 					list.appendChild(listItem);
@@ -132,16 +131,16 @@ define(['Core', 'Language', 'ObjectMap', 'StringUtil', 'WoltLab/WCF/Ui/Page/Jump
 			
 			// visible links
 			for (var i = left + 1; i < right; i++) {
-				list.appendChild(this._createLink(i, this._options));
+				list.appendChild(this._createLink(i));
 			}
 			
 			// right ... links
 			if (right < this._options.maxPage) {
 				if (this._options.maxPage - right < 2) {
-					list.appendChild(this._createLink(this._options.maxPage - 1, this._options));
+					list.appendChild(this._createLink(this._options.maxPage - 1));
 				}
 				else {
-					var listItem = elCreate('li');
+					listItem = elCreate('li');
 					listItem.className = 'jumpTo';
 					listItem.innerHTML = jumpToHtml;
 					list.appendChild(listItem);
@@ -151,14 +150,14 @@ define(['Core', 'Language', 'ObjectMap', 'StringUtil', 'WoltLab/WCF/Ui/Page/Jump
 			}
 			
 			// add last page
-			list.appendChild(this._createLink(this._options.maxPage, this._options));
+			list.appendChild(this._createLink(this._options.maxPage));
 			
 			// add next button
 			listItem = elCreate('li');
 			listItem.className = 'skip';
 			list.appendChild(listItem);
 			
-			iconClassNames = 'icon icon16 fa-angle-double-right';
+			iconClassNames = 'icon icon16 fa-chevron-right';
 			if (this._options.activePage < this._options.maxPage) {
 				link = elCreate('a');
 				link.className = iconClassNames + ' jsTooltip';
@@ -166,7 +165,7 @@ define(['Core', 'Language', 'ObjectMap', 'StringUtil', 'WoltLab/WCF/Ui/Page/Jump
 				link.title = Language.get('wcf.global.page.next');
 				listItem.appendChild(link);
 				
-				link.addEventListener('click', this.switchPage.bind(this, this._options.activePage + 1));
+				link.addEventListener(WCF_CLICK_EVENT, this.switchPage.bind(this, this._options.activePage + 1));
 			}
 			else {
 				listItem.innerHTML = '<span class="' + iconClassNames + '"></span>';
@@ -185,7 +184,7 @@ define(['Core', 'Language', 'ObjectMap', 'StringUtil', 'WoltLab/WCF/Ui/Page/Jump
 		/**
 		 * Creates a link to a specific page.
 		 * 
-		 * @param	{integer}	pageNo		page number
+		 * @param	{int}		pageNo		page number
 		 * @return	{Element}	link element
 		 */
 		_createLink: function(pageNo) {
@@ -193,7 +192,7 @@ define(['Core', 'Language', 'ObjectMap', 'StringUtil', 'WoltLab/WCF/Ui/Page/Jump
 			if (pageNo !== this._options.activePage) {
 				var link = elCreate('a');
 				link.textContent = StringUtil.addThousandsSeparator(pageNo);
-				link.addEventListener('click', this.switchPage.bind(this, pageNo));
+				link.addEventListener(WCF_CLICK_EVENT, this.switchPage.bind(this, pageNo));
 				listItem.appendChild(link);
 			}
 			else {
@@ -207,7 +206,7 @@ define(['Core', 'Language', 'ObjectMap', 'StringUtil', 'WoltLab/WCF/Ui/Page/Jump
 		/**
 		 * Switches to given page number.
 		 * 
-		 * @param	{integer}	pageNo		page number
+		 * @param	{int}		pageNo		page number
 		 * @param	{object}	event		event object
 		 */
 		switchPage: function(pageNo, event) {

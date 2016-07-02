@@ -8,11 +8,9 @@ use wcf\util\StringUtil;
  * Represents a user rank.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.rank
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Rank
  *
  * @property-read	integer		$rankID			unique id of the user rank
  * @property-read	integer		$groupID		id of the user group to which the user rank belongs
@@ -25,12 +23,12 @@ use wcf\util\StringUtil;
  */
 class UserRank extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'user_rank';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'rankID';
 	
@@ -41,7 +39,7 @@ class UserRank extends DatabaseObject {
 	 */
 	public function getImage() {
 		if ($this->rankImage) {
-			$image = '<img src="'.(!preg_match('~^(/|https?://)~i', $this->rankImage) ? WCF::getPath() : '').StringUtil::encodeHTML($this->rankImage).'" alt="" />';
+			$image = '<img src="'.(!preg_match('~^(/|https?://)~i', $this->rankImage) ? WCF::getPath() : '').StringUtil::encodeHTML($this->rankImage).'" alt="">';
 			if ($this->repeatImage > 1) $image = str_repeat($image, $this->repeatImage);
 			return $image;
 		}

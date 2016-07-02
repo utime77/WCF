@@ -8,9 +8,7 @@ use wcf\data\DatabaseObject;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.language.item
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Language\Item
  *
  * @property-read	integer		$languageItemID			unique id of the language item
  * @property-read	integer		$languageID			id of the language the language item belongs to

@@ -1,6 +1,7 @@
 <?php
 namespace wcf\system\cache\builder;
 use wcf\system\database\util\PreparedStatementConditionBuilder;
+use wcf\system\exception\ImplementationException;
 use wcf\system\exception\SystemException;
 use wcf\system\option\user\group\IUserGroupOptionType;
 use wcf\system\WCF;
@@ -10,11 +11,9 @@ use wcf\util\StringUtil;
  * Caches the merged user group options for a certain user group combination.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.cache.builder
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Cache\Builder
  */
 class UserGroupPermissionCacheBuilder extends AbstractCacheBuilder {
 	/**
@@ -24,7 +23,7 @@ class UserGroupPermissionCacheBuilder extends AbstractCacheBuilder {
 	protected $typeObjects = [];
 	
 	/**
-	 * @see	\wcf\system\cache\builder\AbstractCacheBuilder::rebuild()
+	 * @inheritDoc
 	 */
 	public function rebuild(array $parameters) {
 		$data = [];
@@ -97,8 +96,8 @@ class UserGroupPermissionCacheBuilder extends AbstractCacheBuilder {
 			if (!class_exists($className)) {
 				throw new SystemException("unable to find class '".$className."'");
 			}
-			if (!is_subclass_of($className, 'wcf\system\option\user\group\IUserGroupOptionType')) {
-				throw new SystemException("'".$className."' does not implement 'wcf\system\option\user\group\IUserGroupOptionType'");
+			if (!is_subclass_of($className, IUserGroupOptionType::class)) {
+				throw new ImplementationException($className, IUserGroupOptionType::class);
 			}
 			
 			// create instance

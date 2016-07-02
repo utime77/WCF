@@ -11,32 +11,28 @@ use wcf\system\WCF;
  * Executes the delivered sql file.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.package.plugin
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Package\Plugin
  */
 class SQLPackageInstallationPlugin extends AbstractPackageInstallationPlugin {
 	/**
-	 * @see	\wcf\system\package\plugin\AbstractPackageInstallationPlugin::$tableName
+	 * @inheritDoc
 	 */
 	public $tableName = 'package_installation_sql_log';
 	
 	/**
-	 * @see	\wcf\system\package\plugin\IPackageInstallationPlugin::install()
+	 * @inheritDoc
 	 */
 	public function install() {
 		parent::install();
 		
 		// extract sql file from archive
 		if ($queries = $this->getSQL($this->instruction['value'])) {
-			$package = $this->installation->getPackage();
-			
 			// replace app1_ with app{WCF_N}_ in the table names for
 			// all applications
 			$packageList = new PackageList();
-			$packageList->getConditionBuilder()->add('package.isApplication = ?', array(1));
+			$packageList->getConditionBuilder()->add('package.isApplication = ?', [1]);
 			$packageList->readObjects();
 			foreach ($packageList as $package) {
 				$abbreviation = Package::getAbbreviation($package->package);
@@ -48,8 +44,8 @@ class SQLPackageInstallationPlugin extends AbstractPackageInstallationPlugin {
 			$parser = new PackageInstallationSQLParser($queries, $this->installation->getPackage(), $this->installation->getAction());
 			$conflicts = $parser->test();
 			if (!empty($conflicts) && (isset($conflicts['CREATE TABLE']) || isset($conflicts['DROP TABLE']))) {
-				$unknownCreateTable = isset($conflicts['CREATE TABLE']) ? $conflicts['CREATE TABLE'] : array();
-				$unknownDropTable = isset($conflicts['DROP TABLE']) ? $conflicts['DROP TABLE'] : array();
+				$unknownCreateTable = isset($conflicts['CREATE TABLE']) ? $conflicts['CREATE TABLE'] : [];
+				$unknownDropTable = isset($conflicts['DROP TABLE']) ? $conflicts['DROP TABLE'] : [];
 				
 				$errorMessage = "Can't";
 				if (!empty($unknownDropTable)) {
@@ -83,7 +79,7 @@ class SQLPackageInstallationPlugin extends AbstractPackageInstallationPlugin {
 	}
 	
 	/**
-	 * @see	\wcf\system\package\plugin\IPackageInstallationPlugin::uninstall()
+	 * @inheritDoc
 	 */
 	public function uninstall() {
 		// get logged sql tables/columns
@@ -92,8 +88,8 @@ class SQLPackageInstallationPlugin extends AbstractPackageInstallationPlugin {
 			WHERE		packageID = ?
 			ORDER BY	sqlIndex DESC, sqlColumn DESC";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($this->installation->getPackageID()));
-		$entries = array();
+		$statement->execute([$this->installation->getPackageID()]);
+		$entries = [];
 		while ($row = $statement->fetchArray()) {
 			$entries[] = $row;
 		}
@@ -154,14 +150,14 @@ class SQLPackageInstallationPlugin extends AbstractPackageInstallationPlugin {
 	}
 	
 	/**
-	 * @see	\wcf\system\package\plugin\IPackageInstallationPlugin::getDefaultFilename()
+	 * @inheritDoc
 	 */
 	public static function getDefaultFilename() {
 		return 'install.sql';
 	}
 	
 	/**
-	 * @see	\wcf\system\package\plugin\IPackageInstallationPlugin::isValid()
+	 * @inheritDoc
 	 */
 	public static function isValid(PackageArchive $archive, $instruction) {
 		if (!$instruction) {

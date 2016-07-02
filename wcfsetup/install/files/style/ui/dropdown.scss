@@ -129,6 +129,11 @@
 	visibility: hidden;
 	z-index: 450;
 	
+	&.dropdownMenuPageSearch {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+	}
+	
 	&.dropdownArrowRight {
 		&::after {
 			left: auto;
@@ -294,9 +299,26 @@
 	}
 }
 
+.dropdownIndicator::after {
+	content: $fa-var-caret-down;
+	font-family: FontAwesome;
+	margin-left: 5px;
+}
+
+
 .boxFlag > .box24, .boxFlag.box24 {
+	align-items: center;
 	display: flex !important;
 	min-height: 20px;
+	
+	> img:first-child {
+		height: auto;
+	}
+	
+	// prevents text being hidden when displayed in user panel
+	> span {
+		display: inline !important;
+	}
 	
 	&.dropdownToggle {
 		display: inline-flex !important;

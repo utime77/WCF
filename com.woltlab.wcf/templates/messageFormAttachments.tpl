@@ -3,7 +3,7 @@
 		{foreach from=$attachmentHandler->getAttachmentList() item=$attachment}
 			<li class="box64" data-object-id="{@$attachment->attachmentID}" data-height="{@$attachment->height}" data-width="{@$attachment->width}">
 				{if $attachment->tinyThumbnailType}
-					<img src="{link controller='Attachment' object=$attachment}tiny=1{/link}" alt="" class="attachmentTinyThumbnail" />
+					<img src="{link controller='Attachment' object=$attachment}tiny=1{/link}" alt="" class="attachmentTinyThumbnail">
 				{else}
 					<span class="icon icon48 fa-paperclip"></span>
 				{/if}
@@ -55,10 +55,19 @@
 			'wcf.attachment.delete.sure': '{lang}wcf.attachment.delete.sure{/lang}'
 		});
 		
-		new WCF.Attachment.Upload($('#attachments_{if $wysiwygSelector|isset}{$wysiwygSelector}{else}text{/if} > dl > dd > div'), $('#attachments_{if $wysiwygSelector|isset}{$wysiwygSelector}{else}text{/if} > ul'), '{@$attachmentObjectType}', '{@$attachmentObjectID}', '{$tmpHash|encodeJS}', '{@$attachmentParentObjectID}', {@$attachmentHandler->getMaxCount()}, '{@$wysiwygContainerID}');
+		new WCF.Attachment.Upload(
+			$('#attachments_{if $wysiwygSelector|isset}{$wysiwygSelector}{else}text{/if} > dl > dd > div'),
+			$('#attachments_{if $wysiwygSelector|isset}{$wysiwygSelector}{else}text{/if} > ul'),
+			'{@$attachmentObjectType}',
+			'{@$attachmentObjectID}',
+			'{$tmpHash|encodeJS}',
+			'{@$attachmentParentObjectID}',
+			{@$attachmentHandler->getMaxCount()},
+			'{if $wysiwygSelector|isset}{$wysiwygSelector}{else}text{/if}'
+		);
 		new WCF.Action.Delete('wcf\\data\\attachment\\AttachmentAction', '.formAttachmentList > li');
 	});
 	//]]>
 </script>
 
-<input type="hidden" name="tmpHash" value="{$tmpHash}" />
+<input type="hidden" name="tmpHash" value="{$tmpHash}">

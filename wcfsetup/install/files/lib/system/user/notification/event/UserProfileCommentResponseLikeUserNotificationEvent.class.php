@@ -10,9 +10,7 @@ use wcf\system\WCF;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.user.notification.event
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\User\Notification\Event
  */
 class UserProfileCommentResponseLikeUserNotificationEvent extends AbstractSharedUserNotificationEvent {
 	/**
@@ -78,7 +76,7 @@ class UserProfileCommentResponseLikeUserNotificationEvent extends AbstractShared
 	 * @inheritDoc
 	 */
 	public function getEmailMessage($notificationType = 'instant') {
-		// not supported
+		throw new \LogicException('Unreachable');
 	}
 	
 	/**

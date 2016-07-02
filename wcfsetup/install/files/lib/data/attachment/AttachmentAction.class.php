@@ -12,6 +12,7 @@ use wcf\system\exception\UserInputException;
 use wcf\system\request\LinkHandler;
 use wcf\system\upload\DefaultUploadFileSaveStrategy;
 use wcf\system\upload\DefaultUploadFileValidationStrategy;
+use wcf\system\upload\UploadFile;
 use wcf\system\WCF;
 use wcf\util\ArrayUtil;
 use wcf\util\FileUtil;
@@ -20,20 +21,22 @@ use wcf\util\FileUtil;
  * Executes attachment-related actions.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.attachment
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Attachment
+ * 
+ * @method	Attachment		create()
+ * @method	AttachmentEditor[]	getObjects()
+ * @method	AttachmentEditor	getSingleObject()
  */
 class AttachmentAction extends AbstractDatabaseObjectAction implements ISortableAction, IUploadAction {
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected $allowGuestAccess = ['delete', 'updatePosition', 'upload'];
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected $className = AttachmentEditor::class;
 	
@@ -50,7 +53,7 @@ class AttachmentAction extends AbstractDatabaseObjectAction implements ISortable
 	public $eventData = [];
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function validateDelete() {
 		// read objects
@@ -62,7 +65,7 @@ class AttachmentAction extends AbstractDatabaseObjectAction implements ISortable
 			}
 		}
 		
-		foreach ($this->objects as $attachment) {
+		foreach ($this->getObjects() as $attachment) {
 			if ($attachment->tmpHash) {
 				if ($attachment->userID != WCF::getUser()->userID) {
 					throw new PermissionDeniedException();
@@ -75,7 +78,7 @@ class AttachmentAction extends AbstractDatabaseObjectAction implements ISortable
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function validateUpload() {
 		// IE<10 fallback
@@ -108,6 +111,7 @@ class AttachmentAction extends AbstractDatabaseObjectAction implements ISortable
 		
 		// check max count of uploads
 		$handler = new AttachmentHandler($this->parameters['objectType'], intval($this->parameters['objectID']), $this->parameters['tmpHash']);
+		/** @noinspection PhpUndefinedMethodInspection */
 		if ($handler->count() + count($this->parameters['__files']->getFiles()) > $processor->getMaxCount()) {
 			throw new UserInputException('files', 'exceededQuota', [
 				'current' => $handler->count(),
@@ -116,11 +120,12 @@ class AttachmentAction extends AbstractDatabaseObjectAction implements ISortable
 		}
 		
 		// check max filesize, allowed file extensions etc.
+		/** @noinspection PhpUndefinedMethodInspection */
 		$this->parameters['__files']->validateFiles(new DefaultUploadFileValidationStrategy($processor->getMaxSize(), $processor->getAllowedExtensions()));
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function upload() {
 		// get object type
@@ -136,6 +141,7 @@ class AttachmentAction extends AbstractDatabaseObjectAction implements ISortable
 			'tmpHash' => (!$this->parameters['objectID'] ? $this->parameters['tmpHash'] : '')
 		]);
 		
+		/** @noinspection PhpUndefinedMethodInspection */
 		$this->parameters['__files']->saveFiles($saveStrategy);
 		$attachments = $saveStrategy->getObjects();
 		
@@ -170,6 +176,8 @@ class AttachmentAction extends AbstractDatabaseObjectAction implements ISortable
 			}
 		}
 		
+		/** @noinspection PhpUndefinedMethodInspection */
+		/** @var UploadFile[] $files */
 		$files = $this->parameters['__files']->getFiles();
 		foreach ($files as $file) {
 			if ($file->getValidationErrorType()) {
@@ -194,7 +202,7 @@ class AttachmentAction extends AbstractDatabaseObjectAction implements ISortable
 		
 		$saveStrategy = new DefaultUploadFileSaveStrategy(self::class);
 		
-		foreach ($this->objects as $attachment) {
+		foreach ($this->getObjects() as $attachment) {
 			if (!$attachment->isImage) {
 				// create thumbnails for every file that isn't an image
 				$this->eventAttachment = $attachment;
@@ -214,7 +222,7 @@ class AttachmentAction extends AbstractDatabaseObjectAction implements ISortable
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function validateUpdatePosition() {
 		$this->readInteger('objectID', true);
@@ -271,7 +279,7 @@ class AttachmentAction extends AbstractDatabaseObjectAction implements ISortable
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function updatePosition() {
 		$sql = "UPDATE	wcf".WCF_N."_attachment

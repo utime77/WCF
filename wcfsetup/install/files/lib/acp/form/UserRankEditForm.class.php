@@ -11,15 +11,13 @@ use wcf\system\WCF;
  * Shows the user rank edit form.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Form
  */
 class UserRankEditForm extends UserRankAddForm {
 	/**
-	 * @see	\wcf\page\AbstractPage::$activeMenuItem
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.user.rank';
 	
@@ -36,7 +34,7 @@ class UserRankEditForm extends UserRankAddForm {
 	public $rank = null;
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -49,7 +47,7 @@ class UserRankEditForm extends UserRankAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		AbstractForm::save();
@@ -64,7 +62,7 @@ class UserRankEditForm extends UserRankAddForm {
 		}
 		
 		// update label
-		$this->objectAction = new UserRankAction(array($this->rank), 'update', array('data' => array_merge($this->additionalFields, array(
+		$this->objectAction = new UserRankAction([$this->rank], 'update', ['data' => array_merge($this->additionalFields, [
 			'rankTitle' => $this->rankTitle,
 			'cssClassName' => ($this->cssClassName == 'custom' ? $this->customCssClassName : $this->cssClassName),
 			'groupID' => $this->groupID,
@@ -72,7 +70,7 @@ class UserRankEditForm extends UserRankAddForm {
 			'rankImage' => $this->rankImage,
 			'repeatImage' => $this->repeatImage,
 			'requiredGender' => $this->requiredGender
-		))));
+		])]);
 		$this->objectAction->executeAction();
 		$this->saved();
 		
@@ -80,13 +78,13 @@ class UserRankEditForm extends UserRankAddForm {
 		if ($this->cssClassName != 'custom') $this->customCssClassName = '';
 		
 		// show success
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'success' => true
-		));
+		]);
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		parent::readData();
@@ -108,17 +106,17 @@ class UserRankEditForm extends UserRankAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
 		I18nHandler::getInstance()->assignVariables(!empty($_POST));
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'rankID' => $this->rankID,
 			'rank' => $this->rank,
 			'action' => 'edit'
-		));
+		]);
 	}
 }

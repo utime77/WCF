@@ -12,9 +12,7 @@ use wcf\system\like\IViewableLikeProvider;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.comment
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Comment
  *
  * @method	LikeableComment		getObjectByID($objectID)
  * @method	LikeableComment[]	getObjectsByIDs(array $objectIDs)
@@ -39,6 +37,8 @@ class LikeableCommentProvider extends AbstractObjectTypeProvider implements ILik
 	 * @inheritDoc
 	 */
 	public function checkPermissions(ILikeObject $comment) {
+		/** @var Comment $comment */
+		
 		if (!$comment->commentID) return false;
 		
 		$objectType = CommentHandler::getInstance()->getObjectType($comment->objectTypeID);
@@ -74,6 +74,7 @@ class LikeableCommentProvider extends AbstractObjectTypeProvider implements ILik
 		foreach ($likeData as $objectTypeID => $likes) {
 			$objectType = CommentHandler::getInstance()->getObjectType($objectTypeID);
 			if (CommentHandler::getInstance()->getCommentManager($objectType->objectType) instanceof IViewableLikeProvider) {
+				/** @noinspection PhpUndefinedMethodInspection */
 				CommentHandler::getInstance()->getCommentManager($objectType->objectType)->prepare($likes);
 			}
 		}

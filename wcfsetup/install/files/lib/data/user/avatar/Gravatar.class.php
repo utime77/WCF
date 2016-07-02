@@ -10,11 +10,9 @@ use wcf\util\StringUtil;
  * Represents a gravatar.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.avatar
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Avatar
  * @see		http://www.gravatar.com
  */
 class Gravatar extends DefaultAvatar {
@@ -58,13 +56,14 @@ class Gravatar extends DefaultAvatar {
 	 * urls of this gravatar
 	 * @var	string[]
 	 */
-	protected $url = array();
+	protected $url = [];
 	
 	/**
 	 * Creates a new Gravatar object.
 	 * 
 	 * @param	integer		$userID
 	 * @param	string		$gravatar
+	 * @param	string		$fileExtension
 	 */
 	public function __construct($userID, $gravatar, $fileExtension = 'png') {
 		$this->userID = $userID;
@@ -73,7 +72,7 @@ class Gravatar extends DefaultAvatar {
 	}
 	
 	/**
-	 * @see	\wcf\data\user\avatar\IUserAvatar::getURL()
+	 * @inheritDoc
 	 */
 	public function getURL($size = null) {
 		if ($size === null) $size = $this->size;
@@ -97,9 +96,9 @@ class Gravatar extends DefaultAvatar {
 				$this->url[$size] = WCF::getPath().$cachedFilename;
 			}
 			else {
-				$this->url[$size] = LinkHandler::getInstance()->getLink('GravatarDownload', array(
+				$this->url[$size] = LinkHandler::getInstance()->getLink('GravatarDownload', [
 					'forceFrontend' => true
-				), 'userID='.$this->userID.'&size='.$size);
+				], 'userID='.$this->userID.'&size='.$size);
 			}
 		}
 		
@@ -125,7 +124,7 @@ class Gravatar extends DefaultAvatar {
 	}
 	
 	/**
-	 * @see	\wcf\data\user\avatar\IUserAvatar::getImageTag()
+	 * @inheritDoc
 	 */
 	public function getImageTag($size = null) {
 		if ($size === null) $size = $this->size;
@@ -145,11 +144,11 @@ class Gravatar extends DefaultAvatar {
 				break;
 		}
 		
-		return '<img src="'.StringUtil::encodeHTML($this->getURL($size)).'" '.($retinaSize !== null ? ('srcset="'.StringUtil::encodeHTML($this->getURL($retinaSize)).' 2x" ') : '').'style="width: '.$size.'px; height: '.$size.'px" alt="" class="userAvatarImage" />';
+		return '<img src="'.StringUtil::encodeHTML($this->getURL($size)).'" '.($retinaSize !== null ? ('srcset="'.StringUtil::encodeHTML($this->getURL($retinaSize)).' 2x" ') : '').'style="width: '.$size.'px; height: '.$size.'px" alt="" class="userAvatarImage">';
 	}
 	
 	/**
-	 * @see	\wcf\data\user\avatar\IUserAvatar::canCrop()
+	 * @inheritDoc
 	 */
 	public function canCrop() {
 		return false;

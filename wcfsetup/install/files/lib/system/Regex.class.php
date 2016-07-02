@@ -8,9 +8,7 @@ use wcf\system\exception\SystemException;
  * @author	Tim Duesterhus
  * @copyright	2011-2013 Tim Duesterhus
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System
  */
 final class Regex {
 	/**
@@ -36,13 +34,6 @@ final class Regex {
 	 * @var	integer
 	 */
 	const UNGREEDY = 2;
-	
-	/**
-	 * indicates eval() replacement of Regex::replace()
-	 * @var	integer
-	 * @deprecated	The feature will be removed in future versions of PHP
-	 */
-	const EVAL_REPLACEMENT = 4;
 	
 	/**
 	 * indicates that no extra time is spent on analysing
@@ -126,7 +117,7 @@ final class Regex {
 	 * last matches
 	 * @var	array
 	 */
-	private $matches = array();
+	private $matches = [];
 	
 	/**
 	 * Creates a regex.
@@ -145,9 +136,6 @@ final class Regex {
 		// add modifiers
 		if ($modifier & self::CASE_INSENSITIVE) $this->regex .= 'i';
 		if ($modifier & self::UNGREEDY) $this->regex .= 'U';
-		if ($modifier & self::EVAL_REPLACEMENT) {
-			throw new SystemException("Using the 'e' modifier for Regex::replace() is discouraged. Please use a callback.");
-		}
 		if (!($modifier & self::NO_ANALYSE)) $this->regex .= 'S';
 		if ($modifier & self::IGNORE_WHITESPACE) $this->regex .= 'x';
 		if ($modifier & self::DOT_ALL) $this->regex .= 's';
@@ -156,14 +144,14 @@ final class Regex {
 	}
 	
 	/**
-	 * @see	Regex::__construct()
+	 * @inheritDoc
 	 */
 	public static function compile($regex, $modifier = self::MODIFIER_NONE) {
 		return new self($regex, $modifier);
 	}
 	
 	/**
-	 * @see	Regex::match()
+	 * @inheritDoc
 	 */
 	public function __invoke($string) {
 		return $this->match($string);

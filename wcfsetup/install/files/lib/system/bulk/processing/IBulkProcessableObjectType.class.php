@@ -5,12 +5,10 @@ namespace wcf\system\bulk\processing;
  * Every bulk processable object type has to implement this interface.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.bulk.processing
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Bulk\Processing
+ * @since	3.0
  */
 interface IBulkProcessableObjectType {
 	/**

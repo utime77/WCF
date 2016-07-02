@@ -6,12 +6,10 @@ use wcf\system\WCF;
  * Provides a method for validating database object permissions.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Data
+ * @since	3.0
  */
 trait TDatabaseObjectPermissions {
 	/**

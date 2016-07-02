@@ -11,12 +11,10 @@ use wcf\system\WCF;
  * interval.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.condition
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Condition
+ * @since	3.0
  */
 abstract class AbstractTimestampCondition extends AbstractSingleFieldCondition implements IObjectCondition, IObjectListCondition {
 	/**
@@ -115,8 +113,8 @@ abstract class AbstractTimestampCondition extends AbstractSingleFieldCondition i
 		$end = WCF::getLanguage()->get('wcf.date.period.end');
 		
 		return <<<HTML
-<input type="date" id="{$this->getPropertyName()}StartTime" name="{$this->getPropertyName()}StartTime" value="{$this->startTime}" placeholder="{$start}" />
-<input type="date" id="{$this->getPropertyName()}EndTime" name="{$this->getPropertyName()}EndTime" value="{$this->endTime}" placeholder="{$end}" />
+<input type="date" id="{$this->getPropertyName()}StartTime" name="{$this->getPropertyName()}StartTime" value="{$this->startTime}" placeholder="{$start}">
+<input type="date" id="{$this->getPropertyName()}EndTime" name="{$this->getPropertyName()}EndTime" value="{$this->endTime}" placeholder="{$end}">
 HTML;
 	}
 	

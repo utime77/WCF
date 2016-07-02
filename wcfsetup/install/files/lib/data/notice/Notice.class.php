@@ -13,9 +13,7 @@ use wcf\system\WCF;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.notice
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Notice
  *
  * @property-read	integer		$noticeID
  * @property-read	string		$noticeName
@@ -47,7 +45,7 @@ class Notice extends DatabaseObject implements IRouteController {
 	 * Returns the textual representation of the notice.
 	 * 
 	 * @return	string
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	public function __toString() {
 		// replace `{$username}` with the active user's name and `{$email}`
@@ -58,7 +56,7 @@ class Notice extends DatabaseObject implements IRouteController {
 		]);
 		
 		if (!$this->noticeUseHtml) {
-			$text = nl2br(htmlspecialchars($text));
+			$text = nl2br(htmlspecialchars($text), false);
 		}
 		
 		return $text;
@@ -96,11 +94,11 @@ class Notice extends DatabaseObject implements IRouteController {
 						FROM	wcf".WCF_N."_notice_dismissed
 						WHERE	userID = ?";
 					$statement = WCF::getDB()->prepareStatement($sql);
-					$statement->execute(array(
+					$statement->execute([
 						WCF::getUser()->userID
-					));
+					]);
 					
-					$noticeIDs = array();
+					$noticeIDs = [];
 					while ($noticeID = $statement->fetchColumn()) {
 						$noticeIDs[] = $noticeID;
 						

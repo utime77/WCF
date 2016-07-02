@@ -8,11 +8,9 @@ use wcf\system\WCF;
  * Represents a paid subscription user.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.paid.subscription.user
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Paid\Subscription\User
  *
  * @property-read	integer		$subscriptionUserID
  * @property-read	integer		$subscriptionID
@@ -23,12 +21,12 @@ use wcf\system\WCF;
  */
 class PaidSubscriptionUser extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'paid_subscription_user';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'subscriptionUserID';
 	
@@ -73,7 +71,7 @@ class PaidSubscriptionUser extends DatabaseObject {
 			WHERE	subscriptionID = ?
 				AND userID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($subscriptionID, $userID));
+		$statement->execute([$subscriptionID, $userID]);
 		$row = $statement->fetchArray();
 		if ($row !== false) {
 			return new PaidSubscriptionUser(null, $row);

@@ -2,6 +2,7 @@
 namespace wcf\page;
 use wcf\data\user\activity\event\ViewableUserActivityEventList;
 use wcf\system\page\PageLocationManager;
+use wcf\system\request\LinkHandler;
 use wcf\system\user\activity\event\UserActivityEventHandler;
 use wcf\system\WCF;
 
@@ -11,9 +12,7 @@ use wcf\system\WCF;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	page
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Page
  */
 class RecentActivityListPage extends AbstractPage {
 	/**
@@ -21,6 +20,15 @@ class RecentActivityListPage extends AbstractPage {
 	 * @var	ViewableUserActivityEventList
 	 */
 	public $eventList = null;
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function readParameters() {
+		parent::readParameters();
+		
+		$this->canonicalURL = LinkHandler::getInstance()->getLink('RecentActivityList');
+	}
 	
 	/**
 	 * @inheritDoc

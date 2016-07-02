@@ -12,11 +12,9 @@ use wcf\system\WCF;
  * Handles language related functions.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.language
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Language
  */
 class LanguageFactory extends SingletonFactory {
 	/**
@@ -29,7 +27,7 @@ class LanguageFactory extends SingletonFactory {
 	 * initialized languages
 	 * @var	Language[]
 	 */
-	protected $languages = array();
+	protected $languages = [];
 	
 	/**
 	 * active template scripting compiler
@@ -38,7 +36,7 @@ class LanguageFactory extends SingletonFactory {
 	protected $scriptingCompiler = null;
 	
 	/**
-	 * @see	SingletonFactory::init()
+	 * @inheritDoc
 	 */
 	protected function init() {
 		$this->loadCache();
@@ -92,7 +90,7 @@ class LanguageFactory extends SingletonFactory {
 				FROM	wcf".WCF_N."_language
 				WHERE	languageCode = ?";
 			$statement = WCF::getDB()->prepareStatement($sql);
-			$statement->execute(array($languageCode));
+			$statement->execute([$languageCode]);
 			$row = $statement->fetchArray();
 			if (isset($row['languageID'])) return new Language($row['languageID']);
 		}
@@ -155,7 +153,7 @@ class LanguageFactory extends SingletonFactory {
 	 */
 	protected function findPreferredLanguage() {
 		// get available language codes
-		$availableLanguageCodes = array();
+		$availableLanguageCodes = [];
 		foreach ($this->getLanguages() as $language) {
 			$availableLanguageCodes[] = $language->languageCode;
 		}
@@ -242,7 +240,7 @@ class LanguageFactory extends SingletonFactory {
 	 * Returns the default language object.
 	 * 
 	 * @return	Language
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	public function getDefaultLanguage() {
 		return $this->getLanguage($this->cache['default']);
@@ -272,7 +270,7 @@ class LanguageFactory extends SingletonFactory {
 	 * @return	Language[]
 	 */
 	public function getContentLanguages() {
-		$availableLanguages = array();
+		$availableLanguages = [];
 		foreach ($this->getLanguages() as $languageID => $language) {
 			if ($language->hasContent) {
 				$availableLanguages[$languageID] = $language;
@@ -300,7 +298,7 @@ class LanguageFactory extends SingletonFactory {
 			SET	isDefault = 1
 			WHERE	languageID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($languageID));
+		$statement->execute([$languageID]);
 		
 		// rebuild language cache
 		$this->clearCache();

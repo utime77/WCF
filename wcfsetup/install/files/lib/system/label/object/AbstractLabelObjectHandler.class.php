@@ -1,5 +1,6 @@
 <?php
 namespace wcf\system\label\object;
+use wcf\data\label\group\LabelGroup;
 use wcf\data\label\group\ViewableLabelGroup;
 use wcf\system\exception\SystemException;
 use wcf\system\label\LabelHandler;
@@ -9,18 +10,16 @@ use wcf\system\SingletonFactory;
  * Abstract implementation of a label object handler.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.label.object
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Label\Object
  */
 abstract class AbstractLabelObjectHandler extends SingletonFactory implements ILabelObjectHandler {
 	/**
 	 * list of available label groups
 	 * @var	ViewableLabelGroup[]
 	 */
-	protected $labelGroups = array();
+	protected $labelGroups = [];
 	
 	/**
 	 * object type name
@@ -35,7 +34,7 @@ abstract class AbstractLabelObjectHandler extends SingletonFactory implements IL
 	protected $objectTypeID = 0;
 	
 	/**
-	 * @see	\wcf\system\SingletonFactory::init()
+	 * @inheritDoc
 	 */
 	protected function init() {
 		$this->labelGroups = LabelHandler::getInstance()->getLabelGroups();
@@ -48,30 +47,31 @@ abstract class AbstractLabelObjectHandler extends SingletonFactory implements IL
 	}
 	
 	/**
-	 * @see	\wcf\system\label\manager\ILabelObjectHandler::getLabelGroupIDs()
+	 * @inheritDoc
 	 */
-	public function getLabelGroupIDs(array $parameters = array()) {
+	public function getLabelGroupIDs(array $parameters = []) {
 		return array_keys($this->labelGroups);
 	}
 	
 	/**
-	 * @see	\wcf\system\label\manager\ILabelObjectHandler::getLabelGroups()
+	 * @inheritDoc
+	 * @return	ViewableLabelGroup[]
 	 */
-	public function getLabelGroups(array $parameters = array()) {
+	public function getLabelGroups(array $parameters = []) {
 		$groupIDs = $this->getLabelGroupIDs($parameters);
 		
-		$data = array();
+		$data = [];
 		foreach ($groupIDs as $groupID) {
 			$data[$groupID] = $this->labelGroups[$groupID];
 		}
 		
-		uasort($data, array('\wcf\data\label\group\LabelGroup', 'sortLabelGroups'));
+		uasort($data, [LabelGroup::class, 'sortLabelGroups']);
 		
 		return $data;
 	}
 	
 	/**
-	 * @see	\wcf\system\label\manager\ILabelObjectHandler::validateLabelIDs()
+	 * @inheritDoc
 	 */
 	public function validateLabelIDs(array $labelIDs, $optionName = '', $legacyReturnValue = true) {
 		$optionID = 0;
@@ -82,8 +82,8 @@ abstract class AbstractLabelObjectHandler extends SingletonFactory implements IL
 			}
 		}
 		
-		$validationErrors = array();
-		$satisfiedGroups = array();
+		$validationErrors = [];
+		$satisfiedGroups = [];
 		foreach ($labelIDs as $groupID => $labelID) {
 			// only one label per group is allowed
 			if (is_array($labelID)) {
@@ -136,21 +136,21 @@ abstract class AbstractLabelObjectHandler extends SingletonFactory implements IL
 	}
 	
 	/**
-	 * @see	\wcf\system\label\manager\ILabelObjectHandler::setLabels()
+	 * @inheritDoc
 	 */
 	public function setLabels(array $labelIDs, $objectID, $validatePermissions = true) {
 		LabelHandler::getInstance()->setLabels($labelIDs, $this->objectTypeID, $objectID, $validatePermissions);
 	}
 	
 	/**
-	 * @see	\wcf\system\label\manager\ILabelObjectHandler::removeLabels()
+	 * @inheritDoc
 	 */
 	public function removeLabels($objectID, $validatePermissions = true) {
 		LabelHandler::getInstance()->removeLabels($this->objectTypeID, $objectID);
 	}
 	
 	/**
-	 * @see	\wcf\system\label\manager\ILabelObjectHandler::getAssignedLabels()
+	 * @inheritDoc
 	 */
 	public function getAssignedLabels(array $objectIDs, $validatePermissions = true) {
 		return LabelHandler::getInstance()->getAssignedLabels($this->objectTypeID, $objectIDs, $validatePermissions);

@@ -1,9 +1,12 @@
 <?php
 namespace wcf\page;
+use wcf\data\page\content\PageContent;
 use wcf\data\page\Page;
 use wcf\system\exception\IllegalLinkException;
+use wcf\system\language\LanguageFactory;
 use wcf\system\request\LinkHandler;
 use wcf\system\request\RequestHandler;
+use wcf\system\MetaTagHandler;
 use wcf\system\WCF;
 
 /**
@@ -12,21 +15,14 @@ use wcf\system\WCF;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	page
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Page
+ * @since	3.0
  */
 class CmsPage extends AbstractPage {
 	/**
-	 * @var	string[]
+	 * @var	PageContent
 	 */
 	public $content;
-	
-	/**
-	 * @inheritDoc
-	 */
-	public $enableTracking = true;
 	
 	/**
 	 * @var	integer
@@ -65,12 +61,43 @@ class CmsPage extends AbstractPage {
 			throw new IllegalLinkException();
 		}
 		
+		if ($this->page->isDisabled && !WCF::getSession()->getPermission('admin.content.cms.canManagePage')) {
+			throw new IllegalLinkException();
+		}
+		
+		if (!$this->page->isAccessible()) {
+			throw new IllegalLinkException();
+		}
+		
 		$this->content = $this->page->getPageContentByLanguage($this->languageID);
-		if (empty($this->content)) {
+		if ($this->content === null) {
 			throw new IllegalLinkException();
 		}
 		
 		$this->canonicalURL = LinkHandler::getInstance()->getCmsLink($this->pageID, $this->languageID);
+		
+		// update interface language
+		if (!WCF::getUser()->userID && $this->page->isMultilingual && $this->languageID != WCF::getLanguage()->languageID) {
+			WCF::setLanguage($this->languageID);
+		}
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function readData() {
+		parent::readData();
+		
+		// add meta/og tags
+		MetaTagHandler::getInstance()->addTag('og:title', 'og:title', $this->content->title . ' - ' . WCF::getLanguage()->get(PAGE_TITLE), true);
+		MetaTagHandler::getInstance()->addTag('og:url', 'og:url', $this->canonicalURL, true);
+		MetaTagHandler::getInstance()->addTag('og:type', 'og:type', 'website', true);
+		if ($this->content->metaDescription) {
+			MetaTagHandler::getInstance()->addTag('og:description', 'og:description', $this->content->metaDescription, true);
+		}
+		if ($this->content->metaKeywords) {
+			MetaTagHandler::getInstance()->addTag('keywords', 'keywords', $this->content['metaKeywords']);
+		}
 	}
 	
 	/**
@@ -84,14 +111,9 @@ class CmsPage extends AbstractPage {
 			'content' => $this->content,
 			'contentLanguageID' => $this->languageID,
 			'page' => $this->page,
-			'pageID' => $this->pageID
+			'pageID' => $this->pageID,
+			'activePageLanguage' => ($this->languageID ? LanguageFactory::getInstance()->getLanguage($this->languageID) : null),
+			'allowSpidersToIndexThisPage' => true
 		]);
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function getObjectType() {
-		return $this->page ? $this->page->identifier : '';
 	}
 }

@@ -18,15 +18,13 @@ use wcf\system\WCF;
  * Shows the user group option form to edit a single option.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Form
  */
 class UserGroupOptionForm extends AbstractForm {
 	/**
-	 * @see	\wcf\page\AbstractPage::$activeMenuItem
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.group';
 	
@@ -34,18 +32,18 @@ class UserGroupOptionForm extends AbstractForm {
 	 * list of parsed form elements per group
 	 * @var	string[]
 	 */
-	public $formElements = array();
+	public $formElements = [];
 	
 	/**
 	 * list of accessible groups
 	 * @var	UserGroup[]
 	 */
-	public $groups = array();
+	public $groups = [];
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededPermissions
+	 * @inheritDoc
 	 */
-	public $neededPermissions = array('admin.user.canEditGroup');
+	public $neededPermissions = ['admin.user.canEditGroup'];
 	
 	/**
 	 * user group option type object
@@ -57,13 +55,13 @@ class UserGroupOptionForm extends AbstractForm {
 	 * list of parent categories
 	 * @var	UserGroupOptionCategory[]
 	 */
-	public $parentCategories = array();
+	public $parentCategories = [];
 	
 	/**
 	 * list of values per user group
 	 * @var	array
 	 */
-	public $values = array();
+	public $values = [];
 	
 	/**
 	 * user group option object
@@ -78,7 +76,7 @@ class UserGroupOptionForm extends AbstractForm {
 	public $userGroupOptionID = 0;
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -95,7 +93,7 @@ class UserGroupOptionForm extends AbstractForm {
 			$categoryList = new UserGroupOptionCategoryList();
 			$categoryList->readObjects();
 			
-			$categories = array();
+			$categories = [];
 			foreach ($categoryList as $category) {
 				$categories[$category->categoryName] = $category;
 			}
@@ -136,7 +134,7 @@ class UserGroupOptionForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::readFormParameters()
+	 * @inheritDoc
 	 */
 	public function readFormParameters() {
 		parent::readFormParameters();
@@ -145,7 +143,7 @@ class UserGroupOptionForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::validate()
+	 * @inheritDoc
 	 */
 	public function validate() {
 		parent::validate();
@@ -193,7 +191,7 @@ class UserGroupOptionForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		parent::readData();
@@ -201,8 +199,8 @@ class UserGroupOptionForm extends AbstractForm {
 		if (empty($_POST)) {
 			// read values of accessible user groups
 			$conditions = new PreparedStatementConditionBuilder();
-			$conditions->add("groupID IN (?)", array(array_keys($this->groups)));
-			$conditions->add("optionID = ?", array($this->userGroupOption->optionID));
+			$conditions->add("groupID IN (?)", [array_keys($this->groups)]);
+			$conditions->add("optionID = ?", [$this->userGroupOption->optionID]);
 			
 			$sql = "SELECT	groupID, optionValue
 				FROM	wcf".WCF_N."_user_group_option_value
@@ -222,12 +220,12 @@ class UserGroupOptionForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		parent::save();
 		
-		$this->objectAction = new UserGroupOptionAction(array($this->userGroupOption), 'updateValues', array('values' => $this->values));
+		$this->objectAction = new UserGroupOptionAction([$this->userGroupOption], 'updateValues', ['values' => $this->values]);
 		$this->objectAction->executeAction();
 		
 		// fire saved event
@@ -237,18 +235,18 @@ class UserGroupOptionForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'formElements' => $this->formElements,
 			'groups' => $this->groups,
 			'parentCategories' => $this->parentCategories,
 			'userGroupOption' => $this->userGroupOption,
 			'values' => $this->values
-		));
+		]);
 	}
 	
 	/**
@@ -257,7 +255,7 @@ class UserGroupOptionForm extends AbstractForm {
 	 * @param	\wcf\data\DatabaseObject		$object
 	 * @return	boolean
 	 * 
-	 * @deprecated	since 2.2
+	 * @deprecated	3.0
 	 */
 	protected function verifyPermissions(DatabaseObject $object) {
 		// check the options of this item

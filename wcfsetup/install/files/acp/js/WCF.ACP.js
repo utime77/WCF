@@ -751,7 +751,7 @@ WCF.ACP.Package.Uninstallation = WCF.ACP.Package.Installation.extend({
 				self._packageID = $element.data('objectID');
 				self.prepareInstallation();
 			}
-		});
+		}, undefined, undefined, true);
 	},
 	
 	/**
@@ -1070,7 +1070,7 @@ WCF.ACP.Package.Search = Class.extend({
 				this._selectedPackageVersion = $button.data('packageVersion');
 				this._prepareInstallation();
 			}
-		}, this));
+		}, this), undefined, undefined, true);
 	},
 	
 	/**
@@ -1193,7 +1193,7 @@ WCF.ACP.Package.Server.Installation = Class.extend({
 				this._selectedPackageVersion = $button.data('packageVersion');
 				this._prepareInstallation();
 			}
-		}, this));
+		}, this), undefined, undefined, true);
 	},
 	
 	/**
@@ -1876,6 +1876,12 @@ WCF.ACP.Category.Collapsible = WCF.Collapsible.SimpleRemote.extend({
  */
 WCF.ACP.Search = WCF.Search.Base.extend({
 	/**
+	 * name of the selected search provider
+	 * @var	string
+	 */
+	_providerName: '',
+	
+	/**
 	 * @see	WCF.Search.Base.init()
 	 */
 	init: function() {
@@ -1886,6 +1892,29 @@ WCF.ACP.Search = WCF.Search.Base.extend({
 		$('#pageHeaderSearch > form').on('submit', function(event) {
 			event.preventDefault();
 		});
+		
+		var $dropdown = WCF.Dropdown.getDropdownMenu('pageHeaderSearchType');
+		$dropdown.find('a[data-provider-name]').on('click', $.proxy(function(event) {
+			event.preventDefault();
+			var $button = $(event.target);
+			$('.pageHeaderSearchType > .button').text($button.text());
+			
+			var $oldProviderName = this._providerName;
+			this._providerName = ($button.data('providerName') != 'everywhere' ? $button.data('providerName') : '');
+			
+			if ($oldProviderName != this._providerName) {
+				var $searchString = $.trim(this._searchInput.val());
+				if ($searchString) {
+					var $parameters = {
+						data: {
+							excludedSearchValues: this._excludedSearchValues,
+							searchString: $searchString
+						}
+					};
+					this._queryServer($parameters);
+				}
+			}	
+		}, this));
 	},
 	
 	/**
@@ -1942,6 +1971,15 @@ WCF.ACP.Search = WCF.Search.Base.extend({
 		this._super(data);
 		
 		this._list.addClass('acpSearchDropdown');
+	},
+	
+	/**
+	 * @see	WCF.Search.Base._getParameters()
+	 */
+	_getParameters: function(parameters) {
+		parameters.data.providerName = this._providerName;
+		
+		return parameters;
 	}
 });
 
@@ -2038,7 +2076,7 @@ WCF.ACP.User.BanHandler = {
 		if (this._dialog === null) {
 			// create dialog
 			this._dialog = $('<div />').hide().appendTo(document.body);
-			this._dialog.append($('<div class="section"><dl><dt><label for="userBanReason">' + WCF.Language.get('wcf.acp.user.banReason') + '</label></dt><dd><textarea id="userBanReason" cols="40" rows="3" /><small>' + WCF.Language.get('wcf.acp.user.banReason.description') + '</small></dd></dl><dl><dt></dt><dd><label for="userBanNeverExpires"><input type="checkbox" name="userBanNeverExpires" id="userBanNeverExpires" checked="checked" /> ' + WCF.Language.get('wcf.acp.user.ban.neverExpires') + '</label></dd></dl><dl id="userBanExpiresSettings" style="display: none;"><dt><label for="userBanExpires">' + WCF.Language.get('wcf.acp.user.ban.expires') + '</label></dt><dd><input type="date" name="userBanExpires" id="userBanExpires" class="medium" min="' + new Date(TIME_NOW * 1000).toISOString() + '" data-ignore-timezone="true" /><small>' + WCF.Language.get('wcf.acp.user.ban.expires.description') + '</small></dd></dl></div>'));
+			this._dialog.append($('<div class="section"><dl><dt><label for="userBanReason">' + WCF.Language.get('wcf.acp.user.banReason') + '</label></dt><dd><textarea id="userBanReason" cols="40" rows="3" /><small>' + WCF.Language.get('wcf.acp.user.banReason.description') + '</small></dd></dl><dl><dt></dt><dd><label for="userBanNeverExpires"><input type="checkbox" name="userBanNeverExpires" id="userBanNeverExpires" checked> ' + WCF.Language.get('wcf.acp.user.ban.neverExpires') + '</label></dd></dl><dl id="userBanExpiresSettings" style="display: none;"><dt><label for="userBanExpires">' + WCF.Language.get('wcf.acp.user.ban.expires') + '</label></dt><dd><input type="date" name="userBanExpires" id="userBanExpires" class="medium" min="' + new Date(TIME_NOW * 1000).toISOString() + '" data-ignore-timezone="true" /><small>' + WCF.Language.get('wcf.acp.user.ban.expires.description') + '</small></dd></dl></div>'));
 			this._dialog.append($('<div class="formSubmit"><button class="buttonPrimary" accesskey="s">' + WCF.Language.get('wcf.global.button.submit') + '</button></div>'));
 			
 			this._dialog.find('#userBanNeverExpires').change(function() {
@@ -2149,7 +2187,7 @@ WCF.ACP.User.Group.Copy = Class.extend({
 	 * Handles clicking on a 'copy user group' button.
 	 */
 	_click: function() {
-		var $template = $('<div />');
+		var $template = $('<div class="section" />');
 		$template.append($('<dl class="wide"><dt /><dd><label><input type="checkbox" id="copyMembers" value="1" /> ' + WCF.Language.get('wcf.acp.group.copy.copyMembers') + '</label><small>' + WCF.Language.get('wcf.acp.group.copy.copyMembers.description') + '</small></dd></dl>'));
 		$template.append($('<dl class="wide"><dt /><dd><label><input type="checkbox" id="copyUserGroupOptions" value="1" /> ' + WCF.Language.get('wcf.acp.group.copy.copyUserGroupOptions') + '</label><small>' + WCF.Language.get('wcf.acp.group.copy.copyUserGroupOptions.description') + '</small></dd></dl>'));
 		$template.append($('<dl class="wide"><dt /><dd><label><input type="checkbox" id="copyACLOptions" value="1" /> ' + WCF.Language.get('wcf.acp.group.copy.copyACLOptions') + '</label><small>' + WCF.Language.get('wcf.acp.group.copy.copyACLOptions.description') + '</small></dd></dl>'));
@@ -2173,7 +2211,7 @@ WCF.ACP.User.Group.Copy = Class.extend({
 					}
 				});
 			}
-		}, this), '', $template);
+		}, this), '', $template, true);
 	}
 });
 

@@ -12,25 +12,23 @@ use wcf\system\WCF;
  * Shows the user content revert changes form.
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Form
  */
 class UserContentRevertChangesForm extends AbstractForm {
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededModules
+	 * @inheritDoc
 	 */
-	public $neededModules = array('MODULE_EDIT_HISTORY');
+	public $neededModules = ['MODULE_EDIT_HISTORY'];
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededPermissions
+	 * @inheritDoc
 	 */
-	public $neededPermissions = array('admin.content.canBulkRevertContentChanges');
+	public $neededPermissions = ['admin.content.canBulkRevertContentChanges'];
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$activeMenuItem
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.user.management';
 	
@@ -38,13 +36,13 @@ class UserContentRevertChangesForm extends AbstractForm {
 	 * ids of the relevant users
 	 * @var	integer[]
 	 */
-	public $userIDs = array();
+	public $userIDs = [];
 	
 	/**
 	 * relevant users
 	 * @var	User[]
 	 */
-	public $users = array();
+	public $users = [];
 	
 	/**
 	 * timeframe to consider
@@ -59,7 +57,7 @@ class UserContentRevertChangesForm extends AbstractForm {
 	protected $objectTypeID = null;
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -75,7 +73,7 @@ class UserContentRevertChangesForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::readFormParameters()
+	 * @inheritDoc
 	 */
 	public function readFormParameters() {
 		parent::readFormParameters();
@@ -84,7 +82,7 @@ class UserContentRevertChangesForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::validate()
+	 * @inheritDoc
 	 */
 	public function validate() {
 		parent::validate();
@@ -95,7 +93,7 @@ class UserContentRevertChangesForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		parent::save();
@@ -113,15 +111,15 @@ class UserContentRevertChangesForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'users' => $this->users,
 			'userIDs' => $this->userIDs,
 			'timeframe' => $this->timeframe
-		));
+		]);
 	}
 }

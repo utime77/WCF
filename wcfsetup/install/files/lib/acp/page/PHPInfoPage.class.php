@@ -7,25 +7,23 @@ use wcf\system\WCF;
  * Shows phpinfo() output.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.page
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Page
  */
 class PHPInfoPage extends AbstractPage {
 	/**
-	 * @see	\wcf\page\AbstractPage::$templateName
+	 * @inheritDoc
 	 */
 	public $templateName = 'phpInfo';
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededPermissions
+	 * @inheritDoc
 	 */
-	public $neededPermissions = array('admin.configuration.package.canInstallPackage', 'admin.configuration.package.canUpdatePackage');
+	public $neededPermissions = ['admin.configuration.package.canInstallPackage', 'admin.configuration.package.canUpdatePackage'];
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
@@ -60,8 +58,8 @@ class PHPInfoPage extends AbstractPage {
 			return $ret;
 		}, $info);
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'phpInfo' => $info
-		));
+		]);
 	}
 }

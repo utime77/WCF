@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <language xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/maelstrom/language.xsd" languagecode="de" languagename="Deutsch">
 	<category name="wcf.global">
-		<item name="wcf.global.title"><![CDATA[{$setupPackageName} Installation]]></item>
+		<item name="wcf.global.title"><![CDATA[WoltLab Suite&trade; Installation]]></item>
 		<item name="wcf.global.pageDirection"><![CDATA[ltr]]></item>
 		<item name="wcf.global.decimalPoint"><![CDATA[,]]></item>
 		<item name="wcf.global.thousandsSeparator"><![CDATA[.]]></item>
 		<item name="wcf.global.button.next"><![CDATA[Weiter »]]></item>
 		<item name="wcf.global.progressBar"><![CDATA[{@$progress}% fertiggestellt]]></item>
-		<item name="wcf.global.welcome"><![CDATA[Vielen Dank, dass Sie sich für {$setupPackageName} entschieden haben!]]></item>
-		<item name="wcf.global.welcome.description"><![CDATA[Dieser Installationsassistent hilft Ihnen bei der Einrichtung von <br /><b>WoltLab Community Framework</b>{if $setupPackageName != 'WoltLab Community Framework'} und von <b>{$setupPackageName}</b>{/if}.]]></item>
+		<item name="wcf.global.welcome"><![CDATA[Vielen Dank, dass Sie sich für WoltLab Suite&trade; entschieden haben!]]></item>
+		<item name="wcf.global.welcome.description"><![CDATA[Dieser Installationsassistent hilft Ihnen bei der Einrichtung von <strong>WoltLab Suite&trade;</strong>.]]></item>
 		<item name="wcf.global.welcome.language"><![CDATA[Sprache]]></item>
 		<item name="wcf.global.welcome.language.description"><![CDATA[Die Sprache dieses Assistenten ist zurzeit {@$languageChooser}]]></item>
 		<item name="wcf.global.welcome.language.change"><![CDATA[Sprache wechseln]]></item>
@@ -29,7 +29,8 @@
 		<item name="wcf.global.systemRequirements.uploadMaxFilesize"><![CDATA[Maximale Größe für das Hochladen von Dateien]]></item>
 		<item name="wcf.global.systemRequirements.uploadMaxFilesize.description"><![CDATA[Die derzeitige Konfiguration der Skriptsprache „PHP“ macht das Hochladen von Dateien unmöglich. Einige Funktionalitäten werden durch diese Konfiguration nur eingeschränkt funktionieren.]]></item>
 		<item name="wcf.global.systemRequirements.gdLib"><![CDATA[Installierte Version der Grafikbearbeitungs-Bibliothek „gdlib“]]></item>
-		<item name="wcf.global.systemRequirements.gdLib.description"><![CDATA[Grafikbearbeitungs-Bibliothek „gdlib“ ist für die dynamische Generierung von Bildern zuständig. Ohne sie werden einige Funktionalitäten der Software nicht funktionieren.]]></item>
+		<item name="wcf.global.systemRequirements.gdLib.description"><![CDATA[Grafikbearbeitungs-Bibliothek „gdlib“ ist für die Verarbeitung und dynamische Generierung von Bildern zuständig.]]></item>
+		<item name="wcf.global.systemRequirements.gdLib.notFound"><![CDATA[nicht gefunden]]></item>
 		<item name="wcf.global.systemRequirements.active"><![CDATA[aktiviert]]></item>
 		<item name="wcf.global.systemRequirements.notActive"><![CDATA[nicht aktiviert]]></item>
 		<item name="wcf.global.systemRequirements.memoryLimit"><![CDATA[Zur Verfügung stehender Arbeitsspeicher]]></item>
@@ -41,7 +42,7 @@
 		<item name="wcf.global.languages.languages"><![CDATA[Sprachen]]></item>
 		<item name="wcf.global.languages.error.empty"><![CDATA[Bitte wählen Sie mindestens eine Sprache aus!]]></item>
 		<item name="wcf.global.configureDB"><![CDATA[Datenbankzugang konfigurieren]]></item>
-		<item name="wcf.global.configureDB.description"><![CDATA[Die Daten der Software werden in einer SQL-Datenbank gespeichert. Bitte geben Sie die Zugangsdaten für diese Datenbank an! Falls Ihnen die Zugangsdaten nicht bekannt sind, wenden Sie sich bitte an Ihren Serveradministrator oder Webhoster.]]></item>
+		<item name="wcf.global.configureDB.description"><![CDATA[Die Daten der Software werden in einer MySQL oder MariaDB-Datenbank gespeichert. Bitte geben Sie die Zugangsdaten für diese Datenbank an! Falls Ihnen die Zugangsdaten nicht bekannt sind, wenden Sie sich bitte an Ihren Serveradministrator oder Webhoster.]]></item>
 		<item name="wcf.global.configureDB.host"><![CDATA[Server-Hostname]]></item>
 		<item name="wcf.global.configureDB.user"><![CDATA[Benutzername]]></item>
 		<item name="wcf.global.configureDB.password"><![CDATA[Kennwort]]></item>
@@ -50,11 +51,8 @@
 		<item name="wcf.global.configureDB.number"><![CDATA[Installationsnummer]]></item>
 		<item name="wcf.global.configureDB.number.description"><![CDATA[Die Installationsnummer erlaubt Ihnen mehrere Installationen der Software in der gleichen Datenbank zu speichern. Wenn dies Ihre erste Installation der Software in dieser Datenbank ist, sollten Sie hier den Wert <em>1</em> wählen.]]></item>
 		<item name="wcf.global.configureDB.error"><![CDATA[Beim Verbindungsversuch mit der Datenbank ist folgender Fehler aufgetreten:
-		<br /><strong>{$exception->getMessage()}{if $exception->getPrevious()}<br />{$exception->getPrevious()->getMessage()}{/if}</strong>]]></item>
-		<item name="wcf.global.configureDB.conflictedTables"><![CDATA[Folgende Tabelle{if $conflictedTables|count > 1}n{/if} existier{if $conflictedTables|count > 1}en{else}t{/if} schon in der Datenbank „{$dbName}“:<br />{implode from=$conflictedTables item="table"}{$table}{/implode}.<br /><br />Um dieses Problem zu beheben, können Sie:<br />1. diese Tabelle{if $conflictedTables|count > 1}n{/if} manuell löschen und die „Weiter“ Schaltfläche betätigen, oder<br />2. Sie geben die Daten einer anderen Datenbank ein und betätigen die „Weiter“ Schaltfläche, oder<br />3. Sie geben eine von „{$dbNumber}“ unterschiedliche Installationsnummer an und betätigen die „Weiter“ Schaltfläche.]]></item>
-		<item name="wcf.global.configureDB.class"><![CDATA[Datenbank-Typ]]></item>
-		<item name="wcf.global.configureDB.class.MySQLDatabase"><![CDATA[MySQL 5.1+]]></item>
-		<item name="wcf.global.configureDB.class.PostgreSQLDatabase"><![CDATA[PostgreSQL 8.2+]]></item>
+		<br><strong>{$exception->getMessage()}{if $exception->getPrevious()}<br>{$exception->getPrevious()->getMessage()}{/if}</strong>]]></item>
+		<item name="wcf.global.configureDB.conflictedTables"><![CDATA[Folgende Tabelle{if $conflictedTables|count > 1}n{/if} existier{if $conflictedTables|count > 1}en{else}t{/if} schon in der Datenbank „{$dbName}“:<br>{implode from=$conflictedTables item="table"}{$table}{/implode}.<br><br>Um dieses Problem zu beheben, können Sie:<br>1. diese Tabelle{if $conflictedTables|count > 1}n{/if} manuell löschen und die „Weiter“ Schaltfläche betätigen, oder<br>2. Sie geben die Daten einer anderen Datenbank ein und betätigen die „Weiter“ Schaltfläche, oder<br>3. Sie geben eine von „{$dbNumber}“ unterschiedliche Installationsnummer an und betätigen die „Weiter“ Schaltfläche.]]></item>
 		<item name="wcf.global.createUser"><![CDATA[Administrator erstellen]]></item>
 		<item name="wcf.global.createUser.description"><![CDATA[Der Installationsassistent erstellt nun ein Administrator-Konto für Sie. Bitte geben Sie dazu einen Benutzernamen, eine E-Mail-Adresse und ein Kennwort ein.]]></item>
 		<item name="wcf.global.createUser.username"><![CDATA[Benutzername]]></item>
@@ -69,17 +67,18 @@
 		<item name="wcf.global.createUser.error.confirmEmail.notEqual"><![CDATA[Die eingegebenen E-Mail-Adressen sind nicht identisch. Bitte tragen Sie zur Sicherheit in beide Eingabefelder die selbe E-Mail-Adresse ein.]]></item>
 		<item name="wcf.global.createUser.error.confirmPassword.notEqual"><![CDATA[Die eingegebenen Kennwörter sind nicht identisch. Bitte tragen Sie zur Sicherheit in beide Eingabefelder das selbe Kennwort ein.]]></item>
 		<item name="wcf.global.wcfDir.error"><![CDATA[Beim Versuch die Dateien zu entpacken, ist folgender Fehler aufgetreten:
-		<br /><strong>{$exception->getMessage()}</strong><br />
+		<br><strong>{$exception->getMessage()}</strong><br>
 		Bitte kontrollieren Sie, ob das Zielverzeichnis existiert und beschreibbar ist.]]></item>
 		<item name="wcf.global.applicationDirectory"><![CDATA[Installationsverzeichnisse]]></item>
-		<item name="wcf.global.applicationDirectory.description"><![CDATA[Geben Sie die Verzeichnisse an, die für die Installation der aufgeführten Anwendungen verwendet werden sollen. Die Eingabe der Verzeichnisse erfolgt relativ zum Hauptverzeichnis der Website („{$documentRoot}“).]]></item>
+		<item name="wcf.global.applicationDirectory.description"><![CDATA[Geben Sie die Verzeichnisse an, die für die Installation der aufgeführten Apps verwendet werden sollen. Die Eingabe der Verzeichnisse erfolgt relativ zum Hauptverzeichnis der Website („{$documentRoot}“).]]></item>
 		<item name="wcf.global.applicationDirectory.error"><![CDATA[Die Eingaben für die Installationsverzeichnisse sind ungültig. Bitte überprüfen Sie die markierten Felder.]]></item>
-		<item name="wcf.global.applicationDirectory.error.duplicate"><![CDATA[Dieses Verzeichnis wurde bereits für eine andere Anwendung angegeben.]]></item>
+		<item name="wcf.global.applicationDirectory.error.duplicate"><![CDATA[Dieses Verzeichnis wurde bereits für eine andere App angegeben.]]></item>
 		<item name="wcf.global.applicationDirectory.error.makePath"><![CDATA[Das angegebene Verzeichnis kann auf Grund unzureichender Berechtigungen nicht erstellt werden.]]></item>
 		<item name="wcf.global.applicationDirectory.error.makeWritable"><![CDATA[Das angegebene Verzeichnis ist für PHP nicht beschreibbar, bitte überprüfen Sie die Berechtigungen.]]></item>
-		<item name="wcf.global.applicationDirectory.error.notEmpty"><![CDATA[In diesem Verzeichnis befindet sich bereits eine Anwendung.]]></item>
+		<item name="wcf.global.applicationDirectory.error.notEmpty"><![CDATA[In diesem Verzeichnis befindet sich bereits eine App.]]></item>
 		<item name="wcf.global.applicationDirectory.error.outsideDocumentRoot"><![CDATA[Das Verzeichnis befindet sich außerhalb des Hauptverzeichnis der Website.]]></item>
-		<item name="wcf.global.applicationDirectory.url"><![CDATA[Endgültige URL für Anwendungen]]></item>
-		<item name="wcf.global.applicationDirectory.url.description"><![CDATA[Nach der Installation werden die Anwendungen unter den folgenden URLs erreichbar sein.]]></item>
+		<item name="wcf.global.applicationDirectory.url"><![CDATA[Endgültige URL für Apps]]></item>
+		<item name="wcf.global.applicationDirectory.url.description"><![CDATA[Nach der Installation werden die Apps unter den folgenden URLs erreichbar sein.]]></item>
+		<item name="wcf.global.title.apps"><![CDATA[Apps:]]></item>
 	</category>
 </language>

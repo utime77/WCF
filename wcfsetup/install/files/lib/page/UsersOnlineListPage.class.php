@@ -15,9 +15,9 @@ use wcf\util\HeaderUtil;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	page
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Page
+ * 
+ * @property	UsersOnlineList		$objectList
  */
 class UsersOnlineListPage extends SortablePage {
 	/**
@@ -28,7 +28,7 @@ class UsersOnlineListPage extends SortablePage {
 	/**
 	 * @inheritDoc
 	 */
-	public $enableTracking = true;
+	public $itemsPerPage = 100;
 	
 	/**
 	 * @inheritDoc
@@ -105,11 +105,10 @@ class UsersOnlineListPage extends SortablePage {
 		
 		// cache all necessary data for showing locations
 		foreach ($this->objectList as $userOnline) {
-			if ($userOnline->controller) {
-				$page = PageCache::getInstance()->getPageByController($userOnline->controller);
-				if ($page !== null && $page->getHandler() !== null && $page->getHandler() instanceof IOnlineLocationPageHandler) {
-					$page->getHandler()->prepareOnlineLocation($page, $userOnline);
-				}
+			$page = PageCache::getInstance()->getPage($userOnline->pageID);
+			if ($page !== null && $page->getHandler() !== null && $page->getHandler() instanceof IOnlineLocationPageHandler) {
+				/** @noinspection PhpUndefinedMethodInspection */
+				$page->getHandler()->prepareOnlineLocation($page, $userOnline);
 			}
 		}
 		
@@ -135,8 +134,7 @@ class UsersOnlineListPage extends SortablePage {
 	 * @inheritDoc
 	 */
 	protected function readObjects() {
-		$this->objectList->sqlLimit = 0;
-		if ($this->sqlOrderBy) $this->objectList->sqlOrderBy = ($this->sortField == 'lastActivityTime' ? 'session.' : '').$this->sqlOrderBy;
-		$this->objectList->readObjects();
+		if ($this->sqlOrderBy) $this->sqlOrderBy = ($this->sortField == 'lastActivityTime' ? 'session.' : '').$this->sqlOrderBy;
+		parent::readObjects();
 	}
 }

@@ -10,11 +10,9 @@ use wcf\system\request\IRouteController;
  * Represents an automatic assignment to a user group.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.group.assignment
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Group\Assignment
  *
  * @property-read	integer		$assignmentID		unique id of the automatic user group assignment
  * @property-read	integer		$groupID		id of the user group to which users are automatically assigned
@@ -23,12 +21,12 @@ use wcf\system\request\IRouteController;
  */
 class UserGroupAssignment extends DatabaseObject implements IRouteController {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'assignmentID';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'user_group_assignment';
 	
@@ -42,7 +40,7 @@ class UserGroupAssignment extends DatabaseObject implements IRouteController {
 	}
 	
 	/**
-	 * @see	\wcf\data\ITitledObject::getTitle()
+	 * @inheritDoc
 	 */
 	public function getTitle() {
 		return $this->title;

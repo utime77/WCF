@@ -1,6 +1,7 @@
 <?php
 namespace wcf\system\email\mime;
 use wcf\system\email\Mailbox;
+use wcf\system\template\EmailTemplateEngine;
 use wcf\system\WCF;
 
 /**
@@ -11,12 +12,10 @@ use wcf\system\WCF;
  * before evaluating the template.
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.email.mime
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Email\Mime
+ * @since	3.0
  */
 class RecipientAwareTextMimePart extends TextMimePart implements IRecipientAwareMimePart {
 	/**
@@ -53,22 +52,22 @@ class RecipientAwareTextMimePart extends TextMimePart implements IRecipientAware
 	}
 	
 	/**
-	 * @see	\wcf\system\email\mime\IRecipientAwareMimePart::setRecipient()
+	 * @inheritDoc
 	 */
 	public function setRecipient(Mailbox $mailbox = null) {
 		$this->mailbox = $mailbox;
 	}
 	
 	/**
-	 * @see	\wcf\system\email\mime\AbstractMimePart::getContent()
+	 * @inheritDoc
 	 */
 	public function getContent() {
 		$language = WCF::getLanguage();
 		
 		try {
-			WCF::setLanguage($this->mailbox->getLanguage()->languageID);
+			if ($this->mailbox) WCF::setLanguage($this->mailbox->getLanguage()->languageID);
 			
-			return WCF::getTPL()->fetch($this->template, $this->application, [
+			return EmailTemplateEngine::getInstance()->fetch($this->template, $this->application, [
 				'content' => $this->content,
 				'mimeType' => $this->mimeType,
 				'mailbox' => $this->mailbox

@@ -1,10 +1,12 @@
 <?php
 namespace wcf\data\page;
+use wcf\data\page\content\PageContent;
 use wcf\data\DatabaseObject;
 use wcf\data\ILinkableObject;
 use wcf\data\ITitledObject;
 use wcf\data\TDatabaseObjectOptions;
 use wcf\data\TDatabaseObjectPermissions;
+use wcf\system\acl\simple\SimpleAclResolver;
 use wcf\system\application\ApplicationHandler;
 use wcf\system\database\util\PreparedStatementConditionBuilder;
 use wcf\system\exception\SystemException;
@@ -17,10 +19,8 @@ use wcf\system\WCF;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.page
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Data\Page
+ * @since	3.0
  *
  * @property-read	integer		$pageID
  * @property-read	integer|null	$parentPageID
@@ -73,6 +73,12 @@ class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 	protected $boxIDs;
 	
 	/**
+	 * page content grouped by language id
+	 * @var	PageContent[]
+	 */
+	public $pageContents;
+	
+	/**
 	 * Returns true if the active user can delete this page.
 	 * 
 	 * @return	boolean
@@ -91,7 +97,7 @@ class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 	 * @return	boolean
 	 */
 	public function canDisable() {
-		if (WCF::getSession()->getPermission('admin.content.cms.canManagePage') && !$this->originIsSystem && !$this->isLandingPage) {
+		if (WCF::getSession()->getPermission('admin.content.cms.canManagePage') && (!$this->originIsSystem || $this->pageType != 'system') && !$this->isLandingPage) {
 			return true;
 		}
 		
@@ -99,29 +105,25 @@ class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 	}
 	
 	/**
-	 * Returns the page content.
-	 * 
-	 * @return	array		content data
+	 * Returns the page's content.
+	 *
+	 * @return	PageContent[]
 	 */
-	public function getPageContent() {
-		$content = [];
-		
-		$sql = "SELECT	*
-			FROM	wcf".WCF_N."_page_content
-			WHERE	pageID = ?";
-		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute([$this->pageID]);
-		while ($row = $statement->fetchArray()) {
-			$content[($row['languageID'] ?: 0)] = [
-				'title' => $row['title'],
-				'content' => $row['content'],
-				'metaDescription' => $row['metaDescription'],
-				'metaKeywords' => $row['metaKeywords'],
-				'customURL' => $row['customURL']
-			];
+	public function getPageContents() {
+		if ($this->pageContents === null) {
+			$this->pageContents = [];
+			
+			$sql = "SELECT	*
+				FROM	wcf" . WCF_N . "_page_content
+				WHERE	pageID = ?";
+			$statement = WCF::getDB()->prepareStatement($sql);
+			$statement->execute([$this->pageID]);
+			while ($row = $statement->fetchArray()) {
+				$this->pageContents[($row['languageID'] ?: 0)] = new PageContent(null, $row);
+			}
 		}
 		
-		return $content;
+		return $this->pageContents;
 	}
 	
 	/**
@@ -129,7 +131,7 @@ class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 	 * for multilingual pages.
 	 * 
 	 * @param	integer		$languageID	language id or `null` if there are no localized versions
-	 * @return	string[]	page content data
+	 * @return	PageContent|null        	page content data
 	 */
 	public function getPageContentByLanguage($languageID = null) {
 		$conditions = new PreparedStatementConditionBuilder();
@@ -143,8 +145,9 @@ class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 		$statement = WCF::getDB()->prepareStatement($sql, 1);
 		$statement->execute($conditions->getParameters());
 		$row = $statement->fetchSingleRow();
+		if ($row !== false) return new PageContent(null, $row);
 		
-		return $row ?: [];
+		return null;
 	}
 	
 	/**
@@ -172,9 +175,6 @@ class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 	 */
 	public function getTitle() {
 		$title = PageCache::getInstance()->getPageTitle($this->pageID);
-		if (empty($title)) {
-			$title = $this->getGenericTitle();
-		}
 		
 		return $title;
 	}
@@ -185,7 +185,7 @@ class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 	 * @return	string
 	 */
 	public function getDisplayLink() {
-		return str_replace($this->getApplication()->getPageURL(), '', $this->getLink());
+		return preg_replace('~^https?://~', '', $this->getLink());
 	}
 	
 	/**
@@ -203,7 +203,7 @@ class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 	 * @return	\wcf\system\page\handler\IMenuPageHandler|null
 	 */
 	public function getHandler() {
-		if ($this->handler) {
+		if ($this->pageHandler === null && $this->handler) {
 			$this->pageHandler = new $this->handler();
 		}
 		
@@ -217,10 +217,20 @@ class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 	 * @return	boolean		false if the page should be hidden from menus
 	 */
 	public function isVisible() {
+		if ($this->isDisabled) return false;
 		if (!$this->validateOptions()) return false;
 		if (!$this->validatePermissions()) return false;
 		
 		return true;
+	}
+	
+	/**
+	 * Returns true if this page is accessible by current user.
+	 *
+	 * @return	boolean
+	 */
+	public function isAccessible() {
+		return SimpleAclResolver::getInstance()->canAccess('com.woltlab.wcf.page', $this->pageID);
 	}
 	
 	/**
@@ -235,17 +245,17 @@ class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 		
 		WCF::getDB()->beginTransaction();
 		// unmark existing landing page
-		$sql = "UPDATE  wcf".WCF_N."_page
-			SET     isLandingPage = ?";
+		$sql = "UPDATE	wcf".WCF_N."_page
+			SET	isLandingPage = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
 		$statement->execute([
 			0
 		]);
 		
 		// set current page as landing page
-		$sql = "UPDATE  wcf".WCF_N."_page
-			SET     isLandingPage = ?
-			WHERE   pageID = ?";
+		$sql = "UPDATE	wcf".WCF_N."_page
+			SET	isLandingPage = ?
+			WHERE	pageID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
 		$statement->execute([
 			1,
@@ -266,13 +276,13 @@ class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 	/**
 	 * Returns box to page assignments.
 	 *
-	 * @return      integer[]
+	 * @return	integer[]
 	 */
 	public function getBoxIDs() {
 		if ($this->boxIDs === null) {
-			$sql = "SELECT  boxID
-				FROM    wcf" . WCF_N . "_box_to_page
-				WHERE   pageID = ?";
+			$sql = "SELECT	boxID
+				FROM	wcf" . WCF_N . "_box_to_page
+				WHERE	pageID = ?";
 			$statement = WCF::getDB()->prepareStatement($sql);
 			$statement->execute([$this->pageID]);
 			$this->boxIDs = $statement->fetchAll(\PDO::FETCH_COLUMN);
@@ -284,8 +294,8 @@ class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 	/**
 	 * Returns the template name of this page.
 	 * 
-	 * @param       integer         $languageID
-	 * @return      string
+	 * @param	integer		$languageID
+	 * @return	string
 	 */
 	public function getTplName($languageID = null) {
 		if ($this->pageType == 'tpl') {
@@ -300,12 +310,24 @@ class Page extends DatabaseObject implements ILinkableObject, ITitledObject {
 	}
 	
 	/**
-	 * Returns the value of a generic phrase based upon a page's identifier.
+	 * Returns the languages of this page.
 	 * 
-	 * @return      string  generic title
+	 * @return PageLanguage[]
 	 */
-	protected function getGenericTitle() {
-		return WCF::getLanguage()->get('wcf.page.' . $this->identifier);
+	public function getPageLanguages() {
+		$pageLanguages = [];
+		if ($this->isMultilingual) {
+			$sql = "SELECT  languageID
+				FROM    wcf" . WCF_N . "_page_content
+				WHERE   pageID = ?";
+			$statement = WCF::getDB()->prepareStatement($sql);
+			$statement->execute([$this->pageID]);
+			while ($languageID = $statement->fetchColumn()) {
+				$pageLanguages[] = new PageLanguage($this->pageID, $languageID);
+			}
+		}
+		
+		return $pageLanguages;
 	}
 	
 	/**

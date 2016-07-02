@@ -12,11 +12,9 @@ use wcf\util\FileUtil;
  * Represents an attachment.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.attachment
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Attachment
  *
  * @property-read	integer		$attachmentID
  * @property-read	integer		$objectTypeID
@@ -45,12 +43,12 @@ use wcf\util\FileUtil;
  */
 class Attachment extends DatabaseObject implements IRouteController, IThumbnailFile {
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'attachment';
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'attachmentID';
 	
@@ -132,7 +130,7 @@ class Attachment extends DatabaseObject implements IRouteController, IThumbnailF
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function getLocation() {
 		return self::getStorage() . substr($this->fileHash, 0, 2) . '/' . ($this->attachmentID) . '-' . $this->fileHash;
@@ -148,7 +146,7 @@ class Attachment extends DatabaseObject implements IRouteController, IThumbnailF
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function getThumbnailLocation($size = '') {
 		if ($size == 'tiny') {
@@ -159,7 +157,7 @@ class Attachment extends DatabaseObject implements IRouteController, IThumbnailF
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function getThumbnailLink($size = '') {
 		$parameters = [
@@ -174,7 +172,7 @@ class Attachment extends DatabaseObject implements IRouteController, IThumbnailF
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function getTitle() {
 		return $this->filename;
@@ -247,7 +245,7 @@ class Attachment extends DatabaseObject implements IRouteController, IThumbnailF
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public static function getThumbnailSizes() {
 		return [

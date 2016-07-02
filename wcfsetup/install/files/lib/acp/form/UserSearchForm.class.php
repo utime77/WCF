@@ -8,6 +8,7 @@ use wcf\data\user\group\UserGroup;
 use wcf\data\user\UserList;
 use wcf\form\AbstractForm;
 use wcf\system\condition\IUserCondition;
+use wcf\system\condition\UserGroupCondition;
 use wcf\system\event\EventHandler;
 use wcf\system\exception\UserInputException;
 use wcf\system\request\LinkHandler;
@@ -18,28 +19,26 @@ use wcf\util\HeaderUtil;
  * Shows the user search form.
  * 
  * @author	Matthias Schmidt, Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Form
  */
 class UserSearchForm extends UserOptionListForm {
 	/**
-	 * @see	\wcf\page\AbstractPage::$activeMenuItem
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.user.search';
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededPermissions
+	 * @inheritDoc
 	 */
-	public $neededPermissions = array('admin.user.canSearchUser');
+	public $neededPermissions = ['admin.user.canSearchUser'];
 	
 	/**
 	 * list of grouped user group assignment condition object types
-	 * @var	array
+	 * @var	ObjectType[][]
 	 */
-	public $conditions = array();
+	public $conditions = [];
 	
 	/**
 	 * list with searched users
@@ -75,7 +74,7 @@ class UserSearchForm extends UserOptionListForm {
 	 * shown columns
 	 * @var	string[]
 	 */
-	public $columns = array('registrationDate', 'lastActivityTime');
+	public $columns = ['registrationDate', 'lastActivityTime'];
 	
 	/**
 	 * number of results
@@ -91,7 +90,7 @@ class UserSearchForm extends UserOptionListForm {
 	public $groupID = 0;
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -117,7 +116,7 @@ class UserSearchForm extends UserOptionListForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::readFormParameters()
+	 * @inheritDoc
 	 */
 	public function readFormParameters() {
 		parent::readFormParameters();
@@ -135,7 +134,7 @@ class UserSearchForm extends UserOptionListForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		$objectTypes = ObjectTypeCache::getInstance()->getObjectTypes('com.woltlab.wcf.condition.userSearch');
@@ -158,23 +157,23 @@ class UserSearchForm extends UserOptionListForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'groupedObjectTypes' => $this->conditions,
 			'sortField' => $this->sortField,
 			'sortOrder' => $this->sortOrder,
 			'itemsPerPage' => $this->itemsPerPage,
 			'columns' => $this->columns,
 			'columnOptions' => $this->optionHandler->getCategoryOptions('profile')
-		));
+		]);
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		parent::save();
@@ -186,12 +185,12 @@ class UserSearchForm extends UserOptionListForm {
 			'columns' => $this->columns
 		]);
 		
-		$search = SearchEditor::create(array(
+		$search = SearchEditor::create([
 			'userID' => WCF::getUser()->userID,
 			'searchData' => $data,
 			'searchTime' => TIME_NOW,
 			'searchType' => 'users'
-		));
+		]);
 		
 		// get new search id
 		$this->searchID = $search->searchID;
@@ -205,7 +204,7 @@ class UserSearchForm extends UserOptionListForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::validate()
+	 * @inheritDoc
 	 */
 	public function validate() {
 		AbstractForm::validate();
@@ -223,6 +222,8 @@ class UserSearchForm extends UserOptionListForm {
 				
 				// manually inject user group data for listing of group members
 				if ($this->groupID && $objectType->objectType == 'com.woltlab.wcf.userGroup') {
+					/** @var UserGroupCondition $processor */
+					
 					$userGroups = UserGroup::getAccessibleGroups([], [UserGroup::EVERYONE, UserGroup::GUESTS]);
 					
 					uasort($userGroups, function(UserGroup $groupA, UserGroup $groupB) {

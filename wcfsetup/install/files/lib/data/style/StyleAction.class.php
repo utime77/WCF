@@ -12,6 +12,8 @@ use wcf\system\image\ImageHandler;
 use wcf\system\request\LinkHandler;
 use wcf\system\style\StyleHandler;
 use wcf\system\upload\DefaultUploadFileValidationStrategy;
+use wcf\system\upload\UploadFile;
+use wcf\system\upload\UploadHandler;
 use wcf\system\Regex;
 use wcf\system\WCF;
 use wcf\util\FileUtil;
@@ -20,35 +22,36 @@ use wcf\util\FileUtil;
  * Executes style-related actions.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.style
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Style
+ * 
+ * @method	StyleEditor[]	getObjects()
+ * @method	StyleEditor	getSingleObject()
  */
 class StyleAction extends AbstractDatabaseObjectAction implements IToggleAction, IUploadAction {
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected $allowGuestAccess = ['changeStyle', 'getStyleChooser'];
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
-	protected $className = 'wcf\data\style\StyleEditor';
+	protected $className = StyleEditor::class;
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected $permissionsDelete = ['admin.style.canManageStyle'];
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected $permissionsUpdate = ['admin.style.canManageStyle'];
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected $requireACP = ['copy', 'delete', 'markAsTainted', 'setAsDefault', 'toggle', 'update', 'upload', 'uploadLogo'];
 	
@@ -65,9 +68,11 @@ class StyleAction extends AbstractDatabaseObjectAction implements IToggleAction,
 	public $styleEditor = null;
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
+	 * @return	Style
 	 */
 	public function create() {
+		/** @var Style $style */
 		$style = parent::create();
 		
 		// add variables
@@ -80,12 +85,12 @@ class StyleAction extends AbstractDatabaseObjectAction implements IToggleAction,
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function update() {
 		parent::update();
 		
-		foreach ($this->objects as $style) {
+		foreach ($this->getObjects() as $style) {
 			// update variables
 			$this->updateVariables($style->getDecoratedObject(), true);
 			
@@ -98,12 +103,12 @@ class StyleAction extends AbstractDatabaseObjectAction implements IToggleAction,
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function delete() {
 		$count = parent::delete();
 		
-		foreach ($this->objects as $style) {
+		foreach ($this->getObjects() as $style) {
 			// remove custom images
 			if ($style->imagePath && $style->imagePath != 'images/') {
 				$this->removeDirectory($style->imagePath);
@@ -241,7 +246,7 @@ class StyleAction extends AbstractDatabaseObjectAction implements IToggleAction,
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function validateUpload() {
 		// check upload permissions
@@ -261,19 +266,24 @@ class StyleAction extends AbstractDatabaseObjectAction implements IToggleAction,
 			$this->style = $styles[$this->parameters['styleID']];
 		}
 		
-		if (count($this->parameters['__files']->getFiles()) != 1) {
+		/** @var UploadHandler $uploadHandler */
+		$uploadHandler = $this->parameters['__files'];
+		
+		if (count($uploadHandler->getFiles()) != 1) {
 			throw new IllegalLinkException();
 		}
 		
 		// check max filesize, allowed file extensions etc.
-		$this->parameters['__files']->validateFiles(new DefaultUploadFileValidationStrategy(PHP_INT_MAX, ['jpg', 'jpeg', 'png', 'gif']));
+		$uploadHandler->validateFiles(new DefaultUploadFileValidationStrategy(PHP_INT_MAX, ['jpg', 'jpeg', 'png', 'gif']));
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function upload() {
 		// save files
+		/** @noinspection PhpUndefinedMethodInspection */
+		/** @var UploadFile[] $files */
 		$files = $this->parameters['__files']->getFiles();
 		$file = $files[0];
 		
@@ -286,23 +296,21 @@ class StyleAction extends AbstractDatabaseObjectAction implements IToggleAction,
 						throw new UserInputException('image');
 					}
 					switch ($imageData[2]) {
-						case IMG_PNG:
-						case IMG_JPEG:
-						case IMG_JPG:
-						case IMG_GIF:
+						case IMAGETYPE_PNG:
+						case IMAGETYPE_JPEG:
+						case IMAGETYPE_GIF:
 							// fine
 						break;
 						default:
 							throw new UserInputException('image');
 					}
-
+					
 					if ($imageData[0] > Style::PREVIEW_IMAGE_MAX_WIDTH || $imageData[1] > Style::PREVIEW_IMAGE_MAX_HEIGHT) {
 						$adapter = ImageHandler::getInstance()->getAdapter();
 						$adapter->loadFile($fileLocation);
 						$fileLocation = FileUtil::getTemporaryFilename();
 						$thumbnail = $adapter->createThumbnail(Style::PREVIEW_IMAGE_MAX_WIDTH, Style::PREVIEW_IMAGE_MAX_HEIGHT, false);
 						$adapter->writeImage($thumbnail, $fileLocation);
-						$imageData = getimagesize($fileLocation);
 					}
 				}
 				catch (SystemException $e) {
@@ -355,6 +363,8 @@ class StyleAction extends AbstractDatabaseObjectAction implements IToggleAction,
 	 */
 	public function uploadLogo() {
 		// save files
+		/** @noinspection PhpUndefinedMethodInspection */
+		/** @var UploadFile[] $files */
 		$files = $this->parameters['__files']->getFiles();
 		$file = $files[0];
 		
@@ -572,12 +582,12 @@ class StyleAction extends AbstractDatabaseObjectAction implements IToggleAction,
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function validateToggle() {
 		parent::validateUpdate();
 		
-		foreach ($this->objects as $style) {
+		foreach ($this->getObjects() as $style) {
 			if ($style->isDefault) {
 				throw new UserInputException('objectIDs');
 			}
@@ -585,10 +595,10 @@ class StyleAction extends AbstractDatabaseObjectAction implements IToggleAction,
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function toggle() {
-		foreach ($this->objects as $style) {
+		foreach ($this->getObjects() as $style) {
 			$isDisabled = ($style->isDisabled) ? 0 : 1;
 			$style->update(['isDisabled' => $isDisabled]);
 		}
@@ -648,7 +658,7 @@ class StyleAction extends AbstractDatabaseObjectAction implements IToggleAction,
 	
 	/**
 	 * TODO: add documentation
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	public function validateMarkAsTainted() {
 		if (!WCF::getSession()->getPermission('admin.style.canManageStyle')) {
@@ -660,7 +670,7 @@ class StyleAction extends AbstractDatabaseObjectAction implements IToggleAction,
 	
 	/**
 	 * TODO: add documentation
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	public function markAsTainted() {
 		// merge definitions

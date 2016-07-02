@@ -6,10 +6,11 @@
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
  * @module	WoltLab/WCF/Ui/Page/Header/Fixed
  */
-define(['Core', 'EventHandler', 'Ui/CloseOverlay', 'Ui/Screen', 'Ui/SimpleDropdown'], function(Core, EventHandler, UiCloseOverlay, UiScreen, UiSimpleDropdown) {
+define(['Core', 'EventHandler', 'Ui/Alignment', 'Ui/CloseOverlay', 'Ui/Screen', 'Ui/SimpleDropdown'], function(Core, EventHandler, UiAlignment, UiCloseOverlay, UiScreen, UiSimpleDropdown) {
 	"use strict";
 	
-	var _pageHeader, _pageHeaderContainer, _triggerHeight, _isFixed = false, _isMobile = false;
+	var _pageHeader, _pageHeaderContainer, _searchInputContainer, _triggerHeight;
+	var _isFixed = false, _isMobile = false;
 	
 	/**
 	 * @exports     WoltLab/WCF/Ui/Page/Header/Fixed
@@ -39,7 +40,9 @@ define(['Core', 'EventHandler', 'Ui/CloseOverlay', 'Ui/Screen', 'Ui/SimpleDropdo
 		 * @protected
 		 */
 		_initStickyPageHeader: function() {
-			_pageHeader.style.setProperty('min-height', _pageHeader.clientHeight + 'px');
+			if (_pageHeader.clientHeight) {
+				_pageHeader.style.setProperty('min-height', _pageHeader.clientHeight + 'px');
+			}
 			
 			_triggerHeight = _pageHeader.clientHeight - elBySel('.mainMenu', _pageHeader).clientHeight;
 			
@@ -53,10 +56,23 @@ define(['Core', 'EventHandler', 'Ui/CloseOverlay', 'Ui/Screen', 'Ui/SimpleDropdo
 		 * @protected
 		 */
 		_initSearchBar: function() {
+			var searchContainer = elById('pageHeaderSearch');
+			searchContainer.addEventListener(WCF_CLICK_EVENT, function(event) {
+				event.stopPropagation();
+			});
+			
 			var searchInput = elById('pageHeaderSearchInput');
 			
-			UiSimpleDropdown.registerCallback('pageHeaderSearchInputContainer', function() {
+			var searchLabel = elBySel('.pageHeaderSearchLabel');
+			_searchInputContainer = elById('pageHeaderSearchInputContainer');
+			
+			var menu = elById('topMenu');
+			searchLabel.addEventListener(WCF_CLICK_EVENT, function() {
 				if ((_isFixed || _isMobile) && !_pageHeader.classList.contains('searchBarOpen')) {
+					UiAlignment.set(_searchInputContainer, menu, {
+						horizontal: 'right'
+					});
+					
 					_pageHeader.classList.add('searchBarOpen');
 					searchInput.focus();
 				}
@@ -81,12 +97,19 @@ define(['Core', 'EventHandler', 'Ui/CloseOverlay', 'Ui/Screen', 'Ui/SimpleDropdo
 		 * @protected
 		 */
 		_scroll: function() {
+			var wasFixed = _isFixed;
+			
 			_isFixed = (window.scrollY > _triggerHeight);
 			
 			_pageHeader.classList[_isFixed ? 'add' : 'remove']('sticky');
 			_pageHeaderContainer.classList[_isFixed ? 'add' : 'remove']('stickyPageHeader');
 			
-			_pageHeader.classList.remove('searchBarOpen');
+			if (!_isFixed && wasFixed) {
+				_pageHeader.classList.remove('searchBarOpen');
+				['bottom', 'left', 'right', 'top'].forEach(function(propertyName) {
+					_searchInputContainer.style.removeProperty(propertyName);
+				});
+			}
 		}
 	};
 });

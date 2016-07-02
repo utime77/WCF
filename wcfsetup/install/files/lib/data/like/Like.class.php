@@ -7,11 +7,9 @@ use wcf\system\WCF;
  * Represents a like of an object.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.like
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Like
  *
  * @property-read	integer		$likeID			unique id of the like
  * @property-read	integer		$objectID		id of the liked object
@@ -23,12 +21,12 @@ use wcf\system\WCF;
  */
 class Like extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'like';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'likeID';
 	
@@ -59,23 +57,23 @@ class Like extends DatabaseObject {
 				AND objectID = ?
 				AND userID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array(
+		$statement->execute([
 			$objectTypeID,
 			$objectID,
 			$userID
-		));
+		]);
 		
 		$row = $statement->fetchArray();
 		
 		if (!$row) {
-			$row = array();
+			$row = [];
 		}
 		
 		return new Like(null, $row);
 	}
 	
 	/**
-	 * @see	\wcf\data\IStorableObject::getDatabaseTableAlias()
+	 * @inheritDoc
 	 */
 	public static function getDatabaseTableAlias() {
 		return 'like_table';

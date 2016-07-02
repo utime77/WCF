@@ -13,9 +13,7 @@ use wcf\system\WCF;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.notice
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Notice
  * 
  * @method	Notice		getDecoratedObject()
  * @mixin	Notice
@@ -32,8 +30,6 @@ class NoticeEditor extends DatabaseObjectEditor implements IEditableCachedObject
 	 * @param	integer		$showOrder
 	 */
 	public function setShowOrder($showOrder = 0) {
-		$newShowOrder = 1;
-		
 		$sql = "SELECT	MAX(showOrder)
 			FROM	wcf".WCF_N."_notice";
 		$statement = WCF::getDB()->prepareStatement($sql);

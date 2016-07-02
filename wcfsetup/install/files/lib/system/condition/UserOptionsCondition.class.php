@@ -14,9 +14,7 @@ use wcf\system\WCF;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.condition
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Condition
  */
 class UserOptionsCondition extends AbstractMultipleFieldsCondition implements IContentCondition, IObjectListCondition, IUserCondition {
 	use TObjectListUserCondition;
@@ -52,6 +50,7 @@ class UserOptionsCondition extends AbstractMultipleFieldsCondition implements IC
 			$option = $option['object'];
 			
 			if (isset($optionValues[$option->optionName])) {
+				/** @noinspection PhpUndefinedMethodInspection */
 				$this->optionHandler->getTypeObject($option->optionType)->addCondition($objectList, $option, $optionValues[$option->optionName]);
 			}
 		}
@@ -68,6 +67,7 @@ class UserOptionsCondition extends AbstractMultipleFieldsCondition implements IC
 			$option = $option['object'];
 			
 			if (isset($optionValues[$option->optionName])) {
+				/** @noinspection PhpUndefinedMethodInspection */
 				if (!$this->optionHandler->getTypeObject($option->optionType)->checkUser($user, $option, $optionValues[$option->optionName])) {
 					$checkSuccess = false;
 					break;
@@ -89,6 +89,7 @@ class UserOptionsCondition extends AbstractMultipleFieldsCondition implements IC
 			$option = $option['object'];
 			
 			if (isset($optionValues[$option->optionName])) {
+				/** @noinspection PhpUndefinedMethodInspection */
 				$conditionData = $this->optionHandler->getTypeObject($option->optionType)->getConditionData($option, $optionValues[$option->optionName]);
 				if ($conditionData !== null) {
 					$data[$option->optionName] = $conditionData;

@@ -5,26 +5,33 @@ use wcf\data\option\OptionEditor;
 use wcf\data\package\Package;
 use wcf\data\package\PackageCache;
 use wcf\data\package\PackageEditor;
+use wcf\data\page\Page;
+use wcf\data\page\PageCache;
+use wcf\page\CmsPage;
 use wcf\system\application\ApplicationHandler;
 use wcf\system\application\IApplication;
 use wcf\system\box\BoxHandler;
 use wcf\system\cache\builder\CoreObjectCacheBuilder;
 use wcf\system\cache\builder\PackageUpdateCacheBuilder;
 use wcf\system\cronjob\CronjobScheduler;
+use wcf\system\database\MySQLDatabase;
 use wcf\system\event\EventHandler;
 use wcf\system\exception\AJAXException;
 use wcf\system\exception\ErrorException;
 use wcf\system\exception\IPrintableException;
 use wcf\system\exception\NamedUserException;
+use wcf\system\exception\ParentClassException;
 use wcf\system\exception\PermissionDeniedException;
 use wcf\system\exception\SystemException;
 use wcf\system\language\LanguageFactory;
 use wcf\system\package\PackageInstallationDispatcher;
+use wcf\system\request\Request;
 use wcf\system\request\RequestHandler;
 use wcf\system\request\RouteHandler;
 use wcf\system\session\SessionFactory;
 use wcf\system\session\SessionHandler;
 use wcf\system\style\StyleHandler;
+use wcf\system\template\EmailTemplateEngine;
 use wcf\system\template\TemplateEngine;
 use wcf\system\user\storage\UserStorageHandler;
 use wcf\util\FileUtil;
@@ -39,8 +46,8 @@ if (!@ini_get('date.timezone')) {
 	@date_default_timezone_set('Europe/London');
 }
 
-// define current wcf version
-define('WCF_VERSION', '2.2.0 Alpha 1 (Vortex)');
+// define current woltlab suite version
+define('WCF_VERSION', '3.0.0 Alpha 2');
 
 // define current unix timestamp
 define('TIME_NOW', time());
@@ -52,46 +59,44 @@ if (!defined('NO_IMPORTS')) {
 }
 
 /**
- * WCF is the central class for the community framework.
+ * WCF is the central class for the WoltLab Suite Core.
  * It holds the database connection, access to template and language engine.
  * 
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System
  */
 class WCF {
 	/**
 	 * list of currently loaded applications
 	 * @var	Application[]
 	 */
-	protected static $applications = array();
+	protected static $applications = [];
 	
 	/**
 	 * list of currently loaded application objects
 	 * @var	IApplication[]
 	 */
-	protected static $applicationObjects = array();
+	protected static $applicationObjects = [];
 	
 	/**
 	 * list of autoload directories
 	 * @var	array
 	 */
-	protected static $autoloadDirectories = array();
+	protected static $autoloadDirectories = [];
 	
 	/**
 	 * list of unique instances of each core object
 	 * @var	SingletonFactory[]
 	 */
-	protected static $coreObject = array();
+	protected static $coreObject = [];
 	
 	/**
 	 * list of cached core objects
 	 * @var	string[]
 	 */
-	protected static $coreObjectCache = array();
+	protected static $coreObjectCache = [];
 	
 	/**
 	 * database object
@@ -295,11 +300,10 @@ class WCF {
 		// get configuration
 		$dbHost = $dbUser = $dbPassword = $dbName = '';
 		$dbPort = 0;
-		$dbClass = 'wcf\system\database\MySQLDatabase';
 		require(WCF_DIR.'config.inc.php');
 		
 		// create database connection
-		self::$dbObj = new $dbClass($dbHost, $dbUser, $dbPassword, $dbName, $dbPort);
+		self::$dbObj = new MySQLDatabase($dbHost, $dbUser, $dbPassword, $dbName, $dbPort);
 	}
 	
 	/**
@@ -445,7 +449,7 @@ class WCF {
 	 */
 	protected function initApplications() {
 		// step 1) load all applications
-		$loadedApplications = array();
+		$loadedApplications = [];
 		
 		// register WCF as application
 		self::$applications['wcf'] = ApplicationHandler::getInstance()->getApplicationByID(1);
@@ -524,7 +528,7 @@ class WCF {
 		self::$autoloadDirectories[$abbreviation] = $packageDir . 'lib/';
 		
 		$className = $abbreviation.'\system\\'.strtoupper($abbreviation).'Core';
-		if (class_exists($className) && is_subclass_of($className, 'wcf\system\application\IApplication')) {
+		if (class_exists($className) && is_subclass_of($className, IApplication::class)) {
 			// include config file
 			$configPath = $packageDir . PackageInstallationDispatcher::CONFIG_FILE;
 			
@@ -545,14 +549,16 @@ class WCF {
 				// add template path and abbreviation
 				$this->getTPL()->addApplication($abbreviation, $packageDir . 'templates/');
 			}
+			EmailTemplateEngine::getInstance()->addApplication($abbreviation, $packageDir . 'templates/');
 			
 			// init application and assign it as template variable
-			self::$applicationObjects[$application->packageID] = call_user_func(array($className, 'getInstance'));
+			self::$applicationObjects[$application->packageID] = call_user_func([$className, 'getInstance']);
 			$this->getTPL()->assign('__'.$abbreviation, self::$applicationObjects[$application->packageID]);
+			EmailTemplateEngine::getInstance()->assign('__'.$abbreviation, self::$applicationObjects[$application->packageID]);
 		}
 		else {
 			unset(self::$autoloadDirectories[$abbreviation]);
-			throw new SystemException("Unable to run '".$package->package."', '".$className."' is missing or does not implement 'wcf\system\application\IApplication'.");
+			throw new SystemException("Unable to run '".$package->package."', '".$className."' is missing or does not implement '".IApplication::class."'.");
 		}
 		
 		// register template path in ACP
@@ -616,11 +622,15 @@ class WCF {
 	 * Assigns some default variables to the template engine.
 	 */
 	protected function assignDefaultTemplateVariables() {
-		self::getTPL()->registerPrefilter(array('event', 'hascontent', 'lang'));
-		self::getTPL()->assign(array(
+		self::getTPL()->registerPrefilter(['event', 'hascontent', 'lang']);
+		self::getTPL()->assign([
 			'__wcf' => $this,
-			'__wcfVersion' => LAST_UPDATE_TIME // @deprecated since 2.1, use LAST_UPDATE_TIME directly
-		));
+			'__wcfVersion' => LAST_UPDATE_TIME // @deprecated 2.1, use LAST_UPDATE_TIME directly
+		]);
+		EmailTemplateEngine::getInstance()->registerPrefilter(['event', 'hascontent', 'lang']);
+		EmailTemplateEngine::getInstance()->assign([
+			'__wcf' => $this
+		]);
 	}
 	
 	/**
@@ -683,7 +693,7 @@ class WCF {
 	}
 	
 	/**
-	 * @see	\wcf\system\WCF::__callStatic()
+	 * @inheritDoc
 	 */
 	public final function __call($name, array $arguments) {
 		// bug fix to avoid php crash, see http://bugs.php.net/bug.php?id=55020
@@ -715,11 +725,11 @@ class WCF {
 		}
 		
 		if (class_exists($objectName)) {
-			if (!(is_subclass_of($objectName, 'wcf\system\SingletonFactory'))) {
-				throw new SystemException("class '".$objectName."' does not implement the interface 'SingletonFactory'");
+			if (!(is_subclass_of($objectName, SingletonFactory::class))) {
+				throw new ParentClassException($objectName, SingletonFactory::class);
 			}
 			
-			self::$coreObject[$className] = call_user_func(array($objectName, 'getInstance'));
+			self::$coreObject[$className] = call_user_func([$objectName, 'getInstance']);
 			return self::$coreObject[$className];
 		}
 	}
@@ -797,6 +807,33 @@ class WCF {
 	}
 	
 	/**
+	 * Returns the currently active page or null if unknown.
+	 * 
+	 * @return Page|null
+	 */
+	public static function getActivePage() {
+		if (self::getActiveRequest() === null) {
+			return null;
+		}
+		
+		if (self::getActiveRequest()->getClassName() === CmsPage::class) {
+			$metaData = self::getActiveRequest()->getMetaData();
+			return PageCache::getInstance()->getPage($metaData['cms']['pageID']);
+		}
+		
+		return PageCache::getInstance()->getPageByController(self::getActiveRequest()->getClassName());
+	}
+	
+	/**
+	 * Returns the currently active request.
+	 * 
+	 * @return Request
+	 */
+	public static function getActiveRequest() {
+		return RequestHandler::getInstance()->getActiveRequest();
+	}
+	
+	/**
 	 * Returns the URI of the current page.
 	 * 
 	 * @return	string
@@ -870,7 +907,7 @@ class WCF {
 	 * Returns box handler.
 	 *
 	 * @return	BoxHandler
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	public function getBoxHandler() {
 		return BoxHandler::getInstance();
@@ -918,10 +955,14 @@ class WCF {
 	/**
 	 * Returns true if currently active request represents the landing page.
 	 * 
-	 * @return      boolean
+	 * @return	boolean
 	 */
 	public static function isLandingPage() {
-		return RequestHandler::getInstance()->getActiveRequest()->isLandingPage();
+		if (self::getActiveRequest() === null) {
+			return false;
+		}
+		
+		return self::getActiveRequest()->isLandingPage();
 	}
 	
 	/**

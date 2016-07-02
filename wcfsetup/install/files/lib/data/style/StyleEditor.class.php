@@ -1,5 +1,6 @@
 <?php
 namespace wcf\data\style;
+use wcf\data\language\category\LanguageCategory;
 use wcf\data\language\LanguageList;
 use wcf\data\package\Package;
 use wcf\data\package\PackageCache;
@@ -31,15 +32,13 @@ use wcf\util\XMLWriter;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.style
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Style
  * 
  * @method	Style	getDecoratedObject()
  * @mixin	Style
  */
 class StyleEditor extends DatabaseObjectEditor implements IEditableCachedObject {
-	const EXCLUDE_WCF_VERSION = '2.2.0 Alpha 1';
+	const EXCLUDE_WCF_VERSION = '3.0.0 Alpha 1';
 	const INFO_FILE = 'style.xml';
 	
 	/**
@@ -168,6 +167,8 @@ class StyleEditor extends DatabaseObjectEditor implements IEditableCachedObject 
 				
 				case 'files':
 					$elements = $xpath->query('child::*', $category);
+					
+					/** @var \DOMElement $element */
 					foreach ($elements as $element) {
 						$data[$element->tagName] = $element->nodeValue;
 						if ($element->hasAttribute('path')) {
@@ -249,10 +250,11 @@ class StyleEditor extends DatabaseObjectEditor implements IEditableCachedObject 
 		// open variables.xml
 		$xml = new XML();
 		$xml->loadXML($filename, $content);
-		$xpath = $xml->xpath();
 		$variables = $xml->xpath()->query('/ns:variables/ns:variable');
 		
 		$data = [];
+		
+		/** @var \DOMElement $variable */
 		foreach ($variables as $variable) {
 			$data[$variable->getAttribute('name')] = $variable->nodeValue;
 		}
@@ -489,10 +491,9 @@ class StyleEditor extends DatabaseObjectEditor implements IEditableCachedObject 
 						try {
 							if (($imageData = getimagesize($filename)) !== false) {
 								switch ($imageData[2]) {
-									case IMG_PNG:
-									case IMG_JPEG:
-									case IMG_JPG:
-									case IMG_GIF:
+									case IMAGETYPE_PNG:
+									case IMAGETYPE_JPEG:
+									case IMAGETYPE_GIF:
 										$style->update(['image' => 'stylePreview-'.$style->styleID.$fileExtension]);
 								}
 							}
@@ -559,7 +560,7 @@ class StyleEditor extends DatabaseObjectEditor implements IEditableCachedObject 
 				WHERE	languageCategory = ?";
 			$statement2 = WCF::getDB()->prepareStatement($sql);
 			$statement2->execute(['wcf.style']);
-			$languageCategory = $statement2->fetchObject('wcf\data\language\category\LanguageCategory');
+			$languageCategory = $statement2->fetchObject(LanguageCategory::class);
 		}
 		else {
 			$languageCategory = LanguageFactory::getInstance()->getCategory('wcf.style');

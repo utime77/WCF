@@ -12,9 +12,10 @@ use wcf\system\WCF;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.notification
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Notification
+ * 
+ * @method	UserNotificationEditor[]	getObjects()
+ * @method	UserNotificationEditor		getSingleObject()
  */
 class UserNotificationAction extends AbstractDatabaseObjectAction {
 	/**
@@ -25,8 +26,10 @@ class UserNotificationAction extends AbstractDatabaseObjectAction {
 	
 	/**
 	 * @inheritDoc
+	 * @return	UserNotification
 	 */
 	public function create() {
+		/** @var UserNotification $notification */
 		$notification = parent::create();
 		
 		$sql = "INSERT INTO	wcf".WCF_N."_user_notification_to_user

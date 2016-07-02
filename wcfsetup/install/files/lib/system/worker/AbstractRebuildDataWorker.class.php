@@ -1,6 +1,8 @@
 <?php
 namespace wcf\system\worker;
+use wcf\data\DatabaseObjectList;
 use wcf\system\event\EventHandler;
+use wcf\system\exception\ParentClassException;
 use wcf\system\exception\SystemException;
 use wcf\system\request\LinkHandler;
 use wcf\system\search\SearchIndexManager;
@@ -10,11 +12,9 @@ use wcf\system\WCF;
  * Abstract implementation of rebuild data worker.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.worker
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Worker
  */
 abstract class AbstractRebuildDataWorker extends AbstractWorker implements IRebuildDataWorker {
 	/**
@@ -30,14 +30,14 @@ abstract class AbstractRebuildDataWorker extends AbstractWorker implements IRebu
 	protected $objectList = null;
 	
 	/**
-	 * @see	\wcf\system\worker\IRebuildDataWorker::getObjectList()
+	 * @inheritDoc
 	 */
 	public function getObjectList() {
 		return $this->objectList;
 	}
 	
 	/**
-	 * @see	\wcf\system\worker\IWorker::getLoopCount()
+	 * @inheritDoc
 	 */
 	public function setLoopCount($loopCount) {
 		parent::setLoopCount($loopCount);
@@ -46,14 +46,14 @@ abstract class AbstractRebuildDataWorker extends AbstractWorker implements IRebu
 	}
 	
 	/**
-	 * @see	\wcf\system\worker\IWorker::validate()
+	 * @inheritDoc
 	 */
 	public function validate() {
-		WCF::getSession()->checkPermissions(array('admin.management.canRebuildData'));
+		WCF::getSession()->checkPermissions(['admin.management.canRebuildData']);
 	}
 	
 	/**
-	 * @see	\wcf\system\worker\IWorker::countObjects()
+	 * @inheritDoc
 	 */
 	public function countObjects() {
 		if ($this->count === null) {
@@ -66,7 +66,7 @@ abstract class AbstractRebuildDataWorker extends AbstractWorker implements IRebu
 	}
 	
 	/**
-	 * @see	\wcf\system\worker\IWorker::execute()
+	 * @inheritDoc
 	 */
 	public function execute() {
 		$this->objectList->readObjects();
@@ -77,7 +77,7 @@ abstract class AbstractRebuildDataWorker extends AbstractWorker implements IRebu
 	}
 	
 	/**
-	 * @see	\wcf\system\worker\IWorker::getProceedURL()
+	 * @inheritDoc
 	 */
 	public function getProceedURL() {
 		return LinkHandler::getInstance()->getLink('RebuildData');
@@ -91,8 +91,8 @@ abstract class AbstractRebuildDataWorker extends AbstractWorker implements IRebu
 			throw new SystemException('DatabaseObjectList class name not specified.');
 		}
 		
-		if (!is_subclass_of($this->objectListClassName, 'wcf\data\DatabaseObjectList')) {
-			throw new SystemException("'".$this->objectListClassName."' does not extend 'wcf\data\DatabaseObjectList'");
+		if (!is_subclass_of($this->objectListClassName, DatabaseObjectList::class)) {
+			throw new ParentClassException($this->objectListClassName, DatabaseObjectList::class);
 		}
 		
 		$this->objectList = new $this->objectListClassName();
@@ -101,7 +101,7 @@ abstract class AbstractRebuildDataWorker extends AbstractWorker implements IRebu
 	}
 	
 	/**
-	 * @see	\wcf\system\worker\IWorker::finalize()
+	 * @inheritDoc
 	 */
 	public function finalize() {
 		SearchIndexManager::getInstance()->commitBulkOperation();

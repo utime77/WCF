@@ -8,11 +8,9 @@ use wcf\data\TDatabaseObjectPermissions;
  * Represents a user group options category.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.group.option.category
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Group\Option\Category
  *
  * @property-read	integer		$categoryID		unique id of the user group options category
  * @property-read	integer		$packageID		id of the package which delivers the user group options category
@@ -27,12 +25,12 @@ class UserGroupOptionCategory extends DatabaseObject {
 	use TDatabaseObjectPermissions;
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'user_group_option_category';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'categoryID';
 }

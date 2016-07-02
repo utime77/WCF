@@ -17,20 +17,18 @@ use wcf\util\StringUtil;
  * Handles facebook auth.
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	action
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Action
  */
 class FacebookAuthAction extends AbstractAction {
 	/**
-	 * @see	\wcf\action\AbstractAction::$neededModules
+	 * @inheritDoc
 	 */
-	public $neededModules = array('FACEBOOK_PUBLIC_KEY', 'FACEBOOK_PRIVATE_KEY');
+	public $neededModules = ['FACEBOOK_PUBLIC_KEY', 'FACEBOOK_PRIVATE_KEY'];
 	
 	/**
-	 * @see	\wcf\action\IAction::execute()
+	 * @inheritDoc
 	 */
 	public function execute() {
 		parent::execute();
@@ -54,8 +52,7 @@ class FacebookAuthAction extends AbstractAction {
 				$content = $reply['body'];
 			}
 			catch (SystemException $e) {
-				// force logging
-				$e->getExceptionID();
+				\wcf\functions\exception\logThrowable($e);
 				throw new IllegalLinkException();
 			}
 			
@@ -74,8 +71,7 @@ class FacebookAuthAction extends AbstractAction {
 				$content = $reply['body'];
 			}
 			catch (SystemException $e) {
-				// force logging
-				$e->getExceptionID();
+				\wcf\functions\exception\logThrowable($e);
 				throw new IllegalLinkException();
 			}
 			
@@ -94,7 +90,7 @@ class FacebookAuthAction extends AbstractAction {
 					if (UserAuthenticationFactory::getInstance()->getUserAuthentication()->supportsPersistentLogins()) {
 						$password = StringUtil::getRandomID();
 						$userEditor = new UserEditor($user);
-						$userEditor->update(array('password' => $password));
+						$userEditor->update(['password' => $password]);
 						
 						// reload user to retrieve salt
 						$user = new User($user->userID);

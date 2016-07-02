@@ -8,9 +8,7 @@ use wcf\system\WCF;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data
  */
 abstract class DatabaseObject implements IStorableObject {
 	/**
@@ -160,10 +158,12 @@ abstract class DatabaseObject implements IStorableObject {
 	 * @param	DatabaseObject[]	$objects
 	 * @param	mixed			$sortBy
 	 * @param	string			$sortOrder
+	 * @param	boolean			$maintainIndexAssociation
 	 */
 	public static function sort(&$objects, $sortBy, $sortOrder = 'ASC', $maintainIndexAssociation = true) {
 		$sortArray = $objects2 = [];
 		foreach ($objects as $idx => $obj) {
+			/** @noinspection PhpVariableVariableInspection */
 			$sortArray[$idx] = $obj->$sortBy;
 			
 			// array_multisort will drop index association if key is not a string

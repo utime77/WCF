@@ -71,6 +71,7 @@ define(['Language'], function(Language) {
 					case 'i':
 						// `00` through `59`
 						char = date.getMinutes();
+						if (char < 10) char = "0" + char;
 						break;
 					
 					// hours
@@ -193,8 +194,8 @@ define(['Language'], function(Language) {
 		/**
 		 * Returns UTC timestamp, if date is not given, current time will be used.
 		 * 
-		 * @param	Date		date	target date
-		 * @return	integer		UTC timestamp in seconds
+		 * @param	{Date}		date	target date
+		 * @return	{int}		UTC timestamp in seconds
 		 */
 		gmdate: function(data) {
 			if (!(date instanceof Date)) {
@@ -214,9 +215,9 @@ define(['Language'], function(Language) {
 		/**
 		 * Returns a Date object with precise offset (including timezone and local timezone).
 		 * 
-		 * @param	integer		timestamp	timestamp in miliseconds
-		 * @param	integer		offset		timezone offset in miliseconds
-		 * @return	Date		localized date
+		 * @param	{int}		timestamp	timestamp in miliseconds
+		 * @param	{int}		offset		timezone offset in miliseconds
+		 * @return	{Date}		localized date
 		 */
 		getTimezoneDate: function(timestamp, offset) {
 			var date = new Date(timestamp);

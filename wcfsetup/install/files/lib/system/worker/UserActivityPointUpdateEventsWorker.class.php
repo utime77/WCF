@@ -9,15 +9,13 @@ use wcf\system\WCF;
  * Worker implementation for updating user activity point events.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.worker
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Worker
  */
 class UserActivityPointUpdateEventsWorker extends AbstractWorker {
 	/**
-	 * @see	\wcf\system\worker\AbstractWorker::$limit
+	 * @inheritDoc
 	 */
 	protected $limit = 1;
 	
@@ -25,10 +23,10 @@ class UserActivityPointUpdateEventsWorker extends AbstractWorker {
 	 * object types
 	 * @var	ObjectType[]
 	 */
-	public $objectTypes = array();
+	public $objectTypes = [];
 	
 	/**
-	 * @see	\wcf\system\worker\IWorker
+	 * @inheritDoc
 	 */
 	public function __construct(array $parameters) {
 		parent::__construct($parameters);
@@ -37,21 +35,21 @@ class UserActivityPointUpdateEventsWorker extends AbstractWorker {
 	}
 	
 	/**
-	 * @see	\wcf\system\worker\IWorker::validate()
+	 * @inheritDoc
 	 */
 	public function validate() {
-		WCF::getSession()->checkPermissions(array('admin.user.canEditActivityPoints'));
+		WCF::getSession()->checkPermissions(['admin.user.canEditActivityPoints']);
 	}
 	
 	/**
-	 * @see	\wcf\system\worker\IWorker::countObjects()
+	 * @inheritDoc
 	 */
 	public function countObjects() {
 		$this->count = count($this->objectTypes);
 	}
 	
 	/**
-	 * @see	\wcf\system\worker\IWorker::execute()
+	 * @inheritDoc
 	 */
 	public function execute() {
 		$i = 0;
@@ -61,10 +59,10 @@ class UserActivityPointUpdateEventsWorker extends AbstractWorker {
 					SET		activityPoints = items * ?
 					WHERE		objectTypeID = ?";
 				$statement = WCF::getDB()->prepareStatement($sql);
-				$statement->execute(array(
+				$statement->execute([
 					$objectType->points,
 					$objectType->objectTypeID
-				));
+				]);
 			}
 			
 			$i++;
@@ -72,7 +70,7 @@ class UserActivityPointUpdateEventsWorker extends AbstractWorker {
 	}
 	
 	/**
-	 * @see	\wcf\system\worker\IWorker::getProceedURL()
+	 * @inheritDoc
 	 */
 	public function getProceedURL() {
 		return LinkHandler::getInstance()->getLink('UserActivityPointOption');

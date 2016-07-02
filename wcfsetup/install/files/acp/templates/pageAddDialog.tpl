@@ -4,7 +4,7 @@
 			<dt>{lang}wcf.acp.page.type{/lang}</dt>
 			<dd>
 				<label><input type="radio" name="pageType" value="text" checked> {lang}wcf.acp.page.type.text{/lang}</label>
-				<small>{lang}wcf.acp.page.type.wysiwyg.description{/lang}</small>
+				<small>{lang}wcf.acp.page.type.text.description{/lang}</small>
 				<label><input type="radio" name="pageType" value="html"> {lang}wcf.acp.page.type.html{/lang}</label>
 				<small>{lang}wcf.acp.page.type.html.description{/lang}</small>
 				<label><input type="radio" name="pageType" value="tpl"> {lang}wcf.acp.page.type.tpl{/lang}</label>
@@ -28,7 +28,11 @@
 	</div>
 </div>
 <script data-relocate="true">
-	require(['WoltLab/WCF/Acp/Ui/Page/Add'], function(AcpUiPageAdd) {
+	require(['Language', 'WoltLab/WCF/Acp/Ui/Page/Add'], function(Language, AcpUiPageAdd) {
+		Language.addObject({
+			'wcf.acp.page.add': '{lang}wcf.acp.page.add{/lang}'
+		});
+		
 		AcpUiPageAdd.init('{link controller='PageAdd' encode=false}{literal}pageType={$pageType}&isMultilingual={$isMultilingual}{/literal}{/link}');
 		
 		{if $showPageAddDialog}

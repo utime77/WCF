@@ -8,21 +8,19 @@ use wcf\system\SingletonFactory;
  * Handles notice-related matters.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.notice
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Notice
  */
 class NoticeHandler extends SingletonFactory {
 	/**
 	 * list with all enabled notices
 	 * @var	Notice[]
 	 */
-	protected $notices = array();
+	protected $notices = [];
 	
 	/**
-	 * @see	\wcf\system\SingletonFacetory::init()
+	 * @inheritDoc
 	 */
 	protected function init() {
 		$this->notices = NoticeCacheBuilder::getInstance()->getData();
@@ -34,7 +32,7 @@ class NoticeHandler extends SingletonFactory {
 	 * @return	Notice[]
 	 */
 	public function getVisibleNotices() {
-		$notices = array();
+		$notices = [];
 		foreach ($this->notices as $notice) {
 			if ($notice->isDismissed()) continue;
 			

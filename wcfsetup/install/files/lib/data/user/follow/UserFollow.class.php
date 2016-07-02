@@ -7,11 +7,9 @@ use wcf\system\WCF;
  * Represents a user's follower.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.follow
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Follow
  *
  * @property-read	integer		$followID		unique id of the following relation
  * @property-read	integer		$userID			id of the following user
@@ -20,12 +18,12 @@ use wcf\system\WCF;
  */
 class UserFollow extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'user_follow';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'followID';
 	
@@ -42,13 +40,13 @@ class UserFollow extends DatabaseObject {
 			WHERE	userID = ?
 				AND followUserID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array(
+		$statement->execute([
 			$userID,
 			$followUserID
-		));
+		]);
 		
 		$row = $statement->fetchArray();
-		if (!$row) $row = array();
+		if (!$row) $row = [];
 		
 		return new UserFollow(null, $row);
 	}

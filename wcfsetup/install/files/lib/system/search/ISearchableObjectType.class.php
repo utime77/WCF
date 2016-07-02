@@ -1,5 +1,6 @@
 <?php
 namespace wcf\system\search;
+use wcf\data\search\ISearchResultObject;
 use wcf\form\IForm;
 use wcf\system\database\util\PreparedStatementConditionBuilder;
 
@@ -7,11 +8,9 @@ use wcf\system\database\util\PreparedStatementConditionBuilder;
  * All searchable object types should implement this interface. 
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.search
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Search
  */
 interface ISearchableObjectType {
 	/**
@@ -26,14 +25,14 @@ interface ISearchableObjectType {
 	 * Returns the object with the given object id.
 	 * 
 	 * @param	integer		$objectID
-	 * @return	\wcf\data\search\ISearchResultObject
+	 * @return	ISearchResultObject
 	 */
 	public function getObject($objectID);
 	
 	/**
 	 * Shows the form part of this object type.
 	 * 
-	 * @param	\wcf\form\IForm		$form		instance of the form class where the search has taken place
+	 * @param	IForm		$form		instance of the form class where the search has taken place
 	 */
 	public function show(IForm $form = null);
 	
@@ -47,8 +46,8 @@ interface ISearchableObjectType {
 	/**
 	 * Returns the search conditions of this message type.
 	 * 
-	 * @param	\wcf\form\IForm			$form
-	 * @return	\wcf\system\database\util\PreparedStatementConditionBuilder
+	 * @param	IForm		$form
+	 * @return	PreparedStatementConditionBuilder
 	 */
 	public function getConditions(IForm $form = null);
 	
@@ -119,9 +118,9 @@ interface ISearchableObjectType {
 	 * Replaces the outer SQL query with a custom version. Querying the search index requires the
 	 * placeholder {WCF_SEARCH_INNER_JOIN} within an empty INNER JOIN() statement.
 	 * 
-	 * @param	string								$q
-	 * @param	\wcf\system\database\util\PreparedStatementConditionBuilder	$searchIndexConditions
-	 * @param	\wcf\system\database\util\PreparedStatementConditionBuilder	$additionalConditions
+	 * @param	string					$q
+	 * @param	PreparedStatementConditionBuilder	$searchIndexConditions
+	 * @param	PreparedStatementConditionBuilder	$additionalConditions
 	 * @return	string
 	 */
 	public function getOuterSQLQuery($q, PreparedStatementConditionBuilder &$searchIndexConditions = null, PreparedStatementConditionBuilder &$additionalConditions = null);
@@ -129,7 +128,7 @@ interface ISearchableObjectType {
 	/**
 	 * Sets the location in menu/breadcrumbs.
 	 * 
-	 * @since       2.2
+	 * @since	3.0
 	 */
 	public function setLocation();
 	
@@ -137,7 +136,7 @@ interface ISearchableObjectType {
 	 * Returns the name of the active main menu item.
 	 * 
 	 * @return	string
-	 * @deprecated  since 2.2
+	 * @deprecated  3.0
 	 */
 	public function getActiveMenuItem();
 }

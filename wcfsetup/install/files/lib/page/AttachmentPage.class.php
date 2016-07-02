@@ -12,15 +12,13 @@ use wcf\util\FileReader;
  * Shows an attachment.
  * 
  * @author	Joshua Ruesweg, Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	page
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Page
  */
 class AttachmentPage extends AbstractPage {
 	/**
-	 * @see	\wcf\page\IPage::$useTemplate
+	 * @inheritDoc
 	 */
 	public $useTemplate = false;
 	
@@ -58,7 +56,7 @@ class AttachmentPage extends AbstractPage {
 	 * list of mime types which belong to files that are displayed inline
 	 * @var	string[]
 	 */
-	public static $inlineMimeTypes = array('image/gif', 'image/jpeg', 'image/png', 'image/x-png', 'application/pdf', 'image/pjpeg');
+	public static $inlineMimeTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/x-png', 'application/pdf', 'image/pjpeg'];
 	
 	/**
 	 * etag for this attachment
@@ -67,7 +65,7 @@ class AttachmentPage extends AbstractPage {
 	public $eTag = null;
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -78,7 +76,7 @@ class AttachmentPage extends AbstractPage {
 			throw new IllegalLinkException();
 		}
 		
-		$parameters = array('object' => $this->attachment);
+		$parameters = ['object' => $this->attachment];
 		if (isset($_REQUEST['tiny']) && $this->attachment->tinyThumbnailType) {
 			$this->tiny = intval($_REQUEST['tiny']);
 			$parameters['tiny'] = $this->tiny;
@@ -92,7 +90,7 @@ class AttachmentPage extends AbstractPage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::checkPermissions()
+	 * @inheritDoc
 	 */
 	public function checkPermissions() {
 		parent::checkPermissions();
@@ -116,7 +114,7 @@ class AttachmentPage extends AbstractPage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		parent::readData();
@@ -142,7 +140,7 @@ class AttachmentPage extends AbstractPage {
 		}
 		
 		// init file reader
-		$this->fileReader = new FileReader($location, array(
+		$this->fileReader = new FileReader($location, [
 			'filename' => $this->attachment->filename,
 			'mimeType' => $mimeType,
 			'filesize' => $filesize,
@@ -151,7 +149,7 @@ class AttachmentPage extends AbstractPage {
 			'lastModificationTime' => $this->attachment->uploadTime,
 			'expirationDate' => TIME_NOW + 31536000,
 			'maxAge' => 31536000
-		));
+		]);
 		
 		if ($this->eTag !== null) {
 			$this->fileReader->addHeader('ETag', '"'.$this->eTag.'"');
@@ -159,7 +157,7 @@ class AttachmentPage extends AbstractPage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::show()
+	 * @inheritDoc
 	 */
 	public function show() {
 		parent::show();
@@ -173,10 +171,10 @@ class AttachmentPage extends AbstractPage {
 		if (!$this->tiny && !$this->thumbnail) {
 			// update download count
 			$editor = new AttachmentEditor($this->attachment);
-			$editor->update(array(
+			$editor->update([
 				'downloads' => $this->attachment->downloads + 1,
 				'lastDownloadTime' => TIME_NOW
-			));
+			]);
 		}
 		
 		// send file to client

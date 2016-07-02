@@ -8,12 +8,10 @@ use wcf\system\email\Mailbox;
  * Delivers the given email to the given mailbox.
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.background.job
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Background\Job
+ * @since	3.0
  */
 class EmailDeliveryBackgroundJob extends AbstractBackgroundJob {
 	/**
@@ -23,10 +21,16 @@ class EmailDeliveryBackgroundJob extends AbstractBackgroundJob {
 	protected $email;
 	
 	/**
+	 * sender mailbox
+	 * @var	\wcf\system\email\Mailbox
+	 */
+	protected $envelopeFrom;
+	
+	/**
 	 * recipient mailbox
 	 * @var	\wcf\system\email\Mailbox
 	 */
-	protected $mailbox;
+	protected $envelopeTo;
 	
 	/**
 	 * instance of the default transport
@@ -38,12 +42,14 @@ class EmailDeliveryBackgroundJob extends AbstractBackgroundJob {
 	 * Creates the job using the given the email and the destination mailbox.
 	 * 
 	 * @param	\wcf\system\email\Email		$email
-	 * @param	\wcf\system\email\Mailbox	$mailbox
+	 * @param	\wcf\system\email\Mailbox	$envelopeFrom
+	 * @param	\wcf\system\email\Mailbox	$envelopeTo
 	 * @see		\wcf\system\email\transport\EmailTransport
 	 */
-	public function __construct(Email $email, Mailbox $mailbox) {
+	public function __construct(Email $email, Mailbox $envelopeFrom, Mailbox $envelopeTo) {
 		$this->email = $email;
-		$this->mailbox = $mailbox;
+		$this->envelopeFrom = $envelopeFrom;
+		$this->envelopeTo = $envelopeTo;
 	}
 	
 	/**
@@ -63,7 +69,7 @@ class EmailDeliveryBackgroundJob extends AbstractBackgroundJob {
 	}
 	
 	/**
-	 * @see	\wcf\system\background\job\AbstractJob::perform();
+	 * @inheritDoc
 	 */
 	public function perform() {
 		if (self::$transport === null) {
@@ -72,7 +78,7 @@ class EmailDeliveryBackgroundJob extends AbstractBackgroundJob {
 		}
 		
 		try {
-			self::$transport->deliver($this->email, $this->mailbox);
+			self::$transport->deliver($this->email, $this->envelopeFrom, $this->envelopeTo);
 		}
 		catch (PermanentFailure $e) {
 			// no need for retrying. Eat Exception and log the error.

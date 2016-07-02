@@ -6,11 +6,9 @@ use wcf\data\DatabaseObject;
  * Represents an ACP search provider.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.acp.search.provider
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Acp\Search\Provider
  *
  * @property-read	integer		$providerID		unique id of the ACP search provider
  * @property-read	integer		$packageID		id of the package which delivers the ACP search provider
@@ -20,12 +18,12 @@ use wcf\data\DatabaseObject;
  */
 class ACPSearchProvider extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'acp_search_provider';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'providerID';
 }

@@ -48,15 +48,15 @@ define(['Dictionary', 'Language', 'Dom/Traverse', 'Ui/SimpleDropdown'], function
 			var groupId = ~~elData(group, 'object-id');
 			
 			var disabledNotification = elById('settings_' + groupId + '_disabled');
-			disabledNotification.addEventListener('click', function() { mailSetting.classList.remove('active'); });
+			disabledNotification.addEventListener(WCF_CLICK_EVENT, function() { mailSetting.classList.remove('active'); });
 			var enabledNotification = elById('settings_' + groupId + '_enabled');
-			enabledNotification.addEventListener('click', function() { mailSetting.classList.add('active'); });
+			enabledNotification.addEventListener(WCF_CLICK_EVENT, function() { mailSetting.classList.add('active'); });
 			
 			var mailValue = DomTraverse.childByTag(mailSetting, 'INPUT');
 			
 			var button = DomTraverse.childByTag(mailSetting, 'A');
 			elData(button, 'object-id', groupId);
-			button.addEventListener('click', _callbackClick);
+			button.addEventListener(WCF_CLICK_EVENT, _callbackClick);
 			
 			_data.set(groupId, {
 				button: button,
@@ -96,7 +96,7 @@ define(['Dictionary', 'Language', 'Dom/Traverse', 'Ui/SimpleDropdown'], function
 		/**
 		 * Creates the email type dropdown.
 		 * 
-		 * @param	{integer}	objectId	notification event id
+		 * @param	{int}		objectId	notification event id
 		 * @param	{string}	initialValue	initial email type
 		 * @returns	{Element}	dropdown menu object
 		 */
@@ -118,7 +118,7 @@ define(['Dictionary', 'Language', 'Dom/Traverse', 'Ui/SimpleDropdown'], function
 					link.textContent = Language.get('wcf.user.notification.mailNotificationType.' + value);
 					listItem.appendChild(link);
 					elData(listItem, 'value', value);
-					listItem.addEventListener('click', _callbackSelectType);
+					listItem.addEventListener(WCF_CLICK_EVENT, _callbackSelectType);
 					
 					if (initialValue === value) {
 						listItem.className = 'active';

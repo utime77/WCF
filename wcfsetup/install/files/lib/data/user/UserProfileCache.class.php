@@ -7,46 +7,44 @@ use wcf\system\SingletonFactory;
  * Caches user profile objects during runtime.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Data\User
+ * @since	3.0
  * 
  * @todo	remove this class again
  */
 class UserProfileCache extends SingletonFactory {
 	/**
-	 * @see	UserProfiltRuntimeCache::cacheObjectID()
+	 * @inheritDoc
 	 */
 	public function cacheUserID($userID) {
 		UserProfileRuntimeCache::getInstance()->cacheObjectID($userID);
 	}
 	
 	/**
-	 * @see	UserProfiltRuntimeCache::cacheUserIDs()
+	 * @inheritDoc
 	 */
 	public function cacheUserIDs(array $userIDs) {
 		UserProfileRuntimeCache::getInstance()->cacheObjectIDs($userIDs);
 	}
 	
 	/**
-	 * @see	UserProfiltRuntimeCache::getCachedObjects()
+	 * @inheritDoc
 	 */
 	public function getCachedUserProfiles() {
 		return UserProfileRuntimeCache::getInstance()->getCachedObjects();
 	}
 	
 	/**
-	 * @see	UserProfiltRuntimeCache::getObject()
+	 * @inheritDoc
 	 */
 	public function getUserProfile($userID) {
 		return UserProfileRuntimeCache::getInstance()->getObject($userID);
 	}
 	
 	/**
-	 * @see	UserProfiltRuntimeCache::getObjects()
+	 * @inheritDoc
 	 */
 	public function getUserProfiles(array $userIDs) {
 		return UserProfileRuntimeCache::getInstance()->getObjects($userIDs);

@@ -11,11 +11,9 @@ use wcf\util\UserUtil;
  * Handles reCAPTCHA V2 support.
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.recaptcha
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Recaptcha
  */
 class RecaptchaHandlerV2 extends SingletonFactory {
 	/**
@@ -30,7 +28,7 @@ class RecaptchaHandlerV2 extends SingletonFactory {
 			throw new UserInputException('recaptchaString', 'false');
 		}
 		
-		$request = new HTTPRequest('https://www.google.com/recaptcha/api/siteverify?secret='.rawurlencode(RECAPTCHA_PRIVATEKEY).'&response='.rawurlencode($response).'&remoteip='.rawurlencode(UserUtil::getIpAddress()), array('timeout' => 10));
+		$request = new HTTPRequest('https://www.google.com/recaptcha/api/siteverify?secret='.rawurlencode(RECAPTCHA_PRIVATEKEY).'&response='.rawurlencode($response).'&remoteip='.rawurlencode(UserUtil::getIpAddress()), ['timeout' => 10]);
 		
 		try {
 			$request->execute();

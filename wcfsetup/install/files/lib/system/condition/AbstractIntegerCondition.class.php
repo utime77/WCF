@@ -10,9 +10,7 @@ use wcf\system\WCF;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.condition
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Condition
  */
 abstract class AbstractIntegerCondition extends AbstractSingleFieldCondition {
 	/**
@@ -76,7 +74,6 @@ abstract class AbstractIntegerCondition extends AbstractSingleFieldCondition {
 	 */
 	protected function getErrorMessageElement() {
 		if ($this->errorMessage) {
-			$errorMessage = '';
 			switch ($this->errorMessage) {
 				case 'wcf.condition.greaterThan.error.maxValue':
 					$errorMessage = WCF::getLanguage()->getDynamicVariable($this->errorMessage, [
@@ -121,8 +118,8 @@ abstract class AbstractIntegerCondition extends AbstractSingleFieldCondition {
 		$lessThanPlaceHolder = WCF::getLanguage()->get('wcf.condition.lessThan');
 		
 		return <<<HTML
-<input type="number" name="greaterThan_{$this->getIdentifier()}" value="{$this->greaterThan}" placeholder="{$greaterThanPlaceHolder}"{$this->getMinMaxAttributes('greaterThan')} class="medium" />
-<input type="number" name="lessThan_{$this->getIdentifier()}" value="{$this->lessThan}" placeholder="{$lessThanPlaceHolder}"{$this->getMinMaxAttributes('lessThan')} class="medium" />
+<input type="number" name="greaterThan_{$this->getIdentifier()}" value="{$this->greaterThan}" placeholder="{$greaterThanPlaceHolder}"{$this->getMinMaxAttributes('greaterThan')} class="medium">
+<input type="number" name="lessThan_{$this->getIdentifier()}" value="{$this->lessThan}" placeholder="{$lessThanPlaceHolder}"{$this->getMinMaxAttributes('lessThan')} class="medium">
 HTML;
 	}
 	

@@ -12,37 +12,35 @@ use wcf\util\ArrayUtil;
  * Provides the user activity point option form.
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Form
  */
 class UserActivityPointOptionForm extends AbstractForm {
 	/**
-	 * @see	\wcf\page\AbstractPage::$activeMenuItem
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.activityPoint';
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededPermissions
+	 * @inheritDoc
 	 */
-	public $neededPermissions = array('admin.user.canEditActivityPoints');
+	public $neededPermissions = ['admin.user.canEditActivityPoints'];
 	
 	/**
 	 * points to objectType
 	 * @var	integer[]
 	 */
-	public $points = array();
+	public $points = [];
 	
 	/**
 	 * valid object types
 	 * @var	ObjectType[]
 	 */
-	public $objectTypes = array();
+	public $objectTypes = [];
 	
 	/**
-	 * @see	\wcf\form\IForm::readFormParameters()
+	 * @inheritDoc
 	 */
 	public function readFormParameters() {
 		parent::readFormParameters();
@@ -51,7 +49,7 @@ class UserActivityPointOptionForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::validate()
+	 * @inheritDoc
 	 */
 	public function validate() {
 		parent::validate();
@@ -62,7 +60,7 @@ class UserActivityPointOptionForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		$this->objectTypes = ObjectTypeCache::getInstance()->getObjectTypes('com.woltlab.wcf.user.activityPointEvent');
@@ -76,7 +74,7 @@ class UserActivityPointOptionForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		parent::save();
@@ -86,7 +84,7 @@ class UserActivityPointOptionForm extends AbstractForm {
 			$editor = new ObjectTypeEditor($objectType);
 			$data = $objectType->additionalData;
 			$data['points'] = $this->points[$objectType->objectTypeID];
-			$editor->update(array('additionalData' => serialize($data)));
+			$editor->update(['additionalData' => serialize($data)]);
 		}
 		
 		ObjectTypeEditor::resetCache();
@@ -97,14 +95,14 @@ class UserActivityPointOptionForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'objectTypes' => $this->objectTypes,
 			'points' => $this->points
-		));
+		]);
 	}
 }

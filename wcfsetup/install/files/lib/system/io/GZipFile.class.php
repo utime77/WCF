@@ -6,11 +6,12 @@ use wcf\system\exception\SystemException;
  * The File class handles all file operations on a gzip file.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.io
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Io
+ * 
+ * @method	resource	open($mode, $use_include_path = 0)
+ * @method	boolean		rewind()
  */
 class GZipFile extends File {
 	/**
@@ -20,6 +21,7 @@ class GZipFile extends File {
 	 */
 	protected static $gzopen64 = null;
 	
+	/** @noinspection PhpMissingParentConstructorInspection */
 	/**
 	 * Opens a gzip file.
 	 * 
@@ -88,7 +90,7 @@ class GZipFile extends File {
 		}
 		
 		if ($this->seek($eof) == -1) $eof--;
-				
+		
 		$this->rewind();
 		return $eof - $correction;
 	}

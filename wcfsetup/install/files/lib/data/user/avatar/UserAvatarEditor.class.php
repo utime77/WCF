@@ -9,9 +9,7 @@ use wcf\system\WCF;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.avatar
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Avatar
  * 
  * @method	UserAvatar	getDecoratedObject()
  * @mixin	UserAvatar
@@ -29,7 +27,7 @@ class UserAvatarEditor extends DatabaseObjectEditor {
 		$sql = "DELETE FROM	wcf".WCF_N."_user_avatar
 			WHERE		avatarID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($this->avatarID));
+		$statement->execute([$this->avatarID]);
 		
 		$this->deleteFiles();
 	}
@@ -37,7 +35,7 @@ class UserAvatarEditor extends DatabaseObjectEditor {
 	/**
 	 * @inheritDoc
 	 */
-	public static function deleteAll(array $objectIDs = array()) {
+	public static function deleteAll(array $objectIDs = []) {
 		$sql = "SELECT	*
 			FROM	wcf".WCF_N."_user_avatar
 			WHERE	avatarID IN (".str_repeat('?,', count($objectIDs) - 1)."?)";

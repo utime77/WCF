@@ -8,9 +8,7 @@ use wcf\data\acp\session\ACPSession;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.session
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Session
  * 
  * @property-read	string		$spiderID
  */
@@ -33,7 +31,7 @@ class Session extends ACPSession {
 	}
 	
 	/**
-	 * @see	\wcf\data\acp\session\ACPSession::supportsVirtualSessions()
+	 * @inheritDoc
 	 */
 	public static function supportsVirtualSessions() {
 		return (SESSION_ENABLE_VIRTUALIZATION) ? true : false;

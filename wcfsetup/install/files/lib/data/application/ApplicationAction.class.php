@@ -12,11 +12,13 @@ use wcf\util\StringUtil;
  * Executes application-related actions.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.application
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Application
+ * 
+ * @method	Application		create()
+ * @method	ApplicationEditor[]	getObjects()
+ * @method	ApplicationEditor	getSingleObject()
  */
 class ApplicationAction extends AbstractDatabaseObjectAction {
 	/**
@@ -47,7 +49,7 @@ class ApplicationAction extends AbstractDatabaseObjectAction {
 		// calculate cookie path
 		$domains = [];
 		$regex = new Regex(':[0-9]+');
-		foreach ($this->objects as $application) {
+		foreach ($this->getObjects() as $application) {
 			$domainName = $application->domainName;
 			if (StringUtil::endsWith($regex->replace($domainName, ''), $application->cookieDomain)) {
 				$domainName = $application->cookieDomain;

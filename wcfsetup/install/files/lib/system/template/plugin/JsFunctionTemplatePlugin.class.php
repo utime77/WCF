@@ -27,12 +27,10 @@ use wcf\util\StringUtil;
  * 	http://example.com/wcf/js/3rdParty/jquery-ui/awesomeWidget.js
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.template.plugin
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Template\Plugin
+ * @since	3.0
  */
 class JsFunctionTemplatePlugin implements IFunctionTemplatePlugin {
 	/**
@@ -42,7 +40,7 @@ class JsFunctionTemplatePlugin implements IFunctionTemplatePlugin {
 	protected $includedFiles = [];
 	
 	/**
-	 * @see	\wcf\system\template\IFunctionTemplatePlugin::execute()
+	 * @inheritDoc
 	 */
 	public function execute($tagArgs, TemplateEngine $tplObj) {
 		// needed arguments: application and lib/file

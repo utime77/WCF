@@ -12,17 +12,15 @@ use wcf\system\WCF;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.bbcode
- * @category	Community Framework
- *
+ * @package	WoltLabSuite\Core\Data\Bbcode
+ * 
  * @property-read	integer		$bbcodeID
  * @property-read	string		$bbcodeTag
  * @property-read	integer		$packageID
  * @property-read	string		$htmlOpen
  * @property-read	string		$htmlClose
- * @property-read	string		$allowedChildren
  * @property-read	string		$className
+ * @property-read	integer		$isBlockElement
  * @property-read	string		$wysiwygIcon
  * @property-read	string		$buttonLabel
  * @property-read	integer		$isSourceCode
@@ -77,9 +75,9 @@ class BBCode extends ProcessibleDatabaseObject implements IRouteController {
 			FROM	wcf".WCF_N."_bbcode
 			WHERE	bbcodeTag = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($tag));
+		$statement->execute([$tag]);
 		$row = $statement->fetchArray();
-		if (!$row) $row = array();
+		if (!$row) $row = [];
 		
 		return new self(null, $row);
 	}

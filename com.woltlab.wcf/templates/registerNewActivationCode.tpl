@@ -1,7 +1,3 @@
-{capture assign='pageTitle'}{lang}wcf.user.newActivationCode{/lang}{/capture}
-
-{capture assign='contentTitle'}{lang}wcf.user.newActivationCode{/lang}{/capture}
-
 {include file='header'}
 
 {include file='formError'}
@@ -11,7 +7,7 @@
 		<dl{if $errorField == 'username'} class="formError"{/if}>
 			<dt><label for="username">{lang}wcf.user.username{/lang}</label></dt>
 			<dd>
-				<input type="text" id="username" name="username" value="{$username}" required="required" class="medium" />
+				<input type="text" id="username" name="username" value="{$username}" required class="medium">
 				{if $errorField == 'username'}
 					<small class="innerError">
 						{if $errorType == 'empty'}
@@ -29,7 +25,7 @@
 		<dl{if $errorField == 'password'} class="formError"{/if}>
 			<dt><label for="password">{lang}wcf.user.password{/lang}</label></dt>
 			<dd>
-				<input type="password" id="password" name="password" value="{$password}" required="required" class="medium" />
+				<input type="password" id="password" name="password" value="{$password}" required class="medium">
 				{if $errorField == 'password'}
 					<small class="innerError">
 						{if $errorType == 'empty'}
@@ -45,7 +41,7 @@
 		<dl{if $errorField == 'email'} class="formError"{/if}>
 			<dt><label for="email">{lang}wcf.user.email{/lang}</label></dt>
 			<dd>
-				<input type="email" id="email" name="email" value="{$email}" class="medium" />
+				<input type="email" id="email" name="email" value="{$email}" class="medium">
 				{if $errorField == 'email'}
 					<small class="innerError">
 						{lang}wcf.user.email.error.{@$errorType}{/lang}
@@ -61,7 +57,7 @@
 	{event name='sections'}
 	
 	<div class="formSubmit">
-		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s">
 		{@SECURITY_TOKEN_INPUT_TAG}
 	</div>
 </form>

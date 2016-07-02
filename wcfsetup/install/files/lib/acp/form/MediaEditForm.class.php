@@ -14,16 +14,14 @@ use wcf\util\ArrayUtil;
  * Shows the form to edit a media file.
  *
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Form
+ * @since	3.0
  */
 class MediaEditForm extends AbstractForm {
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.cms.media.list';
 	
@@ -52,12 +50,12 @@ class MediaEditForm extends AbstractForm {
 	public $mediaID = 0;
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public $neededPermissions = ['admin.content.cms.canManageMedia'];
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
@@ -74,7 +72,7 @@ class MediaEditForm extends AbstractForm {
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function readData() {
 		parent::readData();
@@ -106,7 +104,7 @@ class MediaEditForm extends AbstractForm {
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function readFormParameters() {
 		parent::readFormParameters();
@@ -119,7 +117,7 @@ class MediaEditForm extends AbstractForm {
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -137,7 +135,7 @@ class MediaEditForm extends AbstractForm {
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function save() {
 		parent::save();
@@ -159,7 +157,7 @@ class MediaEditForm extends AbstractForm {
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 * @throws	UserInputException
 	 */
 	public function validate() {

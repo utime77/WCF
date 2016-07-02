@@ -8,9 +8,7 @@ use wcf\data\DatabaseObjectDecorator;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.category
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Category
  * 
  * @method	Category	getDecoratedObject()
  * @mixin	Category
@@ -20,7 +18,7 @@ class CategoryNode extends DatabaseObjectDecorator implements \RecursiveIterator
 	 * child category nodes
 	 * @var	CategoryNode[]
 	 */
-	protected $children = array();
+	protected $children = [];
 	
 	/**
 	 * current iterator key
@@ -88,6 +86,23 @@ class CategoryNode extends DatabaseObjectDecorator implements \RecursiveIterator
 		}
 		
 		return $i;
+	}
+	
+	/**
+	 * Returns node depth.
+	 *
+	 * @return	integer
+	 */
+	public function getDepth() {
+		$element = $this;
+		$depth = 1;
+		
+		while ($element->parentNode->parentNode != null) {
+			$depth++;
+			$element = $element->parentNode;
+		}
+		
+		return $depth;
 	}
 	
 	/**

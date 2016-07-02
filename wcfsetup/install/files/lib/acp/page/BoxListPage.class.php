@@ -1,6 +1,7 @@
 <?php
 namespace wcf\acp\page;
 use wcf\data\box\Box;
+use wcf\data\box\BoxList;
 use wcf\page\SortablePage;
 use wcf\system\WCF;
 use wcf\util\StringUtil;
@@ -9,38 +10,43 @@ use wcf\util\StringUtil;
  * Shows a list of boxes.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.page
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Page
+ * @since	3.0
+ * 
+ * @property	BoxList		$objectList
  */
 class BoxListPage extends SortablePage {
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.cms.box.list';
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
-	public $objectListClassName = 'wcf\data\box\BoxList';
+	public $objectListClassName = BoxList::class;
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
-	public $neededPermissions = array('admin.content.cms.canManageBox');
+	public $neededPermissions = ['admin.content.cms.canManageBox'];
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public $defaultSortField = 'name';
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
-	public $validSortFields = array('boxID', 'name', 'boxType', 'position', 'showOrder');
+	public $validSortFields = ['boxID', 'name', 'boxType', 'position', 'showOrder'];
+	
+	/**
+	 * @inheritDoc
+	 */
+	public $itemsPerPage = 50;
 	
 	/**
 	 * name
@@ -73,7 +79,13 @@ class BoxListPage extends SortablePage {
 	public $position = '';
 	
 	/**
-	 * @inheritdoc
+	 * display 'Add Box' dialog on load
+	 * @var integer
+	 */
+	public $showBoxAddDialog = 0;
+	
+	/**
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -83,50 +95,49 @@ class BoxListPage extends SortablePage {
 		if (!empty($_REQUEST['content'])) $this->content = StringUtil::trim($_REQUEST['content']);
 		if (!empty($_REQUEST['boxType'])) $this->boxType = $_REQUEST['boxType'];
 		if (!empty($_REQUEST['position'])) $this->position = $_REQUEST['position'];
+		if (!empty($_REQUEST['showBoxAddDialog'])) $this->showBoxAddDialog = 1;
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected function initObjectList() {
 		parent::initObjectList();
 		
 		// hide menu boxes
-		$this->objectList->getConditionBuilder()->add('box.boxType <> ?', array('menu'));
+		$this->objectList->getConditionBuilder()->add('box.boxType <> ?', ['menu']);
 		
 		if (!empty($this->name)) {
-			$this->objectList->getConditionBuilder()->add('box.name LIKE ?', array('%'.$this->name.'%'));
+			$this->objectList->getConditionBuilder()->add('box.name LIKE ?', ['%'.$this->name.'%']);
 		}
 		if (!empty($this->title)) {
-			$this->objectList->getConditionBuilder()->add('box.boxID IN (SELECT boxID FROM wcf'.WCF_N.'_box_content WHERE title LIKE ?)', array('%'.$this->title.'%'));
+			$this->objectList->getConditionBuilder()->add('box.boxID IN (SELECT boxID FROM wcf'.WCF_N.'_box_content WHERE title LIKE ?)', ['%'.$this->title.'%']);
 		}
 		if (!empty($this->content)) {
-			$this->objectList->getConditionBuilder()->add('box.boxID IN (SELECT boxID FROM wcf'.WCF_N.'_box_content WHERE content LIKE ?)', array('%'.$this->content.'%'));
+			$this->objectList->getConditionBuilder()->add('box.boxID IN (SELECT boxID FROM wcf'.WCF_N.'_box_content WHERE content LIKE ?)', ['%'.$this->content.'%']);
 		}
 		if (!empty($this->position)) {
-			$this->objectList->getConditionBuilder()->add('box.position = ?', array($this->position));
+			$this->objectList->getConditionBuilder()->add('box.position = ?', [$this->position]);
 		}
-		if ($this->boxType == 'static') {
-			$this->objectList->getConditionBuilder()->add('box.boxType IN (?, ?, ?)', array('text', 'html', 'tpl'));
-		}
-		else if ($this->boxType == 'system') {
-			$this->objectList->getConditionBuilder()->add('box.boxType IN (?)', array('system'));
+		if (!empty($this->boxType)) {
+			$this->objectList->getConditionBuilder()->add('box.boxType = ?', [$this->boxType]);
 		}
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'name' => $this->name,
 			'title' => $this->title,
 			'content' => $this->content,
 			'boxType' => $this->boxType,
 			'position' => $this->position,
-			'availablePositions' => Box::$availablePositions
-		));
+			'availablePositions' => Box::$availablePositions,
+			'showBoxAddDialog' => $this->showBoxAddDialog
+		]);
 	}
 }

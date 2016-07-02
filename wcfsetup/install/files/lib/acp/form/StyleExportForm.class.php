@@ -13,15 +13,13 @@ use wcf\util\StringUtil;
  * Shows the style export form.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Form
  */
 class StyleExportForm extends AbstractForm {
 	/**
-	 * @see	\wcf\page\AbstractPage::$activeMenuItem
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.style';
 	
@@ -56,9 +54,9 @@ class StyleExportForm extends AbstractForm {
 	public $exportTemplates = false;
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededPermissions
+	 * @inheritDoc
 	 */
-	public $neededPermissions = array('admin.style.canManageStyle');
+	public $neededPermissions = ['admin.style.canManageStyle'];
 	
 	/**
 	 * package identifier
@@ -79,7 +77,7 @@ class StyleExportForm extends AbstractForm {
 	public $styleID = 0;
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -95,7 +93,7 @@ class StyleExportForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::readFormParameters()
+	 * @inheritDoc
 	 */
 	public function readFormParameters() {
 		parent::readFormParameters();
@@ -111,7 +109,7 @@ class StyleExportForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::validate()
+	 * @inheritDoc
 	 */
 	public function validate() {
 		parent::validate();
@@ -133,7 +131,7 @@ class StyleExportForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		parent::save();
@@ -162,12 +160,12 @@ class StyleExportForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'canExportImages' => $this->canExportImages,
 			'canExportTemplates' => $this->canExportTemplates,
 			'exportAsPackage' => $this->exportAsPackage,
@@ -176,6 +174,6 @@ class StyleExportForm extends AbstractForm {
 			'packageName' => $this->packageName,
 			'style' => $this->style,
 			'styleID' => $this->styleID
-		));
+		]);
 	}
 }

@@ -9,15 +9,13 @@ use wcf\system\request\LinkHandler;
  * Moderation queue implementation for moderated content.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.moderation.queue
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Moderation\Queue
  */
 class ModerationQueueActivationManager extends AbstractModerationQueueManager {
 	/**
-	 * @see	\wcf\system\moderation\queue\AbstractModerationQueueManager::$definitionName
+	 * @inheritDoc
 	 */
 	protected $definitionName = 'com.woltlab.wcf.moderation.activation';
 	
@@ -41,10 +39,10 @@ class ModerationQueueActivationManager extends AbstractModerationQueueManager {
 	}
 	
 	/**
-	 * @see	\wcf\system\moderation\queue\IModerationQueueManager::getLink()
+	 * @inheritDoc
 	 */
 	public function getLink($queueID) {
-		return LinkHandler::getInstance()->getLink('ModerationActivation', array('id' => $queueID));
+		return LinkHandler::getInstance()->getLink('ModerationActivation', ['id' => $queueID]);
 	}
 	
 	/**
@@ -55,7 +53,7 @@ class ModerationQueueActivationManager extends AbstractModerationQueueManager {
 	 * @param	array		$additionalData
 	 * @throws	SystemException
 	 */
-	public function addModeratedContent($objectType, $objectID, array $additionalData = array()) {
+	public function addModeratedContent($objectType, $objectID, array $additionalData = []) {
 		if (!$this->isValid($objectType)) {
 			throw new SystemException("Object type '".$objectType."' is not valid for definition 'com.woltlab.wcf.moderation.activation'");
 		}

@@ -16,7 +16,7 @@ $.Redactor.prototype.WoltLabEvent = function() {
 			this.observe.load = (function() {
 				observeLoad.call(this);
 				
-				EventHandler.fire('com.woltlab.wcf.redactor', 'observe_load_' + elementId, {
+				EventHandler.fire('com.woltlab.wcf.redactor2', 'observe_load_' + elementId, {
 					editor: this.$editor[0]
 				});
 			}).bind(this);
@@ -35,6 +35,11 @@ $.Redactor.prototype.WoltLabEvent = function() {
 			// provide editor message on callback
 			EventHandler.add('com.woltlab.wcf.redactor2', 'getText_' + elementId, (function(data) {
 				data.message = this.code.get();
+			}).bind(this));
+			
+			// clear editor content on reset
+			EventHandler.add('com.woltlab.wcf.redactor2', 'reset_' + elementId, (function() {
+				this.code.set('');
 			}).bind(this));
 		},
 		

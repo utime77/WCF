@@ -5,8 +5,7 @@
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @category	Community Framework
+ * @package	WoltLabSuite\Core
  */
 
 // automatically defined constants/constants defined with classes
@@ -28,13 +27,13 @@ define('SECURITY_TOKEN_INPUT_TAG', '');
 // option constants
 define('LAST_UPDATE_TIME', 0);
 define('WCF_UUID', 'bd096261-15f4-5dc1-9767-01ce08d7c80b');
+define('WOLTLAB_BRANDING', 1);
 define('MODULE_MASTER_PASSWORD', 0);
 define('ENABLE_DEBUG_MODE', 1);
 define('ENABLE_BENCHMARK', 0);
 define('LOG_IP_ADDRESS', 1);
 define('ENABLE_WOLTLAB_NEWS', 1);
 define('MODULE_SYSTEM_RECAPTCHA', 1);
-define('MODULE_PRIVACY_POLICY_PAGE', 1);
 define('MODULE_COOKIE_POLICY_PAGE', 1);
 define('MODULE_ATTACHMENT', 1);
 define('MODULE_SMILEY', 1);
@@ -49,12 +48,11 @@ define('MODULE_USER_PROFILE_WALL', 1);
 define('MODULE_TAGGING', 1);
 define('MODULE_POLL', 1);
 define('MODULE_WCF_AD', 0);
-define('PAGE_TITLE', '');
+define('PAGE_TITLE', 'WoltLab Suite');
 define('PAGE_DESCRIPTION', '');
 define('META_KEYWORDS', '');
 define('META_DESCRIPTION', '');
 define('SHOW_VERSION_NUMBER', 1);
-define('SHOW_CLOCK', 1);
 define('EXTERNAL_LINK_REL_NOFOLLOW', 1);
 define('EXTERNAL_LINK_TARGET_BLANK', 0);
 define('FOOTER_CODE', '');
@@ -138,7 +136,7 @@ define('SHOW_SIGNATURE_DEFAULT_VALUE', 1);
 define('MODULE_EDIT_HISTORY', 1);
 define('EDIT_HISTORY_EXPIRATION', 90);
 define('ENABLE_SHARE_BUTTONS', 1);
-define('SHARE_BUTTONS_SHOW_COUNT', 1);
+define('SHARE_BUTTONS_PROVIDERS', '');
 define('MODULE_IMAGE_PROXY', 0);
 define('IMAGE_PROXY_EXPIRATION', 14);
 define('ENABLE_CENSORSHIP', 0);
@@ -195,9 +193,6 @@ define('LIKE_ALLOW_FOR_OWN_CONTENT', 1);
 define('LIKE_ENABLE_DISLIKE', 1);
 define('LIKE_SHOW_SUMMARY', 1);
 define('MESSAGE_SIDEBAR_ENABLE_ONLINE_STATUS', 1);
-define('MESSAGE_SIDEBAR_ENABLE_RANK', 1);
-define('MESSAGE_SIDEBAR_ENABLE_AVATAR', 1);
-define('MESSAGE_SIDEBAR_ENABLE_MESSAGE_GROUP_STARTER_ICON', 1);
 define('MESSAGE_SIDEBAR_ENABLE_LIKES_RECEIVED', 1);
 define('MESSAGE_SIDEBAR_ENABLE_ACTIVITY_POINTS', 0);
 define('MESSAGE_SIDEBAR_ENABLE_USER_ONLINE_MARKING', 1);
@@ -216,3 +211,11 @@ define('MEDIA_MEDIUM_THUMBNAIL_RETAIN_DIMENSIONS', 1);
 define('MEDIA_LARGE_THUMBNAIL_WIDTH', 1200);
 define('MEDIA_LARGE_THUMBNAIL_HEIGHT', 900);
 define('MEDIA_LARGE_THUMBNAIL_RETAIN_DIMENSIONS', 1);
+define('MODULE_ARTICLE', 1);
+define('ARTICLE_SHOW_ABOUT_AUTHOR', 1);
+define('ARTICLE_ENABLE_COMMENTS_DEFAULT_VALUE', 1);
+define('ARTICLE_ENABLE_LIKE', 1);
+define('ARTICLES_PER_PAGE', 1);
+define('ARTICLE_RELATED_ARTICLES', 1);
+define('ARTICLE_RELATED_ARTICLES_MATCH_THRESHOLD', 1);
+define('SHOW_UPDATE_NOTICE_FRONTEND', 1);

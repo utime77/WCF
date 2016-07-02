@@ -10,12 +10,10 @@ use wcf\util\FileUtil;
  * controller URLs, optionally recognizing id and title parameter.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.request
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Request
+ * @since	3.0
  */
 class LookupRequestRoute implements IRequestRoute {
 	/**
@@ -100,15 +98,15 @@ class LookupRequestRoute implements IRequestRoute {
 	 * @inheritDoc
 	 */
 	public function setIsACP($isACP) {
-		// lookups are not supported for ACP requests
+		throw new \BadMethodCallException('lookups are not supported for ACP requests');
 	}
 	
 	/**
 	 * @inheritDoc
-	 * @throws	SystemException
+	 * @throws	\BadMethodCallException
 	 */
 	public function buildLink(array $components) {
-		throw new SystemException('LookupRequestRoute cannot build links, please verify capabilities by calling canHandle() first.');
+		throw new \BadMethodCallException('LookupRequestRoute cannot build links, please verify capabilities by calling canHandle() first.');
 	}
 	
 	/**

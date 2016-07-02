@@ -4,6 +4,7 @@ use wcf\data\event\listener\EventListener;
 use wcf\system\cache\builder\EventListenerCacheBuilder;
 use wcf\system\event\listener\IParameterizedEventListener;
 use wcf\system\event\IEventListener as ILegacyEventListener;
+use wcf\system\exception\ImplementationException;
 use wcf\system\exception\SystemException;
 use wcf\system\SingletonFactory;
 
@@ -11,11 +12,9 @@ use wcf\system\SingletonFactory;
  * EventHandler executes all registered actions for a specific event.
  * 
  * @author	Tim Duesterhus, Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.event
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Event
  */
 class EventHandler extends SingletonFactory {
 	/**
@@ -113,10 +112,10 @@ class EventHandler extends SingletonFactory {
 									if (!class_exists($eventListener->listenerClassName)) {
 										throw new SystemException("Unable to find class '".$eventListener->listenerClassName."'");
 									}
-									if (!is_subclass_of($eventListener->listenerClassName, 'wcf\system\event\listener\IParameterizedEventListener')) {
+									if (!is_subclass_of($eventListener->listenerClassName, IParameterizedEventListener::class)) {
 										// legacy event listeners
-										if (!is_subclass_of($eventListener->listenerClassName, 'wcf\system\event\IEventListener')) {
-											throw new SystemException("'".$eventListener->listenerClassName."' does not implement 'wcf\system\event\listener\IParameterizedEventListener'");
+										if (!is_subclass_of($eventListener->listenerClassName, IEventListener::class)) {
+											throw new ImplementationException($eventListener->listenerClassName, IParameterizedEventListener::class);
 										}
 									}
 									
@@ -160,7 +159,7 @@ class EventHandler extends SingletonFactory {
 	 * @param	array		&$parameters
 	 * @throws	SystemException
 	 */
-	public function fireAction($eventObj, $eventName, array &$parameters = array()) {
+	public function fireAction($eventObj, $eventName, array &$parameters = []) {
 		// get class name
 		if (is_object($eventObj)) $className = get_class($eventObj);
 		else $className = $eventObj;
@@ -200,10 +199,10 @@ class EventHandler extends SingletonFactory {
 						if (!class_exists($eventListener->listenerClassName)) {
 							throw new SystemException("Unable to find class '".$eventListener->listenerClassName."'");
 						}
-						if (!is_subclass_of($eventListener->listenerClassName, 'wcf\system\event\listener\IParameterizedEventListener')) {
+						if (!is_subclass_of($eventListener->listenerClassName, IParameterizedEventListener::class)) {
 							// legacy event listeners
-							if (!is_subclass_of($eventListener->listenerClassName, 'wcf\system\event\IEventListener')) {
-								throw new SystemException("'".$eventListener->listenerClassName."' does not implement 'wcf\system\event\listener\IParameterizedEventListener'");
+							if (!is_subclass_of($eventListener->listenerClassName, IEventListener::class)) {
+								throw new ImplementationException($eventListener->listenerClassName, IParameterizedEventListener::class);
 							}
 						}
 						

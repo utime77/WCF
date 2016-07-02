@@ -6,11 +6,9 @@ use wcf\data\DatabaseObject;
  * Represents a package update.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.package.update
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Package\Update
  *
  * @property-read	integer		$packageUpdateID
  * @property-read	integer		$packageUpdateServerID
@@ -23,12 +21,12 @@ use wcf\data\DatabaseObject;
  */
 class PackageUpdate extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'package_update';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'packageUpdateID';
 	

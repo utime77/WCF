@@ -10,9 +10,7 @@ use wcf\system\like\IViewableLikeProvider;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.like
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Like
  *
  * @method	ViewableLike		current()
  * @method	ViewableLike[]		getObjects()
@@ -46,17 +44,17 @@ class ViewableLikeList extends LikeList {
 	public function readObjects() {
 		parent::readObjects();
 		
-		$userIDs = array();
-		$likeGroups = array();
-		foreach ($this->objects as &$like) {
+		$userIDs = [];
+		$likeGroups = [];
+		foreach ($this->objects as $like) {
 			$userIDs[] = $like->userID;
 			
 			if (!isset($likeGroups[$like->objectTypeID])) {
 				$objectType = ObjectTypeCache::getInstance()->getObjectType($like->objectTypeID);
-				$likeGroups[$like->objectTypeID] = array(
+				$likeGroups[$like->objectTypeID] = [
 					'provider' => $objectType->getProcessor(),
-					'objects' => array()
-				);
+					'objects' => []
+				];
 			}
 			
 			$likeGroups[$like->objectTypeID]['objects'][] = $like;
@@ -70,6 +68,7 @@ class ViewableLikeList extends LikeList {
 		// parse like
 		foreach ($likeGroups as $likeData) {
 			if ($likeData['provider'] instanceof IViewableLikeProvider) {
+				/** @noinspection PhpUndefinedMethodInspection */
 				$likeData['provider']->prepare($likeData['objects']);
 			}
 		}

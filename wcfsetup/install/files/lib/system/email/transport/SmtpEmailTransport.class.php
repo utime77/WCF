@@ -12,12 +12,10 @@ use wcf\util\StringUtil;
  * SmtpEmailTransport is an implementation of an email transport which sends emails via SMTP (RFC 5321, 3207 and 4954).
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.email.transport
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Email\Transport
+ * @since	3.0
  */
 class SmtpEmailTransport implements EmailTransport {
 	/**
@@ -83,7 +81,7 @@ class SmtpEmailTransport implements EmailTransport {
 	 * @param	string	$username	username to use for authentication
 	 * @param	string	$password	corresponding password
 	 * @param	string	$starttls	one of 'none', 'may' and 'encrypt'
-	 * @throws	SystemException
+	 * @throws	\InvalidArgumentException
 	 */
 	public function __construct($host = MAIL_SMTP_HOST, $port = MAIL_SMTP_PORT, $username = MAIL_SMTP_USER, $password = MAIL_SMTP_PASSWORD, $starttls = MAIL_SMTP_STARTTLS) {
 		$this->host = $host;
@@ -98,12 +96,12 @@ class SmtpEmailTransport implements EmailTransport {
 				$this->starttls = $starttls;
 			break;
 			default:
-				throw new SystemException("Invalid STARTTLS preference '".$starttls."'. Must be one of 'none', 'may' and 'encrypt'.");
+				throw new \InvalidArgumentException("Invalid STARTTLS preference '".$starttls."'. Must be one of 'none', 'may' and 'encrypt'.");
 		}
 	}
 	
 	/**
-	 * @see	\wcf\system\email\transport\SmtpTransport::disconnect()
+	 * @inheritDoc
 	 */
 	public function __destruct() {
 		$this->disconnect();
@@ -174,6 +172,8 @@ class SmtpEmailTransport implements EmailTransport {
 	/**
 	 * Connects to the server and enables STARTTLS if available. Bails
 	 * out if STARTTLS is not available and connection is set to 'encrypt'.
+	 * 
+	 * @throws	PermanentFailure
 	 */
 	protected function connect() {
 		$this->connection = new RemoteFile($this->host, $this->port);
@@ -221,6 +221,8 @@ class SmtpEmailTransport implements EmailTransport {
 	
 	/**
 	 * Enables STARTTLS on the connection.
+	 * 
+	 * @throws	TransientFailure
 	 */
 	protected function starttls() {
 		$this->write("STARTTLS");
@@ -310,12 +312,14 @@ class SmtpEmailTransport implements EmailTransport {
 	 * Delivers the given email using SMTP.
 	 * 
 	 * @param	Email		$email
+	 * @param	Mailbox		$envelopeFrom
 	 * @param	Mailbox		$envelopeTo
 	 * @throws	\Exception
 	 * @throws	PermanentFailure
+	 * @throws	TransientFailure
 	 * @throws	SystemException
 	 */
-	public function deliver(Email $email, Mailbox $envelopeTo) {
+	public function deliver(Email $email, Mailbox $envelopeFrom, Mailbox $envelopeTo) {
 		// delivery is locked
 		if ($this->locked instanceof \Exception) {
 			throw $this->locked;
@@ -354,7 +358,7 @@ class SmtpEmailTransport implements EmailTransport {
 			if (StringUtil::startsWith($item, '.')) return '.'.$item;
 			
 			return $item;
-		}, explode("\r\n", $email))));
+		}, explode("\r\n", $email->getEmail()))));
 		$this->write(".");
 		$this->read([250]);
 	}

@@ -9,9 +9,7 @@ use wcf\system\WCF;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.style
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Style
  *
  * @method	Style	getDecoratedObject()
  * @mixin	Style
@@ -46,8 +44,8 @@ class ActiveStyle extends DatabaseObjectDecorator {
 	 * @return	string
 	 */
 	public function getPageLogo() {
-		if ($this->object->getVariable('pageLogo')) {
-			return $this->getImage($this->object->getVariable('pageLogo'));
+		if ($this->getDecoratedObject()->getVariable('pageLogo')) {
+			return $this->getImage($this->getDecoratedObject()->getVariable('pageLogo'));
 		}
 		
 		return '';

@@ -36,6 +36,22 @@ CREATE TABLE wcf1_acl_option_to_group (
 	UNIQUE KEY groupID (groupID, objectID, optionID)
 );
 
+DROP TABLE IF EXISTS wcf1_acl_simple_to_user;
+CREATE TABLE wcf1_acl_simple_to_user (
+	objectTypeID INT(10) NOT NULL,
+	objectID INT(10) NOT NULL,
+	userID INT(10) NOT NULL,
+	UNIQUE KEY userKey (objectTypeID, objectID, userID)
+);
+
+DROP TABLE IF EXISTS wcf1_acl_simple_to_group;
+CREATE TABLE wcf1_acl_simple_to_group (
+	objectTypeID INT(10) NOT NULL,
+	objectID INT(10) NOT NULL,
+	groupID INT(10) NOT NULL,
+	UNIQUE KEY groupKey (objectTypeID, objectID, groupID)
+);
+
 DROP TABLE IF EXISTS wcf1_acp_menu_item;
 CREATE TABLE wcf1_acp_menu_item (
 	menuItemID INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -69,12 +85,7 @@ CREATE TABLE wcf1_acp_session (
 	userAgent VARCHAR(255) NOT NULL DEFAULT '',
 	lastActivityTime INT(10) NOT NULL DEFAULT 0,
 	requestURI VARCHAR(255) NOT NULL DEFAULT '',
-	requestMethod VARCHAR(7) NOT NULL DEFAULT '',
-	controller VARCHAR(255) NOT NULL DEFAULT '',
-	parentObjectType VARCHAR(255) NOT NULL DEFAULT '',
-	parentObjectID INT(10) NOT NULL DEFAULT 0,
-	objectType VARCHAR(255) NOT NULL DEFAULT '',
-	objectID INT(10) NOT NULL DEFAULT 0
+	requestMethod VARCHAR(7) NOT NULL DEFAULT ''	
 );
 
 DROP TABLE IF EXISTS wcf1_acp_session_access_log;
@@ -141,6 +152,38 @@ CREATE TABLE wcf1_application (
 	cookiePath VARCHAR(255) NOT NULL DEFAULT '/'
 );
 
+DROP TABLE IF EXISTS wcf1_article;
+CREATE TABLE wcf1_article (
+	articleID INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	userID INT(10),
+	username VARCHAR(255) NOT NULL DEFAULT '',
+	time INT(10) NOT NULL DEFAULT 0,
+	categoryID INT(10),
+	isMultilingual TINYINT(1) NOT NULL DEFAULT 0,
+	publicationStatus TINYINT(1) NOT NULL DEFAULT 1,
+	publicationDate INT(10) NOT NULL DEFAULT 0,
+	enableComments TINYINT(1) NOT NULL DEFAULT 1,
+	comments SMALLINT(5) NOT NULL DEFAULT 0,
+	views MEDIUMINT(7) NOT NULL DEFAULT 0,
+	cumulativeLikes MEDIUMINT(7) NOT NULL DEFAULT 0,
+	
+	KEY (time)
+);
+
+DROP TABLE IF EXISTS wcf1_article_content;
+CREATE TABLE wcf1_article_content (
+	articleContentID INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	articleID INT(10) NOT NULL,
+	languageID INT(10),
+	title VARCHAR(255) NOT NULL,
+	teaser TEXT,
+	content MEDIUMTEXT,
+	imageID INT(10),
+	hasEmbeddedObjects TINYINT(1) NOT NULL DEFAULT 0,
+	
+	UNIQUE KEY (articleID, languageID)
+);
+
 DROP TABLE IF EXISTS wcf1_attachment;
 CREATE TABLE wcf1_attachment (
 	attachmentID INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -179,7 +222,7 @@ CREATE TABLE wcf1_attachment (
 DROP TABLE IF EXISTS wcf1_background_job;
 CREATE TABLE wcf1_background_job (
 	jobID INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	job MEDIUMTEXT NOT NULL,
+	job MEDIUMBLOB NOT NULL,
 	status ENUM('ready', 'processing') NOT NULL DEFAULT 'ready',
 	time INT(10) NOT NULL,
 	KEY (status, time)
@@ -192,10 +235,10 @@ CREATE TABLE wcf1_bbcode (
 	packageID INT(10) NOT NULL,
 	htmlOpen VARCHAR(255) NOT NULL DEFAULT '',
 	htmlClose VARCHAR(255) NOT NULL DEFAULT '',
-	allowedChildren VARCHAR(255) NOT NULL DEFAULT 'all',
 	className VARCHAR(255) NOT NULL DEFAULT '',
 	wysiwygIcon varchar(255) NOT NULL DEFAULT '',
 	buttonLabel VARCHAR(255) NOT NULL DEFAULT '',
+	isBlockElement TINYINT(1) NOT NULL DEFAULT 0,
 	isSourceCode TINYINT(1) NOT NULL DEFAULT 0,
 	isDisabled TINYINT(1) NOT NULL DEFAULT 0,
 	showButton TINYINT(1) NOT NULL DEFAULT 0,
@@ -247,13 +290,15 @@ CREATE TABLE wcf1_box (
 
 DROP TABLE IF EXISTS wcf1_box_content;
 CREATE TABLE wcf1_box_content (
+	boxContentID INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	boxID INT(10) NOT NULL,
 	languageID INT(10),
 	title VARCHAR(255) NOT NULL,
 	content MEDIUMTEXT,
 	imageID INT(10),
+	hasEmbeddedObjects TINYINT(1) NOT NULL DEFAULT 0,
 	
-	KEY (boxID, languageID)
+	UNIQUE KEY (boxID, languageID)
 );
 
 DROP TABLE IF EXISTS wcf1_box_to_page;
@@ -485,6 +530,7 @@ CREATE TABLE wcf1_language (
 	countryCode VARCHAR(10) NOT NULL DEFAULT '',
 	isDefault TINYINT(1) NOT NULL DEFAULT 0,
 	hasContent TINYINT(1) NOT NULL DEFAULT 0,
+	isDisabled TINYINT(1) NOT NULL DEFAULT 0,
 	UNIQUE KEY languageCode (languageCode)
 );
 
@@ -924,6 +970,7 @@ CREATE TABLE wcf1_page (
 
 DROP TABLE IF EXISTS wcf1_page_content;
 CREATE TABLE wcf1_page_content (
+	pageContentID INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	pageID INT(10) NOT NULL,
 	languageID INT(10),
 	title VARCHAR(255) NOT NULL,
@@ -931,7 +978,8 @@ CREATE TABLE wcf1_page_content (
 	metaDescription TEXT,
 	metaKeywords TEXT,
 	customURL VARCHAR(255) NOT NULL,
-
+	hasEmbeddedObjects TINYINT(1) NOT NULL DEFAULT 0,
+	
 	UNIQUE KEY (pageID, languageID)
 );
 
@@ -1042,13 +1090,14 @@ CREATE TABLE wcf1_session (
 	lastActivityTime INT(10) NOT NULL DEFAULT 0,
 	requestURI VARCHAR(255) NOT NULL DEFAULT '',
 	requestMethod VARCHAR(7) NOT NULL DEFAULT '',
-	controller VARCHAR(255) NOT NULL DEFAULT '',
-	parentObjectType VARCHAR(255) NOT NULL DEFAULT '',
-	parentObjectID INT(10) NOT NULL DEFAULT 0,
-	objectType VARCHAR(255) NOT NULL DEFAULT '',
-	objectID INT(10) NOT NULL DEFAULT 0,
+	pageID INT(10),
+	pageObjectID INT(10),
+	parentPageID INT(10),
+	parentPageObjectID INT(10),
 	spiderID INT(10),
 	KEY packageID (lastActivityTime, spiderID),
+	KEY pageID (pageID, pageObjectID),
+	KEY parentPageID (parentPageID, parentPageObjectID),
 	UNIQUE KEY uniqueUserID (userID)
 );
 
@@ -1061,18 +1110,6 @@ CREATE TABLE wcf1_session_virtual (
 	lastActivityTime INT(10) NOT NULL DEFAULT 0,
 	sessionVariables MEDIUMTEXT,
 	UNIQUE KEY (sessionID, ipAddress, userAgent)
-);
-
-DROP TABLE IF EXISTS wcf1_sitemap;
-CREATE TABLE wcf1_sitemap (
-	sitemapID INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	packageID INT(10) NOT NULL,
-	sitemapName VARCHAR(80) NOT NULL DEFAULT '',
-	className VARCHAR(255) NOT NULL DEFAULT '',
-	showOrder INT(10) NOT NULL DEFAULT 0,
-	permissions TEXT NULL,
-	options TEXT NULL,
-	UNIQUE KEY sitemapName (packageID, sitemapName)
 );
 
 DROP TABLE IF EXISTS wcf1_smiley;
@@ -1264,7 +1301,6 @@ CREATE TABLE wcf1_user (
 	notificationMailToken VARCHAR(20) NOT NULL DEFAULT '',
 	authData VARCHAR(255) NOT NULL DEFAULT '',
 	likesReceived MEDIUMINT(7) NOT NULL DEFAULT 0,
-	socialNetworkPrivacySettings TEXT,
 	
 	KEY username (username),
 	KEY registrationDate (registrationDate),
@@ -1616,6 +1652,12 @@ ALTER TABLE wcf1_acl_option_to_user ADD FOREIGN KEY (userID) REFERENCES wcf1_use
 ALTER TABLE wcf1_acl_option_to_group ADD FOREIGN KEY (optionID) REFERENCES wcf1_acl_option (optionID) ON DELETE CASCADE;
 ALTER TABLE wcf1_acl_option_to_group ADD FOREIGN KEY (groupID) REFERENCES wcf1_user_group (groupID) ON DELETE CASCADE;
 
+ALTER TABLE wcf1_acl_simple_to_user ADD FOREIGN KEY (objectTypeID) REFERENCES wcf1_object_type (objectTypeID) ON DELETE CASCADE;
+ALTER TABLE wcf1_acl_simple_to_user ADD FOREIGN KEY (userID) REFERENCES wcf1_user (userID) ON DELETE CASCADE;
+
+ALTER TABLE wcf1_acl_simple_to_group ADD FOREIGN KEY (objectTypeID) REFERENCES wcf1_object_type (objectTypeID) ON DELETE CASCADE;
+ALTER TABLE wcf1_acl_simple_to_group ADD FOREIGN KEY (groupID) REFERENCES wcf1_user_group (groupID) ON DELETE CASCADE;
+
 ALTER TABLE wcf1_acp_menu_item ADD FOREIGN KEY (packageID) REFERENCES wcf1_package (packageID) ON DELETE CASCADE;
 
 ALTER TABLE wcf1_acp_search_provider ADD FOREIGN KEY (packageID) REFERENCES wcf1_package (packageID) ON DELETE CASCADE;
@@ -1633,6 +1675,13 @@ ALTER TABLE wcf1_acp_template ADD FOREIGN KEY (packageID) REFERENCES wcf1_packag
 ALTER TABLE wcf1_ad ADD FOREIGN KEY (objectTypeID) REFERENCES wcf1_object_type (objectTypeID) ON DELETE CASCADE;
 
 ALTER TABLE wcf1_application ADD FOREIGN KEY (packageID) REFERENCES wcf1_package (packageID) ON DELETE CASCADE;
+
+ALTER TABLE wcf1_article ADD FOREIGN KEY (userID) REFERENCES wcf1_user (userID) ON DELETE SET NULL;
+ALTER TABLE wcf1_article ADD FOREIGN KEY (categoryID) REFERENCES wcf1_category (categoryID) ON DELETE SET NULL;
+
+ALTER TABLE wcf1_article_content ADD FOREIGN KEY (articleID) REFERENCES wcf1_article (articleID) ON DELETE CASCADE;
+ALTER TABLE wcf1_article_content ADD FOREIGN KEY (languageID) REFERENCES wcf1_language (languageID) ON DELETE SET NULL;
+ALTER TABLE wcf1_article_content ADD FOREIGN KEY (imageID) REFERENCES wcf1_media (mediaID) ON DELETE SET NULL;
 
 ALTER TABLE wcf1_attachment ADD FOREIGN KEY (objectTypeID) REFERENCES wcf1_object_type (objectTypeID) ON DELETE CASCADE;
 ALTER TABLE wcf1_attachment ADD FOREIGN KEY (userID) REFERENCES wcf1_user (userID) ON DELETE SET NULL;
@@ -1758,10 +1807,10 @@ ALTER TABLE wcf1_search ADD FOREIGN KEY (userID) REFERENCES wcf1_user (userID) O
 
 ALTER TABLE wcf1_session ADD FOREIGN KEY (userID) REFERENCES wcf1_user (userID) ON DELETE CASCADE;
 ALTER TABLE wcf1_session ADD FOREIGN KEY (spiderID) REFERENCES wcf1_spider (spiderID) ON DELETE CASCADE;
+ALTER TABLE wcf1_session ADD FOREIGN KEY (pageID) REFERENCES wcf1_page (pageID) ON DELETE SET NULL;
+ALTER TABLE wcf1_session ADD FOREIGN KEY (parentPageID) REFERENCES wcf1_page (pageID) ON DELETE SET NULL;
 
 ALTER TABLE wcf1_session_virtual ADD FOREIGN KEY (sessionID) REFERENCES wcf1_session (sessionID) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE wcf1_sitemap ADD FOREIGN KEY (packageID) REFERENCES wcf1_package (packageID) ON DELETE CASCADE;
 
 ALTER TABLE wcf1_smiley ADD FOREIGN KEY (packageID) REFERENCES wcf1_package (packageID) ON DELETE CASCADE;
 ALTER TABLE wcf1_smiley ADD FOREIGN KEY (categoryID) REFERENCES wcf1_category (categoryID) ON DELETE SET NULL;
@@ -1987,7 +2036,7 @@ INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdow
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownLink', 'rgba(33, 33, 33, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownLinkActive', 'rgba(33, 33, 33, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfDropdownText', 'rgba(33, 33, 33, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFontFamilyFallback', '"Segoe UI", "Lucida Grande", "Helveltica", sans-serif');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFontFamilyFallback', '"Segoe UI", "Lucida Grande", "Helvetica", sans-serif');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFontFamilyGoogle', 'Open Sans');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFontLineHeight', '1.48');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfFontSizeDefault', '14px');
@@ -2022,22 +2071,23 @@ INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderT
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderLink', 'rgba(255, 255, 255, .8)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderLinkActive', 'rgba(255, 255, 255, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderMenuBackground', 'rgba(44, 62, 80, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderMenuBackgroundActive', 'rgba(34, 49, 63, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderMenuLinkBackground', 'rgba(39, 54, 68, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderMenuLinkBackgroundActive', 'rgb(19, 34, 48, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderMenuLink', 'rgba(255, 255, 255, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderMenuLinkActive', 'rgba(255, 255, 255, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderMenuDropdownBackground', 'rgba(34, 49, 63, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderMenuDropdownBackground', 'rgb(19, 34, 48, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderMenuDropdownBackgroundActive', 'rgba(55, 73, 95, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderMenuDropdownBorder', 'rgba(55, 73, 95, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderMenuDropdownLink', 'rgba(255, 255, 255, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderMenuDropdownLinkActive', 'rgba(255, 255, 255, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderSearchBoxBackground', 'rgba(44, 62, 80, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderSearchBoxBackgroundActive', 'rgba(34, 49, 63, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderSearchBoxText', 'rgba(255, 255, 255, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderSearchBoxTextActive', 'rgba(255, 255, 255, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderSearchBoxBackground', 'rgba(255, 255, 255, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderSearchBoxBackgroundActive', 'rgba(255, 255, 255, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderSearchBoxText', 'rgba(66, 66, 66, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderSearchBoxTextActive', 'rgba(66, 66, 66, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderSearchBoxBorder', 'rgba(128, 139, 150, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderSearchBoxBorderActive', 'rgba(255, 255, 255, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderSearchBoxPlaceholder', 'rgba(169, 169, 169, 1)');
-INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderSearchBoxPlaceholderActive', 'rgba(204, 204, 204, 1)');
+INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfHeaderSearchBoxPlaceholderActive', 'rgba(169, 169, 169, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfInputBackground', 'rgba(241, 246, 251, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfInputBackgroundActive', 'rgba(241, 246, 251, 1)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfInputBorder', 'rgba(176, 200, 224, 1)');
@@ -2096,14 +2146,17 @@ INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfTextSha
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfTooltipBackground', 'rgba(0, 0, 0, .8)');
 INSERT INTO wcf1_style_variable (variableName, defaultValue) VALUES ('wcfTooltipText', 'rgba(255, 255, 255, 1)');
 
+-- Email template group
+INSERT INTO wcf1_template_group (parentTemplateGroupID, templateGroupName, templateGroupFolderName) VALUES (NULL, 'wcf.acp.template.group.email', '_wcf_email/');
+
 -- media providers
 -- Videos
 	-- Youtube
-	INSERT INTO wcf1_bbcode_media_provider (title, regex, html) VALUES ('YouTube', 'https?://(?:.+?\\.)?youtu(?:\\.be/|be\\.com/(?:#/)?watch\\?(?:.*?&)?v=)(?P<ID>[a-zA-Z0-9_-]+)(?P<start>(?:#a?t=(?:\\d+|(?:\\d+h(?:\\d+m)?(?:\\d+s)?)|(?:\\d+m(?:\\d+s)?)|(?:\\d+s))$)?)', '<iframe style="max-width:100%;" width="560" height="315" src="https://www.youtube.com/embed/{$ID}?wmode=transparent{$start}" allowfullscreen></iframe>');
+	INSERT INTO wcf1_bbcode_media_provider (title, regex, html) VALUES ('YouTube', 'https?://(?:.+?\\.)?youtu(?:\\.be/|be\\.com/(?:#/)?watch\\?(?:.*?&)?v=)(?P<ID>[a-zA-Z0-9_-]+)(?:(?:\\?|&)t=(?P<start>\\d+)$)?', '<div class="videoContainer"><iframe src="https://www.youtube.com/embed/{$ID}?wmode=transparent&amp;start={$start}" allowfullscreen></iframe></div>');
+	-- Youtube playlist
+	INSERT INTO wcf1_bbcode_media_provider (title, regex, html) VALUES ('YouTube Playlist', 'https?://(?:.+?\\.)?youtu(?:\\.be/|be\\.com/)playlist\\?(?:.*?&)?list=(?P<ID>[a-zA-Z0-9_-]+)', '<div class="videoContainer"><iframe src="https://www.youtube.com/embed/videoseries?list={$ID}" allowfullscreen></iframe></div>');
 	-- Vimeo
 	INSERT INTO wcf1_bbcode_media_provider (title, regex, html) VALUES ('Vimeo', 'https?://vimeo\\.com/(?P<ID>\\d+)', '<iframe src="https://player.vimeo.com/video/{$ID}" width="400" height="225" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>');
-	-- MyVideo
-	INSERT INTO wcf1_bbcode_media_provider (title, regex, html) VALUES ('MyVideo', 'http://(?:www\\.)?myvideo\\.de/watch/(?P<ID>\\d+)', '<object width="611" height="383" type="application/x-shockwave-flash" data="http://www.myvideo.de/movie/{$ID}"><param name="movie" value="http://www.myvideo.de/movie/{$ID}" /><param name="AllowFullscreen" value="true" /><param name="AllowScriptAccess" value="always" /><param name="wmode" value="transparent" /></object>');
 	-- Clipfish
 	INSERT INTO wcf1_bbcode_media_provider (title, regex, html) VALUES ('Clipfish', 'http://(?:www\\.)?clipfish\\.de/(?:.*?/)?video/(?P<ID>\\d+)/', '<div style="width:464px; height:404px;"><div style="width:464px; height:384px;"><iframe src="http://www.clipfish.de/embed_video/?vid={$ID}&amp;as=0&amp;col=990000" name="Clipfish Embedded Video" width="464" height="384" align="left" marginheight="0" marginwidth="0" scrolling="no"></iframe></div></div>');
 	-- Veoh

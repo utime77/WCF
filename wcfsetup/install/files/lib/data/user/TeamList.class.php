@@ -8,21 +8,19 @@ use wcf\system\WCF;
  * Represents a list of team user groups.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User
  */
 class TeamList extends UserProfileList {
 	/**
 	 * teams included in the list
 	 * @var	Team[]
 	 */
-	protected $teams = array();
+	protected $teams = [];
 	
 	/**
-	 * @see	\wcf\data\DatabaseObjectList::countObjects()
+	 * @inheritDoc
 	 */
 	public function countObjects() {
 		$sql = "SELECT	COUNT(*)
@@ -37,10 +35,10 @@ class TeamList extends UserProfileList {
 	}
 	
 	/**
-	 * @see	\wcf\data\DatabaseObjectList::readObjectIDs()
+	 * @inheritDoc
 	 */
 	public function readObjectIDs() {
-		$this->objectIDs = array();
+		$this->objectIDs = [];
 		$sql = "SELECT		user_to_group.userID AS objectID
 			FROM		wcf".WCF_N."_user_group user_group,
 					wcf".WCF_N."_user_to_group user_to_group
@@ -55,7 +53,7 @@ class TeamList extends UserProfileList {
 	}
 	
 	/**
-	 * @see	\wcf\data\DatabaseObjectList::readObjects()
+	 * @inheritDoc
 	 */
 	public function readObjects() {
 		parent::readObjects();

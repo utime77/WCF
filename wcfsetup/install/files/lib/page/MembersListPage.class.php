@@ -2,7 +2,7 @@
 namespace wcf\page;
 use wcf\data\search\Search;
 use wcf\data\user\User;
-use wcf\system\database\PostgreSQLDatabase;
+use wcf\data\user\UserProfileList;
 use wcf\system\exception\IllegalLinkException;
 use wcf\system\request\LinkHandler;
 use wcf\system\user\storage\UserStorageHandler;
@@ -15,9 +15,9 @@ use wcf\util\HeaderUtil;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	page
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Page
+ * 
+ * @property	UserProfileList		$objectList
  */
 class MembersListPage extends SortablePage {
 	/**
@@ -35,11 +35,6 @@ class MembersListPage extends SortablePage {
 	 * @inheritDoc
 	 */
 	public $neededModules = ['MODULE_MEMBERS_LIST'];
-	
-	/**
-	 * @inheritDoc
-	 */
-	public $enableTracking = true;
 	
 	/**
 	 * @inheritDoc
@@ -64,7 +59,7 @@ class MembersListPage extends SortablePage {
 	/**
 	 * @inheritDoc
 	 */
-	public $objectListClassName = 'wcf\data\user\UserProfileList';
+	public $objectListClassName = UserProfileList::class;
 	
 	/**
 	 * letter
@@ -124,14 +119,7 @@ class MembersListPage extends SortablePage {
 		
 		if (!empty($this->letter)) {
 			if ($this->letter == '#') {
-				// PostgreSQL
-				if (WCF::getDB() instanceof PostgreSQLDatabase) {
-					$this->objectList->getConditionBuilder()->add("SUBSTRING(username FROM 1 for 1) IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')");
-				}
-				else {
-					// MySQL
-					$this->objectList->getConditionBuilder()->add("SUBSTRING(username,1,1) IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')");
-				}
+				$this->objectList->getConditionBuilder()->add("SUBSTRING(username,1,1) IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')");
 			}
 			else {
 				$this->objectList->getConditionBuilder()->add("username LIKE ?", [$this->letter.'%']);

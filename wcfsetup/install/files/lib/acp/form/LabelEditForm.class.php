@@ -14,20 +14,18 @@ use wcf\system\WCF;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Form
  */
 class LabelEditForm extends LabelAddForm {
 	/**
-	 * @see	\wcf\page\AbstractPage::$activeMenuItem
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.label';
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededPermissions
+	 * @inheritDoc
 	 */
-	public $neededPermissions = array('admin.content.label.canManageLabel');
+	public $neededPermissions = ['admin.content.label.canManageLabel'];
 	
 	/**
 	 * label id
@@ -42,7 +40,7 @@ class LabelEditForm extends LabelAddForm {
 	public $labelObj = null;
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -55,7 +53,7 @@ class LabelEditForm extends LabelAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		AbstractForm::save();
@@ -70,12 +68,12 @@ class LabelEditForm extends LabelAddForm {
 		}
 		
 		// update label
-		$this->objectAction = new LabelAction(array($this->labelID), 'update', array('data' => array_merge($this->additionalFields, array(
+		$this->objectAction = new LabelAction([$this->labelID], 'update', ['data' => array_merge($this->additionalFields, [
 			'label' => $this->label,
 			'cssClassName' => ($this->cssClassName == 'custom' ? $this->customCssClassName : $this->cssClassName),
 			'groupID' => $this->groupID,
 			'showOrder' => $this->showOrder
-		))));
+		])]);
 		$this->objectAction->executeAction();
 		
 		$objectTypes = ObjectTypeCache::getInstance()->getObjectTypes('com.woltlab.wcf.label.objectType');
@@ -89,13 +87,13 @@ class LabelEditForm extends LabelAddForm {
 		if ($this->cssClassName != 'custom') $this->customCssClassName = '';
 		
 		// show success
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'success' => true
-		));
+		]);
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		parent::readData();
@@ -116,16 +114,16 @@ class LabelEditForm extends LabelAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
 		I18nHandler::getInstance()->assignVariables(!empty($_POST));
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'label' => $this->labelObj,
 			'action' => 'edit'
-		));
+		]);
 	}
 }

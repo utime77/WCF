@@ -7,11 +7,9 @@ use wcf\data\label\Label;
  * Every label object handler has to implement this interface.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.label.object
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Label\Object
  */
 interface ILabelObjectHandler {
 	/**
@@ -20,7 +18,7 @@ interface ILabelObjectHandler {
 	 * @param	array		$parameters
 	 * @return	integer[]
 	 */
-	public function getLabelGroupIDs(array $parameters = array());
+	public function getLabelGroupIDs(array $parameters = []);
 	
 	/**
 	 * Returns a list of label groups.
@@ -28,7 +26,7 @@ interface ILabelObjectHandler {
 	 * @param	array		$parameters
 	 * @return	ViewableLabelGroup[]
 	 */
-	public function getLabelGroups(array $parameters = array());
+	public function getLabelGroups(array $parameters = []);
 	
 	/**
 	 * Returns true, if all given label ids are valid and accessible.

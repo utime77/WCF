@@ -28,7 +28,7 @@
 		<dl{if $errorField == 'title'} class="formError"{/if}>
 			<dt><label for="title">{lang}wcf.global.title{/lang}</label></dt>
 			<dd>
-				<input type="text" id="title" name="title" value="{$i18nPlainValues['title']}" autofocus="autofocus" class="long" />
+				<input type="text" id="title" name="title" value="{$i18nPlainValues['title']}" autofocus class="long">
 				{if $errorField == 'title'}
 					<small class="innerError">
 						{if $errorType == 'title' || $errorType == 'multilingual'}
@@ -38,7 +38,6 @@
 						{/if}
 					</small>
 				{/if}
-				<small>{lang}wcf.acp.menu.title.description{/lang}</small>
 				{include file='multipleLanguageInputJavascript' elementIdentifier='title' forceSelection=false}
 			</dd>
 		</dl>
@@ -49,7 +48,7 @@
 				<dd>
 					<select name="position" id="position">
 						{foreach from=$availablePositions item=availablePosition}
-							<option value="{@$availablePosition}"{if $availablePosition == $position} selected="selected"{/if}>{lang}wcf.acp.box.position.{@$availablePosition}{/lang}</option>
+							<option value="{@$availablePosition}"{if $availablePosition == $position} selected{/if}>{@$availablePosition}</option>
 						{/foreach}
 					</select>
 					
@@ -66,16 +65,16 @@
 			</dl>
 			
 			<dl>
-				<dt><label for="showOrder">{lang}wcf.acp.box.showOrder{/lang}</label></dt>
+				<dt><label for="showOrder">{lang}wcf.global.showOrder{/lang}</label></dt>
 				<dd>
-					<input type="number" id="showOrder" name="showOrder" value="{@$showOrder}" class="tiny" min="0" />
+					<input type="number" id="showOrder" name="showOrder" value="{@$showOrder}" class="tiny" min="0">
 				</dd>
 			</dl>
 			
 			<dl{if $errorField == 'cssClassName'} class="formError"{/if}>
 				<dt><label for="cssClassName">{lang}wcf.acp.box.cssClassName{/lang}</label></dt>
 				<dd>
-					<input type="text" id="cssClassName" name="cssClassName" value="{$cssClassName}" class="long" />
+					<input type="text" id="cssClassName" name="cssClassName" value="{$cssClassName}" class="long">
 					{if $errorField == 'cssClassName'}
 						<small class="innerError">
 							{if $errorType == 'empty'}
@@ -91,25 +90,42 @@
 			<dl>
 				<dt></dt>
 				<dd>
-					<label><input type="checkbox" id="showHeader" name="showHeader" value="1" {if $showHeader}checked="checked" {/if}/> {lang}wcf.acp.box.showHeader{/lang}</label>
+					<label><input type="checkbox" id="showHeader" name="showHeader" value="1"{if $showHeader} checked{/if}> {lang}wcf.acp.box.showHeader{/lang}</label>
 				</dd>
 			</dl>
 			
 			<dl>
 				<dt></dt>
 				<dd>
-					<label><input type="checkbox" id="visibleEverywhere" name="visibleEverywhere" value="1" {if $visibleEverywhere}checked="checked" {/if}/> {lang}wcf.acp.box.visibleEverywhere{/lang}</label>
+					<label><input type="checkbox" id="visibleEverywhere" name="visibleEverywhere" value="1"{if $visibleEverywhere} checked{/if}> {lang}wcf.acp.box.visibleEverywhere{/lang}</label>
+					<script data-relocate="true">
+						elById('visibleEverywhere').addEventListener('change', function() {
+							if (this.checked) {
+								elShow(elById('visibilityExceptionHidden'));
+								elHide(elById('visibilityExceptionVisible'));
+							}
+							else {
+								elHide(elById('visibilityExceptionHidden'));
+								elShow(elById('visibilityExceptionVisible'));
+							}
+						});
+					</script>
 				</dd>
 			</dl>
 			
 			<dl>
-				<dt><label for="pageIDs">{lang}wcf.acp.box.pageIDs{/lang}</label></dt>
+				<dt>
+					<span id="visibilityExceptionVisible"{if $visibleEverywhere} style="display: none"{/if}>{lang}wcf.acp.box.visibilityException.visible{/lang}</span>
+					<span id="visibilityExceptionHidden"{if !$visibleEverywhere} style="display: none"{/if}>{lang}wcf.acp.box.visibilityException.hidden{/lang}</span>
+				</dt>
 				<dd>
-					<select name="pageIDs[]" id="pageIDs" multiple="multiple" size="20">
+					<ul class="scrollableCheckboxList">
 						{foreach from=$pageNodeList item=pageNode}
-							<option value="{@$pageNode->pageID}"{if $pageNode->pageID|in_array:$pageIDs} selected="selected"{/if}>{if $pageNode->getDepth() > 1}{@"&nbsp;&nbsp;&nbsp;&nbsp;"|str_repeat:($pageNode->getDepth() - 1)}{/if}{$pageNode->name}</option>
+							<li{if $pageNode->getDepth() > 1} style="padding-left: {$pageNode->getDepth()*20-20}px"{/if}>
+								<label><input type="checkbox" name="pageIDs[]" value="{@$pageNode->pageID}"{if $pageNode->pageID|in_array:$pageIDs} checked{/if}> {$pageNode->name}</label>
+							</li>
 						{/foreach}
-					</select>
+					</ul>
 				</dd>
 			</dl>
 		{/if}
@@ -120,7 +136,7 @@
 	{event name='sections'}
 	
 	<div class="formSubmit">
-		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s">
 		{@SECURITY_TOKEN_INPUT_TAG}
 	</div>
 </form>

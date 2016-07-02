@@ -17,11 +17,9 @@ use wcf\util\StyleUtil;
  * Provides access to the SCSS PHP compiler.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.style
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Style
  */
 class StyleCompiler extends SingletonFactory {
 	/**
@@ -37,7 +35,7 @@ class StyleCompiler extends SingletonFactory {
 	public static $supportedOptionType = ['boolean', 'integer'];
 	
 	/**
-	 * @see	\wcf\system\SingletonFactory::init()
+	 * @inheritDoc
 	 */
 	protected function init() {
 		require_once(WCF_DIR.'lib/system/style/scssphp/scss.inc.php');
@@ -251,7 +249,7 @@ class StyleCompiler extends SingletonFactory {
 		// add mixins
 		$content .= $this->prepareFile(WCF_DIR.'style/bootstrap/mixin.scss');
 		
-		// add newer mixins added with WCF 2.2
+		// add newer mixins added with version 3.0
 		foreach (glob(WCF_DIR.'style/bootstrap/mixin/*.scss') as $mixin) {
 			$content .= $this->prepareFile($mixin);
 		}

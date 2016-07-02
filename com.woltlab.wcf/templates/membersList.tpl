@@ -1,30 +1,30 @@
-{capture assign='pageTitle'}{if $searchID}{lang}wcf.user.search.results{/lang}{else}{lang}wcf.user.members{/lang}{/if}{if $pageNo > 1} - {lang}wcf.page.pageNo{/lang}{/if}{/capture}
+{capture assign='pageTitle'}{if $searchID}{lang}wcf.user.search.results{/lang}{else}{$__wcf->getActivePage()->getTitle()}{/if}{if $pageNo > 1} - {lang}wcf.page.pageNo{/lang}{/if}{/capture}
 
-{capture assign='contentTitle'}{if $searchID}{lang}wcf.user.search.results{/lang}{else}{lang}wcf.user.members{/lang}{/if} <span class="badge">{#$items}</span>{/capture}
+{capture assign='contentTitle'}{if $searchID}{lang}wcf.user.search.results{/lang}{else}{$__wcf->getActivePage()->getTitle()}{/if} <span class="badge">{#$items}</span>{/capture}
 
 {capture assign='canonicalURLParameters'}sortField={@$sortField}&sortOrder={@$sortOrder}{if $letter}&letter={@$letter|rawurlencode}{/if}{/capture}
 
 {capture assign='headContent'}
 	{if $pageNo < $pages}
-		<link rel="next" href="{link controller='MembersList'}pageNo={@$pageNo+1}&{@$canonicalURLParameters}{/link}" />
+		<link rel="next" href="{link controller='MembersList'}pageNo={@$pageNo+1}&{@$canonicalURLParameters}{/link}">
 	{/if}
 	{if $pageNo > 1}
-		<link rel="prev" href="{link controller='MembersList'}{if $pageNo > 2}pageNo={@$pageNo-1}&{/if}{@$canonicalURLParameters}{/link}" />
+		<link rel="prev" href="{link controller='MembersList'}{if $pageNo > 2}pageNo={@$pageNo-1}&{/if}{@$canonicalURLParameters}{/link}">
 	{/if}
-	<link rel="canonical" href="{link controller='MembersList'}{if $pageNo > 1}pageNo={@$pageNo}&{/if}{@$canonicalURLParameters}{/link}" />
-{/capture}	
+	<link rel="canonical" href="{link controller='MembersList'}{if $pageNo > 1}pageNo={@$pageNo}&{/if}{@$canonicalURLParameters}{/link}">
+{/capture}
 
 {capture assign='sidebarRight'}
 	{assign var=encodedLetter value=$letter|rawurlencode}
 	<section class="jsOnly box">
 		<form method="post" action="{link controller='UserSearch'}{/link}">
-			<h2 class="boxTitle">{lang}wcf.user.search{/lang}</h2>
+			<h2 class="boxTitle"><a href="{link controller='UserSearch'}{/link}">{lang}wcf.user.search{/lang}</a></h2>
 			
 			<div class="boxContent">
 				<dl>
 					<dt></dt>
 					<dd>
-						<input type="text" id="searchUsername" name="username" class="long" placeholder="{lang}wcf.user.username{/lang}" />
+						<input type="text" id="searchUsername" name="username" class="long" placeholder="{lang}wcf.user.username{/lang}">
 						{@SECURITY_TOKEN_INPUT_TAG}
 					</dd>
 				</dl>
@@ -54,23 +54,23 @@
 					<dt></dt>
 					<dd>
 						<select id="sortField" name="sortField">
-							<option value="username"{if $sortField == 'username'} selected="selected"{/if}>{lang}wcf.user.username{/lang}</option>
-							<option value="registrationDate"{if $sortField == 'registrationDate'} selected="selected"{/if}>{lang}wcf.user.registrationDate{/lang}</option>
-							<option value="activityPoints"{if $sortField == 'activityPoints'} selected="selected"{/if}>{lang}wcf.user.activityPoint{/lang}</option>
-							{if MODULE_LIKE}<option value="likesReceived"{if $sortField == 'likesReceived'} selected="selected"{/if}>{lang}wcf.like.likesReceived{/lang}</option>{/if}
-							<option value="lastActivityTime"{if $sortField == 'lastActivityTime'} selected="selected"{/if}>{lang}wcf.user.usersOnline.lastActivity{/lang}</option>
+							<option value="username"{if $sortField == 'username'} selected{/if}>{lang}wcf.user.username{/lang}</option>
+							<option value="registrationDate"{if $sortField == 'registrationDate'} selected{/if}>{lang}wcf.user.registrationDate{/lang}</option>
+							<option value="activityPoints"{if $sortField == 'activityPoints'} selected{/if}>{lang}wcf.user.activityPoint{/lang}</option>
+							{if MODULE_LIKE}<option value="likesReceived"{if $sortField == 'likesReceived'} selected{/if}>{lang}wcf.like.likesReceived{/lang}</option>{/if}
+							<option value="lastActivityTime"{if $sortField == 'lastActivityTime'} selected{/if}>{lang}wcf.user.usersOnline.lastActivity{/lang}</option>
 							{event name='sortField'}
 						</select>
 						<select name="sortOrder">
-							<option value="ASC"{if $sortOrder == 'ASC'} selected="selected"{/if}>{lang}wcf.global.sortOrder.ascending{/lang}</option>
-							<option value="DESC"{if $sortOrder == 'DESC'} selected="selected"{/if}>{lang}wcf.global.sortOrder.descending{/lang}</option>
+							<option value="ASC"{if $sortOrder == 'ASC'} selected{/if}>{lang}wcf.global.sortOrder.ascending{/lang}</option>
+							<option value="DESC"{if $sortOrder == 'DESC'} selected{/if}>{lang}wcf.global.sortOrder.descending{/lang}</option>
 						</select>
 					</dd>
 				</dl>
 				
 				<div class="formSubmit">
-					<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
-					<input type="hidden" name="letter" value="{$letter}" />
+					<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s">
+					<input type="hidden" name="letter" value="{$letter}">
 					{@SID_INPUT_TAG}
 				</div>
 			</div>

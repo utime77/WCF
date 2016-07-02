@@ -9,20 +9,18 @@ use wcf\system\WCF;
  * Executes following-related actions.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.follow
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Follow
  */
 class UserFollowingAction extends UserFollowAction {
 	/**
-	 * @see	\wcf\data\AbstractDatabaseObjectAction::$className
+	 * @inheritDoc
 	 */
-	protected $className = 'wcf\data\user\follow\UserFollowEditor';
+	protected $className = UserFollowEditor::class;
 	
 	/**
-	 * @see	\wcf\data\IGroupedUserListAction::validateGetGroupedUserList()
+	 * @inheritDoc
 	 */
 	public function validateGetGroupedUserList() {
 		$this->readInteger('pageNo');
@@ -35,7 +33,7 @@ class UserFollowingAction extends UserFollowAction {
 	}
 	
 	/**
-	 * @see	\wcf\data\IGroupedUserListAction::getGroupedUserList()
+	 * @inheritDoc
 	 */
 	public function getGroupedUserList() {
 		// resolve page count
@@ -43,7 +41,7 @@ class UserFollowingAction extends UserFollowAction {
 			FROM	wcf".WCF_N."_user_follow
 			WHERE	userID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($this->parameters['userID']));
+		$statement->execute([$this->parameters['userID']]);
 		$pageCount = ceil($statement->fetchSingleColumn() / 20);
 		
 		// get user ids
@@ -51,7 +49,7 @@ class UserFollowingAction extends UserFollowAction {
 			FROM	wcf".WCF_N."_user_follow
 			WHERE	userID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql, 20, ($this->parameters['pageNo'] - 1) * 20);
-		$statement->execute(array($this->parameters['userID']));
+		$statement->execute([$this->parameters['userID']]);
 		$userIDs = $statement->fetchAll(\PDO::FETCH_COLUMN);
 		
 		// create group
@@ -61,13 +59,13 @@ class UserFollowingAction extends UserFollowAction {
 		// load user profiles
 		GroupedUserList::loadUsers();
 		
-		WCF::getTPL()->assign(array(
-			'groupedUsers' => array($group)
-		));
+		WCF::getTPL()->assign([
+			'groupedUsers' => [$group]
+		]);
 		
-		return array(
+		return [
 			'pageCount' => $pageCount,
 			'template' => WCF::getTPL()->fetch('groupedUserList')
-		);
+		];
 	}
 }

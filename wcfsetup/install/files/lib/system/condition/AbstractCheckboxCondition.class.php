@@ -11,10 +11,8 @@ use wcf\system\WCF;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.condition
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Condition
+ * @since	3.0
  */
 abstract class AbstractCheckboxCondition extends AbstractSingleFieldCondition {
 	/**
@@ -56,7 +54,7 @@ abstract class AbstractCheckboxCondition extends AbstractSingleFieldCondition {
 	 * @inheritDoc
 	 */
 	public function getFieldElement() {
-		return '<label><input type="checkbox" name="' . $this->fieldName . '" id="' . $this->fieldName . '"'.($this->fieldValue ? ' checked="checked"' : '').' /> '.WCF::getLanguage()->get($this->label).'</label>';
+		return '<label><input type="checkbox" name="' . $this->fieldName . '" id="' . $this->fieldName . '"'.($this->fieldValue ? ' checked' : '').'> '.WCF::getLanguage()->get($this->label).'</label>';
 	}
 	
 	/**

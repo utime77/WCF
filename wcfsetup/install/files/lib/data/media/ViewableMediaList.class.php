@@ -3,15 +3,13 @@ namespace wcf\data\media;
 use wcf\system\WCF;
 
 /**
- * Represents a list of viewable madia files.
+ * Represents a list of viewable media files.
  * 
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.media
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Data\Media
+ * @since	3.0
  *
  * @method	ViewableMedia		current()
  * @method	ViewableMedia[]		getObjects()
@@ -20,12 +18,12 @@ use wcf\system\WCF;
  */
 class ViewableMediaList extends MediaList {
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public $decoratorClassName = ViewableMedia::class;
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function __construct() {
 		parent::__construct();

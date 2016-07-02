@@ -9,18 +9,16 @@ use wcf\system\WCF;
  * does not cause the details to be logged.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.package.validation
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Package\Validation
  */
 class PackageValidationException extends SystemException {
 	/**
 	 * list of additional details for each subtype
 	 * @var	string[]
 	 */
-	protected $details = array();
+	protected $details = [];
 	
 	/**
 	 * missing archive, expects the detail 'archive' and optionally 'targetArchive' (extracting archive from the archive)
@@ -95,7 +93,7 @@ class PackageValidationException extends SystemException {
 	 * @param	integer		$code
 	 * @param	string[]	$details
 	 */
-	public function __construct($code, array $details = array()) {
+	public function __construct($code, array $details = []) {
 		$this->details = $details;
 		
 		parent::__construct($this->getLegacyMessage($code), $code);
@@ -159,7 +157,7 @@ class PackageValidationException extends SystemException {
 	}
 	
 	/**
-	 * @see	\wcf\system\exception\LoggedException::logError()
+	 * @inheritDoc
 	 */
 	protected function logError() {
 		// do not log errors

@@ -18,9 +18,9 @@ use wcf\util\StringUtil;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.page
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Page
+ * 
+ * @property	LabelList	$objectList
  */
 class LabelListPage extends SortablePage {
 	/**
@@ -125,7 +125,7 @@ class LabelListPage extends SortablePage {
 				$this->objectList->getConditionBuilder()->add('(label LIKE ? OR labelID IN (?))', ['%'.addcslashes($this->label, '_%').'%', $labelIDs]);
 			}
 			else {
-				$this->objectList->getConditionBuilder()->add('label LIKE ?', ['%'.addcslashes($this->label, '_%').'%',]);
+				$this->objectList->getConditionBuilder()->add('label LIKE ?', ['%'.addcslashes($this->label, '_%').'%']);
 			}
 		}
 	}

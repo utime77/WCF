@@ -11,11 +11,9 @@ use wcf\system\WCF;
  * Represents an ad.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.ad
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Ad
  *
  * @property-read	integer		$adID
  * @property-read	integer		$objectTypeID
@@ -26,12 +24,12 @@ use wcf\system\WCF;
  */
 class Ad extends DatabaseObject implements IRouteController {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'adID';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'ad';
 	
@@ -53,7 +51,9 @@ class Ad extends DatabaseObject implements IRouteController {
 		$objectType = ObjectTypeCache::getInstance()->getObjectType($this->objectTypeID);
 		
 		$location = WCF::getLanguage()->get('wcf.acp.ad.location.'.$objectType->objectType);
+		/** @noinspection PhpUndefinedFieldInspection */
 		if ($objectType->categoryname != 'com.woltlab.wcf.global') {
+			/** @noinspection PhpUndefinedFieldInspection */
 			$location = WCF::getLanguage()->get('wcf.acp.ad.location.category.'.$objectType->categoryname).': '.$location;
 		}
 		
@@ -61,7 +61,7 @@ class Ad extends DatabaseObject implements IRouteController {
 	}
 	
 	/**
-	 * @see	\wcf\data\ITitledObject::getTitle()
+	 * @inheritDoc
 	 */
 	public function getTitle() {
 		return $this->adName;

@@ -14,18 +14,17 @@ use wcf\util\StringUtil;
  * $tar->create();
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.io
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Io
  */
 class TarWriter extends Tar {
 	/**
-	 * @see	\wcf\system\io\Tar::$mode
+	 * @inheritDoc
 	 */
 	protected $mode = 'wb+';
 	
+	/** @noinspection PhpMissingParentConstructorInspection */
 	/**
 	 * Creates a new TarWriter object.
 	 * 
@@ -88,7 +87,7 @@ class TarWriter extends Tar {
 	 * @throws	SystemException
 	 */
 	public function add($files, $addDir = '', $removeDir = '') {
-		if (!is_array($files)) $files = array($files);
+		if (!is_array($files)) $files = [$files];
 		if (empty($files)) return false;
 		
 		$result = true;

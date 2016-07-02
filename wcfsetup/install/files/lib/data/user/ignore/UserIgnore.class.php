@@ -7,11 +7,9 @@ use wcf\system\WCF;
  * Represents an ignored user.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.ignore
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Ignore
  *
  * @property-read	integer		$ignoreID		unique id of the ignore relation
  * @property-read	integer		$userID			id of the ignoring user
@@ -20,12 +18,12 @@ use wcf\system\WCF;
  */
 class UserIgnore extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'user_ignore';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'ignoreID';
 	
@@ -41,13 +39,13 @@ class UserIgnore extends DatabaseObject {
 			WHERE	userID = ?
 				AND ignoreUserID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array(
+		$statement->execute([
 			WCF::getUser()->userID,
 			$ignoreUserID
-		));
+		]);
 		
 		$row = $statement->fetchArray();
-		if (!$row) $row = array();
+		if (!$row) $row = [];
 		
 		return new UserIgnore(null, $row);
 	}

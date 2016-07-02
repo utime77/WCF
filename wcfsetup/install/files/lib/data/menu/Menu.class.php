@@ -9,12 +9,10 @@ use wcf\system\WCF;
  * Represents a menu.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.menu
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Data\Menu
+ * @since	3.0
  *
  * @property-read	integer		$menuID			unique id of the menu
  * @property-read	string		$identifier		textual identifier of the menu

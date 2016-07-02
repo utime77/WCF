@@ -19,9 +19,7 @@ use wcf\util\UserUtil;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Form
  */
 class MailForm extends AbstractCaptchaForm {
 	/**
@@ -144,7 +142,7 @@ class MailForm extends AbstractCaptchaForm {
 		$messageData = [
 			'message' => $this->message,
 			'recipient' => $this->user,
-			'username' => WCF::getUser()->userID ? WCF::getUser()->username : $this->email,
+			'username' => WCF::getUser()->userID ? WCF::getUser()->username : $this->email
 		];
 		
 		// build mail

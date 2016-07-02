@@ -18,13 +18,11 @@ use wcf\util\StringUtil;
  *	- show
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	page
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Page
  */
-abstract class AbstractPage implements IPage, ITrackablePage {
+abstract class AbstractPage implements IPage {
 	/**
 	 * name of the active menu item
 	 * @var	string
@@ -44,12 +42,6 @@ abstract class AbstractPage implements IPage, ITrackablePage {
 	public $canonicalURL = '';
 	
 	/**
-	 * enables the tracking of this page
-	 * @var	boolean
-	 */
-	public $enableTracking = false;
-	
-	/**
 	 * is true if canonical URL will be enforced even if POST data is represent
 	 * @var	boolean
 	 */
@@ -65,13 +57,13 @@ abstract class AbstractPage implements IPage, ITrackablePage {
 	 * needed modules to view this page
 	 * @var	string[]
 	 */
-	public $neededModules = array();
+	public $neededModules = [];
 	
 	/**
 	 * needed permissions to view this page
 	 * @var	string[]
 	 */
-	public $neededPermissions = array();
+	public $neededPermissions = [];
 	
 	/**
 	 * name of the template for the called page
@@ -92,12 +84,12 @@ abstract class AbstractPage implements IPage, ITrackablePage {
 	public $useTemplate = true;
 	
 	/**
-	 * @see	\wcf\page\IPage::__run()
+	 * @inheritDoc
 	 */
 	public final function __construct() { }
 	
 	/**
-	 * @see	\wcf\page\IPage::__run()
+	 * @inheritDoc
 	 */
 	public function __run() {
 		// call default methods
@@ -106,7 +98,7 @@ abstract class AbstractPage implements IPage, ITrackablePage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		// call readParameters event
@@ -117,7 +109,7 @@ abstract class AbstractPage implements IPage, ITrackablePage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		// call readData event
@@ -125,21 +117,22 @@ abstract class AbstractPage implements IPage, ITrackablePage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		// call assignVariables event
 		EventHandler::getInstance()->fireAction($this, 'assignVariables');
 		
 		// assign parameters
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'action' => $this->action,
-			'templateName' => $this->templateName
-		));
+			'templateName' => $this->templateName,
+			'canonicalURL' => $this->canonicalURL
+		]);
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::checkModules()
+	 * @inheritDoc
 	 */
 	public function checkModules() {
 		// call checkModules event
@@ -154,7 +147,7 @@ abstract class AbstractPage implements IPage, ITrackablePage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::checkPermissions()
+	 * @inheritDoc
 	 */
 	public function checkPermissions() {
 		// call checkPermissions event
@@ -177,7 +170,7 @@ abstract class AbstractPage implements IPage, ITrackablePage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::show()
+	 * @inheritDoc
 	 */
 	public function show() {
 		// check if active user is logged in
@@ -323,47 +316,5 @@ abstract class AbstractPage implements IPage, ITrackablePage {
 				ACPMenu::getInstance()->setActiveMenuItem($this->activeMenuItem);
 			}
 		}
-	}
-	
-	/**
-	 * @see	\wcf\page\ITrackablePage::isTracked()
-	 */
-	public function isTracked() {
-		return $this->enableTracking;
-	}
-	
-	/**
-	 * @see	\wcf\page\ITrackablePage::getController()
-	 */
-	public function getController() {
-		return get_class($this);
-	}
-	
-	/**
-	 * @see	\wcf\page\ITrackablePage::getParentObjectType()
-	 */
-	public function getParentObjectType() {
-		return '';
-	}
-	
-	/**
-	 * @see	\wcf\page\ITrackablePage::getParentObjectID()
-	 */
-	public function getParentObjectID() {
-		return 0;
-	}
-	
-	/**
-	 * @see	\wcf\page\ITrackablePage::getObjectType()
-	 */
-	public function getObjectType() {
-		return '';
-	}
-	
-	/**
-	 * @see	\wcf\page\ITrackablePage::getObjectID()
-	 */
-	public function getObjectID() {
-		return 0;
 	}
 }

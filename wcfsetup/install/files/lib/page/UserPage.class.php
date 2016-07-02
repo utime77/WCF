@@ -24,16 +24,9 @@ use wcf\system\WCF;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	page
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Page
  */
 class UserPage extends AbstractPage {
-	/**
-	 * @see	\wcf\page\AbstractPage::$enableTracking
-	 */
-	public $enableTracking = true;
-	
 	/**
 	 * edit profile on page load
 	 * @var	boolean
@@ -83,7 +76,7 @@ class UserPage extends AbstractPage {
 	public $visitorList;
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -104,7 +97,7 @@ class UserPage extends AbstractPage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		parent::readData();
@@ -118,7 +111,7 @@ class UserPage extends AbstractPage {
 			UserProfileMenu::getInstance()->setActiveMenuItem('about');
 		}
 		
-		$activeMenuItem = UserProfileMenu::getInstance()->getActiveMenuItem();
+		$activeMenuItem = UserProfileMenu::getInstance()->getActiveMenuItem($this->user->userID);
 		$contentManager = $activeMenuItem->getContentManager();
 		$this->profileContent = $contentManager->getContent($this->user->userID);
 		$this->objectType = ObjectTypeCache::getInstance()->getObjectTypeByName('com.woltlab.wcf.user.profileEditableContent', 'com.woltlab.wcf.user.profileAbout');
@@ -151,7 +144,7 @@ class UserPage extends AbstractPage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
@@ -174,7 +167,7 @@ class UserPage extends AbstractPage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::show()
+	 * @inheritDoc
 	 */
 	public function show() {
 		// update profile hits
@@ -199,19 +192,5 @@ class UserPage extends AbstractPage {
 		}
 		
 		parent::show();
-	}
-	
-	/**
-	 * @see	\wcf\page\ITrackablePage::getObjectType()
-	 */
-	public function getObjectType() {
-		return 'com.woltlab.wcf.user';
-	}
-	
-	/**
-	 * @see	\wcf\page\ITrackablePage::getObjectID()
-	 */
-	public function getObjectID() {
-		return $this->userID;
 	}
 }

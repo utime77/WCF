@@ -1,6 +1,6 @@
 {capture assign='pageTitle'}{lang}wcf.global.error.title{/lang}{/capture}
 
-{include file='header' __disableAds=true}
+{include file='header' __disableAds=true __disableContentHeader=true}
 	
 <p id="errorMessage" class="error">
 	{@$message}
@@ -8,7 +8,7 @@
 <script data-relocate="true">
 	//<![CDATA[
 	if (document.referrer) {
-		$('#errorMessage').append('<br /><a href="' + document.referrer + '">{lang}wcf.global.error.backward{/lang}</a>'); 
+		$('#errorMessage').append('<br><a href="' + document.referrer + '">{lang}wcf.global.error.backward{/lang}</a>'); 
 	}
 	//]]>
 </script>

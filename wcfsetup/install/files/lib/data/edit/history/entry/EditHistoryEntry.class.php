@@ -7,11 +7,9 @@ use wcf\data\DatabaseObject;
  * Represents an edit history entry
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.edit.history.entry
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Edit\History\Entry
  *
  * @property-read	integer		$entryID
  * @property-read	integer		$objectTypeID
@@ -26,17 +24,17 @@ use wcf\data\DatabaseObject;
  */
 class EditHistoryEntry extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'edit_history_entry';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'entryID';
 	
 	/**
-	 * @see	\wcf\data\edit\history\entry\EntryHistoryEntry::getObject()
+	 * @inheritDoc
 	 */
 	protected $object = null;
 	

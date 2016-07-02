@@ -6,11 +6,9 @@ use wcf\data\DatabaseObject;
  * Represents a search.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.search
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Search
  *
  * @property-read	integer		$searchID
  * @property-read	integer|null	$userID
@@ -21,12 +19,12 @@ use wcf\data\DatabaseObject;
  */
 class Search extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'search';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'searchID';
 }

@@ -13,9 +13,7 @@ use wcf\system\WCF;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.condition
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Condition
  */
 class UserStateCondition extends AbstractSingleFieldCondition implements IContentCondition, IObjectListCondition, IUserCondition {
 	use TObjectListUserCondition;
@@ -124,8 +122,9 @@ class UserStateCondition extends AbstractSingleFieldCondition implements IConten
 	 * @return	string
 	 */
 	protected function getCheckedAttribute($propertyName) {
+		/** @noinspection PhpVariableVariableInspection */
 		if ($this->$propertyName) {
-			return ' checked="checked"';
+			return ' checked';
 		}
 		
 		return '';
@@ -141,10 +140,10 @@ class UserStateCondition extends AbstractSingleFieldCondition implements IConten
 		$userIsEnabled = WCF::getLanguage()->get('wcf.user.condition.state.isEnabled');
 		
 		return <<<HTML
-<label><input type="checkbox" name="userIsBanned" value="1"{$this->getCheckedAttribute('userIsBanned')} /> {$userIsBanned}</label>
-<label><input type="checkbox" name="userIsNotBanned" value="1"{$this->getCheckedAttribute('userIsNotBanned')} /> {$userIsNotBanned}</label>
-<label><input type="checkbox" name="userIsEnabled" value="1"{$this->getCheckedAttribute('userIsEnabled')} /> {$userIsEnabled}</label>
-<label><input type="checkbox" name="userIsDisabled" value="1"{$this->getCheckedAttribute('userIsDisabled')} /> {$userIsDisabled}</label>
+<label><input type="checkbox" name="userIsBanned" value="1"{$this->getCheckedAttribute('userIsBanned')}> {$userIsBanned}</label>
+<label><input type="checkbox" name="userIsNotBanned" value="1"{$this->getCheckedAttribute('userIsNotBanned')}> {$userIsNotBanned}</label>
+<label><input type="checkbox" name="userIsEnabled" value="1"{$this->getCheckedAttribute('userIsEnabled')}> {$userIsEnabled}</label>
+<label><input type="checkbox" name="userIsDisabled" value="1"{$this->getCheckedAttribute('userIsDisabled')}> {$userIsDisabled}</label>
 HTML;
 	}
 	

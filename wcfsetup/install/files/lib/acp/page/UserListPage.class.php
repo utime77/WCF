@@ -10,6 +10,7 @@ use wcf\system\clipboard\ClipboardHandler;
 use wcf\system\database\util\PreparedStatementConditionBuilder;
 use wcf\system\event\EventHandler;
 use wcf\system\exception\IllegalLinkException;
+use wcf\system\option\user\IUserOptionOutput;
 use wcf\system\option\IOptionHandler;
 use wcf\system\request\LinkHandler;
 use wcf\system\WCF;
@@ -20,11 +21,9 @@ use wcf\util\StringUtil;
  * Shows the result of a user search.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.page
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Page
  */
 class UserListPage extends SortablePage {
 	/**
@@ -104,7 +103,7 @@ class UserListPage extends SortablePage {
 	
 	/**
 	 * list of users
-	 * @var	User[]
+	 * @var	UserProfile[]
 	 */
 	public $users = [];
 	
@@ -312,6 +311,8 @@ class UserListPage extends SortablePage {
 							if (isset($this->options[$column])) {
 								if ($this->options[$column]->outputClass) {
 									$this->options[$column]->setOptionValue($user->getDecoratedObject());
+									
+									/** @var IUserOptionOutput $outputObj */
 									$outputObj = $this->options[$column]->getOutputObject();
 									$this->columnValues[$user->userID][$column] = $outputObj->getOutput($user->getDecoratedObject(), $this->options[$column]->getDecoratedObject(), $user->{$column});
 								}

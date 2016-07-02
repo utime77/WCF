@@ -11,10 +11,8 @@ use wcf\system\WCF;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.page.handler
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Page\Handler
+ * @since	3.0
  */
 class UserPageHandler extends AbstractMenuPageHandler implements IOnlineLocationPageHandler {
 	use TOnlineLocationPageHandler;
@@ -23,11 +21,11 @@ class UserPageHandler extends AbstractMenuPageHandler implements IOnlineLocation
 	 * @inheritDoc
 	 */
 	public function getOnlineLocation(Page $page, UserOnline $user) {
-		if ($user->objectID === null) {
+		if ($user->pageObjectID === null) {
 			return '';
 		}
 		
-		$visitedUser = UserRuntimeCache::getInstance()->getObject($user->objectID);
+		$visitedUser = UserRuntimeCache::getInstance()->getObject($user->pageObjectID);
 		if ($visitedUser === null) {
 			return '';
 		}
@@ -39,8 +37,8 @@ class UserPageHandler extends AbstractMenuPageHandler implements IOnlineLocation
 	 * @inheritDoc
 	 */
 	public function prepareOnlineLocation(Page $page, UserOnline $user) {
-		if ($user->objectID !== null) {
-			UserRuntimeCache::getInstance()->cacheObjectID($user->objectID);
+		if ($user->pageObjectID !== null) {
+			UserRuntimeCache::getInstance()->cacheObjectID($user->pageObjectID);
 		}
 	}
 }

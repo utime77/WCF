@@ -10,9 +10,7 @@ use wcf\system\WCF;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.condition
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Condition
  */
 class UserBirthdayCondition extends AbstractCondition implements IContentCondition {
 	/**
@@ -39,14 +37,14 @@ class UserBirthdayCondition extends AbstractCondition implements IContentConditi
 		$label = WCF::getLanguage()->get('wcf.user.birthdayToday');
 		$checked = '';
 		if ($this->birthdayToday) {
-			$checked = ' checked="checked"';
+			$checked = ' checked';
 		}
 		
 		return <<<HTML
 <dl>
 	<dt></dt>
 	<dd>
-		<label><input type="checkbox" name="birthdayToday" id="birthdayToday"{$checked} /> {$label}</label>
+		<label><input type="checkbox" name="birthdayToday" id="birthdayToday"{$checked}> {$label}</label>
 	</dd>
 </dl>
 HTML;

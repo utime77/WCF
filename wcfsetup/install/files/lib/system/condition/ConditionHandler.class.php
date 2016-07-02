@@ -13,11 +13,9 @@ use wcf\system\SingletonFactory;
  * Handles general condition-related matters.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.condition
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Condition
  */
 class ConditionHandler extends SingletonFactory {
 	/**
@@ -25,7 +23,7 @@ class ConditionHandler extends SingletonFactory {
 	 * object type definition
 	 * @var	array
 	 */
-	protected $conditions = array();
+	protected $conditions = [];
 	
 	/**
 	 * Creates condition objects for the object with the given id and based
@@ -38,13 +36,13 @@ class ConditionHandler extends SingletonFactory {
 		foreach ($conditionObjectTypes as $objectType) {
 			$conditionData = $objectType->getProcessor()->getData();
 			if ($conditionData !== null) {
-				$conditionAction = new ConditionAction(array(), 'create', array(
-					'data' => array(
+				$conditionAction = new ConditionAction([], 'create', [
+					'data' => [
 						'conditionData' => serialize($conditionData),
 						'objectID' => $objectID,
 						'objectTypeID' => $objectType->objectTypeID
-					)
-				));
+					]
+				]);
 				$conditionAction->executeAction();
 			}
 		}
@@ -66,7 +64,7 @@ class ConditionHandler extends SingletonFactory {
 		}
 		
 		$objectTypes = ObjectTypeCache::getInstance()->getObjectTypes($definitionName);
-		$objectTypeIDs = array();
+		$objectTypeIDs = [];
 		foreach ($objectTypes as $objectType) {
 			$objectTypeIDs[] = $objectType->objectTypeID;
 		}
@@ -74,8 +72,8 @@ class ConditionHandler extends SingletonFactory {
 		if (empty($objectTypeIDs)) return;
 		
 		$conditionList = new ConditionList();
-		$conditionList->getConditionBuilder()->add('objectTypeID IN (?)', array($objectTypeIDs));
-		$conditionList->getConditionBuilder()->add('objectID IN (?)', array($objectIDs));
+		$conditionList->getConditionBuilder()->add('objectTypeID IN (?)', [$objectTypeIDs]);
+		$conditionList->getConditionBuilder()->add('objectID IN (?)', [$objectIDs]);
 		$conditionList->readObjects();
 		
 		if (count($conditionList)) {
@@ -101,16 +99,16 @@ class ConditionHandler extends SingletonFactory {
 		}
 		
 		if (!isset($this->conditions[$definition->definitionID])) {
-			$this->conditions[$definition->definitionID] = ConditionCacheBuilder::getInstance()->getData(array(
+			$this->conditions[$definition->definitionID] = ConditionCacheBuilder::getInstance()->getData([
 				'definitionID' => $definition->definitionID
-			));
+			]);
 		}
 		
 		if (isset($this->conditions[$definition->definitionID][$objectID])) {
 			return $this->conditions[$definition->definitionID][$objectID];
 		}
 		
-		return array();
+		return [];
 	}
 	
 	/**

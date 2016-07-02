@@ -13,11 +13,9 @@ use wcf\util\FileUtil;
  * Represents an application.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.application
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Application
  *
  * @property-read	integer		$packageID
  * @property-read	string		$domainName
@@ -39,17 +37,17 @@ class Application extends DatabaseObject {
 	protected $pageURL = '';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'application';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'packageID';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexIsIdentity
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexIsIdentity = false;
 	
@@ -103,11 +101,11 @@ class Application extends DatabaseObject {
 	 */
 	public static function getDirectory($abbreviation) {
 		if (static::$directories === null) {
-			static::$directories = array();
+			static::$directories = [];
 			
 			// read application directories
 			$packageList = new PackageList();
-			$packageList->getConditionBuilder()->add('package.isApplication = ?', array(1));
+			$packageList->getConditionBuilder()->add('package.isApplication = ?', [1]);
 			$packageList->readObjects();
 			foreach ($packageList as $package) {
 				$abbr = Package::getAbbreviation($package->package);

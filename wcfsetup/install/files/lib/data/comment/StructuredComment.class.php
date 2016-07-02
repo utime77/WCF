@@ -11,9 +11,7 @@ use wcf\system\cache\runtime\UserProfileRuntimeCache;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.comment
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Comment
  * 
  * @method	Comment		getDecoratedObject()
  * @mixin	Comment
@@ -94,7 +92,7 @@ class StructuredComment extends DatabaseObjectDecorator implements \Countable, \
 	 * Sets the user's profile.
 	 * 
 	 * @param	UserProfile	$userProfile
-	 * @deprecated	since 2.2
+	 * @deprecated	3.0
 	 */
 	public function setUserProfile(UserProfile $userProfile) {
 		$this->userProfile = $userProfile;
@@ -155,42 +153,42 @@ class StructuredComment extends DatabaseObjectDecorator implements \Countable, \
 	}
 	
 	/**
-	 * @see	\Countable::count()
+	 * @inheritDoc
 	 */
 	public function count() {
 		return count($this->responses);
 	}
 	
 	/**
-	 * @see	\Iterator::current()
+	 * @inheritDoc
 	 */
 	public function current() {
 		return $this->responses[$this->position];
 	}
 	
 	/**
-	 * @see	\Iterator::key()
+	 * @inheritDoc
 	 */
 	public function key() {
 		return $this->postition;
 	}
 	
 	/**
-	 * @see	\Iterator::next()
+	 * @inheritDoc
 	 */
 	public function next() {
 		$this->position++;
 	}
 	
 	/**
-	 * @see	\Iterator::rewind()
+	 * @inheritDoc
 	 */
 	public function rewind() {
 		$this->position = 0;
 	}
 	
 	/**
-	 * @see	\Iterator::valid()
+	 * @inheritDoc
 	 */
 	public function valid() {
 		return isset($this->responses[$this->position]);

@@ -2,6 +2,7 @@
 namespace wcf\system\background;
 use wcf\data\user\User;
 use wcf\system\background\job\AbstractBackgroundJob;
+use wcf\system\exception\ParentClassException;
 use wcf\system\exception\SystemException;
 use wcf\system\session\SessionHandler;
 use wcf\system\SingletonFactory;
@@ -11,12 +12,10 @@ use wcf\system\WCF;
  * Manages the background queue.
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.background.job
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Background\Job
+ * @since	3.0
  */
 class BackgroundQueueHandler extends SingletonFactory {
 	/**
@@ -38,7 +37,7 @@ class BackgroundQueueHandler extends SingletonFactory {
 	 * @see	\wcf\system\background\BackgroundQueueHandler::enqueueAt()
 	 */
 	public function enqueueIn($jobs, $time = 0) {
-		self::enqueueAt($jobs, TIME_NOW + $time);
+		$this->enqueueAt($jobs, TIME_NOW + $time);
 	}
 	
 	/**
@@ -57,7 +56,7 @@ class BackgroundQueueHandler extends SingletonFactory {
 		if (!is_array($jobs)) $jobs = [$jobs];
 		foreach ($jobs as $job) {
 			if (!($job instanceof AbstractBackgroundJob)) {
-				throw new SystemException('$jobs contains an item that does not extend \wcf\system\background\job\AbstractBackgroundJob.');
+				throw new ParentClassException(get_class($job), AbstractBackgroundJob::class);
 			}
 		}
 		
@@ -99,6 +98,10 @@ class BackgroundQueueHandler extends SingletonFactory {
 			
 			if ($job->getFailures() <= $job::MAX_FAILURES) {
 				$this->enqueueIn($job, $job->retryAfter());
+				
+				if (WCF::debugModeIsEnabled()) {
+					\wcf\functions\exception\logThrowable($e);
+				}
 			}
 			else {
 				// job failed too often: log
@@ -111,6 +114,10 @@ class BackgroundQueueHandler extends SingletonFactory {
 			
 			if ($job->getFailures() <= $job::MAX_FAILURES) {
 				$this->enqueueIn($job, $job->retryAfter());
+				
+				if (WCF::debugModeIsEnabled()) {
+					\wcf\functions\exception\logThrowable($e);
+				}
 			}
 			else {
 				// job failed too often: log

@@ -19,20 +19,18 @@ use wcf\util\ArrayUtil;
  * Shows the assign user to group form.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Form
  */
 class UserAssignToGroupForm extends AbstractForm {
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededPermissions
+	 * @inheritDoc
 	 */
-	public $neededPermissions = array('admin.user.canEditUser');
+	public $neededPermissions = ['admin.user.canEditUser'];
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$activeMenuItem
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.user.management';
 	
@@ -40,25 +38,25 @@ class UserAssignToGroupForm extends AbstractForm {
 	 * ids of the relevant users
 	 * @var	integer[]
 	 */
-	public $userIDs = array();
+	public $userIDs = [];
 	
 	/**
 	 * ids of the assigned user groups
 	 * @var	integer[]
 	 */
-	public $groupIDs = array();
+	public $groupIDs = [];
 	
 	/**
 	 * relevant users
 	 * @var	User[]
 	 */
-	public $users = array();
+	public $users = [];
 	
 	/**
 	 * assigned user groups
 	 * @var	UserGroup[]
 	 */
-	public $groups = array();
+	public $groups = [];
 	
 	/**
 	 * id of the user clipboard item object type
@@ -67,7 +65,7 @@ class UserAssignToGroupForm extends AbstractForm {
 	protected $objectTypeID = null;
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -88,7 +86,7 @@ class UserAssignToGroupForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::readFormParameters()
+	 * @inheritDoc
 	 */
 	public function readFormParameters() {
 		parent::readFormParameters();
@@ -97,7 +95,7 @@ class UserAssignToGroupForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::validate()
+	 * @inheritDoc
 	 */
 	public function validate() {
 		parent::validate();
@@ -115,13 +113,13 @@ class UserAssignToGroupForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		parent::save();
 		
 		$conditions = new PreparedStatementConditionBuilder();
-		$conditions->add("userID IN (?)", array($this->userIDs));
+		$conditions->add("userID IN (?)", [$this->userIDs]);
 		
 		$sql = "SELECT	userID, groupID
 			FROM	wcf".WCF_N."_user_to_group
@@ -129,7 +127,7 @@ class UserAssignToGroupForm extends AbstractForm {
 		$statement = WCF::getDB()->prepareStatement($sql);
 		$statement->execute($conditions->getParameters());
 		
-		$groups = array();
+		$groups = [];
 		while ($row = $statement->fetchArray()) {
 			$groups[$row['userID']][] = $row['groupID'];
 		}
@@ -142,10 +140,10 @@ class UserAssignToGroupForm extends AbstractForm {
 			$groupsIDs = array_merge($groups[$user->userID], $this->groupIDs);
 			$groupsIDs = array_unique($groupsIDs);
 			
-			$action = new UserAction(array(new UserEditor($user)), 'addToGroups', array(
+			$action = new UserAction([new UserEditor($user)], 'addToGroups', [
 				'groups' => $groupsIDs,
 				'addDefaultGroups' => false
-			));
+			]);
 			$action->executeAction();
 		}
 		
@@ -154,17 +152,17 @@ class UserAssignToGroupForm extends AbstractForm {
 		
 		$this->saved();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'groupIDs' => $this->groupIDs,
 			'message' => 'wcf.acp.user.assignToGroup.success',
 			'users' => $this->users
-		));
+		]);
 		WCF::getTPL()->display('success');
 		exit;
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		parent::readData();
@@ -173,23 +171,23 @@ class UserAssignToGroupForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'users' => $this->users,
 			'userIDs' => $this->userIDs,
 			'groupIDs' => $this->groupIDs,
 			'groups' => $this->groups
-		));
+		]);
 	}
 	
 	/**
 	 * Get a list of available groups.
 	 */
 	protected function readGroups() {
-		$this->groups = UserGroup::getAccessibleGroups(array(), array(UserGroup::GUESTS, UserGroup::EVERYONE, UserGroup::USERS));
+		$this->groups = UserGroup::getAccessibleGroups([], [UserGroup::GUESTS, UserGroup::EVERYONE, UserGroup::USERS]);
 	}
 }

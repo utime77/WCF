@@ -8,12 +8,14 @@ use wcf\data\user\User;
 use wcf\data\user\UserAction;
 use wcf\system\cache\builder\LanguageCacheBuilder;
 use wcf\system\database\util\SQLParser;
+use wcf\system\database\MySQLDatabase;
 use wcf\system\exception\SystemException;
 use wcf\system\exception\UserInputException;
 use wcf\system\io\File;
 use wcf\system\io\Tar;
 use wcf\system\language\LanguageFactory;
 use wcf\system\package\PackageArchive;
+use wcf\system\request\RouteHandler;
 use wcf\system\session\ACPSessionFactory;
 use wcf\system\session\SessionHandler;
 use wcf\system\setup\Installer;
@@ -39,11 +41,9 @@ define('ENABLE_BENCHMARK', 0);
  * Executes the installation of the basic WCF systems.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System
  */
 class WCFSetup extends WCF {
 	/**
@@ -77,26 +77,12 @@ class WCFSetup extends WCF {
 	protected static $installedFiles = [];
 	
 	/**
-	 * name of installed primary application
-	 * @var	string
-	 */
-	protected static $setupPackageName = 'WoltLab Community Framework';
-	
-	/**
 	 * indicates if developer mode is used to install
 	 * @var	boolean
 	 */
 	protected static $developerMode = 0;
 	
-	/**
-	 * supported databases
-	 * @var	string[][]
-	 */
-	protected static $dbClasses = [
-		'MySQLDatabase' => ['class' => 'wcf\system\database\MySQLDatabase', 'minversion' => '5.1.17']//,		// MySQL 5.1.17+
-		//'PostgreSQLDatabase' => ['class' => 'wcf\system\database\PostgreSQLDatabase', 'minversion' => '8.2.0']	// PostgreSQL 8.2.0+
-	];
-	
+	/** @noinspection PhpMissingParentConstructorInspection */
 	/**
 	 * Calls all init functions of the WCFSetup class and starts the setup process.
 	 */
@@ -108,8 +94,9 @@ class WCFSetup extends WCF {
 		$this->getInstallationDirectories();
 		$this->initLanguage();
 		$this->initTPL();
+		/** @noinspection PhpUndefinedMethodInspection */
 		self::getLanguage()->loadLanguage();
-		$this->getPackageName();
+		$this->getPackageNames();
 		
 		// start setup
 		$this->setup();
@@ -142,25 +129,9 @@ class WCFSetup extends WCF {
 	}
 	
 	/**
-	 * Gets the available database classes.
-	 * 
-	 * @return	string[]
-	 */
-	protected static function getAvailableDBClasses() {
-		$availableDBClasses = [];
-		foreach (self::$dbClasses as $class => $data) {
-			if (call_user_func([$data['class'], 'isSupported'])) {
-				$availableDBClasses[$class] = $data;
-			}
-		}
-		
-		return $availableDBClasses;
-	}
-	
-	/**
 	 * Gets the selected wcf dir from request.
 	 * 
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	protected static function getInstallationDirectories() {
 		if (self::$developerMode && isset($_ENV['WCFSETUP_USEDEFAULTWCFDIR'])) {
@@ -387,11 +358,10 @@ class WCFSetup extends WCF {
 		$system['phpVersion']['result'] = (version_compare($comparePhpVersion, '5.5.4') >= 0);
 		
 		// sql
-		$system['sql']['value'] = array_keys(self::getAvailableDBClasses());
-		$system['sql']['result'] = !empty($system['sql']['value']);
+		$system['sql']['result'] = MySQLDatabase::isSupported();
 		
 		// upload_max_filesize
-		$system['uploadMaxFilesize']['value'] = ini_get('upload_max_filesize');
+		$system['uploadMaxFilesize']['value'] = min(ini_get('upload_max_filesize'), ini_get('post_max_size'));
 		$system['uploadMaxFilesize']['result'] = (intval($system['uploadMaxFilesize']['value']) > 0);
 		
 		// gdlib version
@@ -460,7 +430,7 @@ class WCFSetup extends WCF {
 	/**
 	 * Searches the wcf dir.
 	 * 
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	protected function configureDirectories() {
 		// get available packages
@@ -641,8 +611,6 @@ class WCFSetup extends WCF {
 	 * Shows the page for configurating the database connection.
 	 */
 	protected function configureDB() {
-		$availableDBClasses = self::getAvailableDBClasses();
-		$dbClass = '';
 		if (self::$developerMode && isset($_ENV['WCFSETUP_DBHOST'])) {
 			$dbHost = $_ENV['WCFSETUP_DBHOST'];
 			$dbUser = $_ENV['WCFSETUP_DBUSER'];
@@ -658,12 +626,6 @@ class WCFSetup extends WCF {
 			$dbNumber = 1;
 		}
 		
-		// set $dbClass to first item in $availableDBClasses
-		foreach ($availableDBClasses as $dbClass) {
-			$dbClass = $dbClass['class'];
-			break;
-		}
-		
 		if (isset($_POST['send']) || (self::$developerMode && isset($_ENV['WCFSETUP_DBHOST']))) {
 			if (isset($_POST['dbHost'])) $dbHost = $_POST['dbHost'];
 			if (isset($_POST['dbUser'])) $dbUser = $_POST['dbUser'];
@@ -672,7 +634,6 @@ class WCFSetup extends WCF {
 			
 			// ensure that $dbNumber is zero or a positive integer
 			if (isset($_POST['dbNumber'])) $dbNumber = max(0, intval($_POST['dbNumber']));
-			if (isset($_POST['dbClass'])) $dbClass = $_POST['dbClass'];
 			
 			// get port
 			$dbPort = 0;
@@ -683,47 +644,41 @@ class WCFSetup extends WCF {
 			
 			// test connection
 			try {
-				// check db class
-				$validDB = false;
-				foreach ($availableDBClasses as $dbData) {
-					if ($dbData['class'] == $dbClass) {
-						$validDB = true;
+				// check connection data
+				/** @var \wcf\system\database\Database $db */
+				$db = new MySQLDatabase($dbHost, $dbUser, $dbPassword, $dbName, $dbPort, true);
+				$db->connect();
+				
+				// check sql version
+				$sqlVersion = $db->getVersion();
+				$compareSQLVersion = preg_replace('/^(\d+\.\d+\.\d+).*$/', '\\1', $sqlVersion);
+				if (stripos($sqlVersion, 'MariaDB')) {
+					// MariaDB 10.0.22+
+					if (!(version_compare($compareSQLVersion, '10.0.22') >= 0)) {
+						throw new SystemException("Insufficient MariaDB version '".$compareSQLVersion."'. Version '10.0.22' or greater is needed.");
+					}
+				}
+				else {
+					// MySQL 5.5.35+
+					if (!(version_compare($compareSQLVersion, '5.5.35') >= 0)) {
+						throw new SystemException("Insufficient MySQL version '".$compareSQLVersion."'. Version '5.5.35' or greater is needed.");
+					}
+				}
+				
+				// check innodb support
+				$sql = "SHOW ENGINES";
+				$statement = $db->prepareStatement($sql);
+				$statement->execute();
+				$hasInnoDB = false;
+				while ($row = $statement->fetchArray()) {
+					if ($row['Engine'] == 'InnoDB' && in_array($row['Support'], ['DEFAULT', 'YES'])) {
+						$hasInnoDB = true;
 						break;
 					}
 				}
 				
-				if (!$validDB) {
-					throw new SystemException("Database type '".$dbClass."'. is not available on this system.");
-				}
-				
-				// check connection data
-				/** @var \wcf\system\database\Database $db */
-				$db = new $dbClass($dbHost, $dbUser, $dbPassword, $dbName, $dbPort, true);
-				$db->connect();
-				
-				// check sql version
-				if (!empty($availableDBClasses[$dbClass]['minversion'])) {
-					$compareSQLVersion = preg_replace('/^(\d+\.\d+\.\d+).*$/', '\\1', $db->getVersion());
-					if (!(version_compare($compareSQLVersion, $availableDBClasses[$dbClass]['minversion']) >= 0)) {
-						throw new SystemException("Insufficient SQL version '".$compareSQLVersion."'. Version '".$availableDBClasses[$dbClass]['minversion']."' or greater is needed.");
-					}
-				}
-				// check innodb support
-				if ($dbClass == 'wcf\system\database\MySQLDatabase') {
-					$sql = "SHOW ENGINES";
-					$statement = $db->prepareStatement($sql);
-					$statement->execute();
-					$hasInnoDB = false;
-					while ($row = $statement->fetchArray()) {
-						if ($row['Engine'] == 'InnoDB' && in_array($row['Support'], ['DEFAULT', 'YES'])) {
-							$hasInnoDB = true;
-							break;
-						}
-					}
-					
-					if (!$hasInnoDB) {
-						throw new SystemException("Support for InnoDB is missing.");
-					}
+				if (!$hasInnoDB) {
+					throw new SystemException("Support for InnoDB is missing.");
 				}
 				
 				// check for table conflicts
@@ -740,7 +695,6 @@ class WCFSetup extends WCF {
 					$file->write("\$dbUser = '".str_replace("'", "\\'", $dbUser)."';\n");
 					$file->write("\$dbPassword = '".str_replace("'", "\\'", $dbPassword)."';\n");
 					$file->write("\$dbName = '".str_replace("'", "\\'", $dbName)."';\n");
-					$file->write("\$dbClass = '".str_replace("'", "\\'", $dbClass)."';\n");
 					$file->write("if (!defined('WCF_N')) define('WCF_N', $dbNumber);\n");
 					$file->close();
 					
@@ -763,8 +717,6 @@ class WCFSetup extends WCF {
 			'dbPassword' => $dbPassword,
 			'dbName' => $dbName,
 			'dbNumber' => $dbNumber,
-			'dbClass' => $dbClass,
-			'availableDBClasses' => $availableDBClasses,
 			'nextStep' => 'configureDB'
 		]);
 		WCF::getTPL()->display('stepConfigureDB');
@@ -991,7 +943,7 @@ class WCFSetup extends WCF {
 			}
 			else {
 				$username = $password = $confirmPassword = 'root';
-				$email = $confirmEmail = 'woltlab@woltlab.com';
+				$email = $confirmEmail = 'wsc-developer-mode@example.com';
 			}
 			
 			// error handling
@@ -1156,7 +1108,7 @@ class WCFSetup extends WCF {
 				'processNo' => $processNo,
 				'userID' => $admin->userID,
 				'package' => 'com.woltlab.wcf',
-				'packageName' => 'WoltLab Community Framework',
+				'packageName' => 'WoltLab Suite Core',
 				'archive' => TMP_DIR.'install/packages/'.$wcfPackageFile,
 				'isApplication' => 1
 			]);
@@ -1182,6 +1134,7 @@ class WCFSetup extends WCF {
 				}
 				
 				$queueIDs = [];
+				/** @noinspection PhpUndefinedVariableInspection */
 				$queueID = $queue->queueID;
 				while ($queueID) {
 					$queueIDs[] = $queueID;
@@ -1211,6 +1164,7 @@ class WCFSetup extends WCF {
 				throw new SystemException('', 0, '', $e);
 			}
 			
+			/** @noinspection PhpUndefinedVariableInspection */
 			$queue = PackageInstallationQueueEditor::create([
 				'parentQueueID' => $queue->queueID,
 				'processNo' => $processNo,
@@ -1268,31 +1222,30 @@ class WCFSetup extends WCF {
 	}
 	
 	/**
-	 * Gets the package name of the first application in WCFSetup.tar.gz.
+	 * Gets the package names of the bundled applications in WCFSetup.tar.gz.
 	 */
-	protected static function getPackageName() {
+	protected static function getPackageNames() {
 		// get package name
+		$packageNames = [];
 		$tar = new Tar(SETUP_FILE);
 		foreach ($tar->getContentList() as $file) {
 			if ($file['type'] != 'folder' && mb_strpos($file['filename'], 'install/packages/') === 0) {
 				$packageFile = basename($file['filename']);
-				$packageName = preg_replace('!\.(tar\.gz|tgz|tar)$!', '', $packageFile);
 				
-				if ($packageName != 'com.woltlab.wcf') {
-					try {
-						$archive = new PackageArchive(TMP_DIR.'install/packages/'.$packageFile);
-						$archive->openArchive();
-						self::$setupPackageName = $archive->getLocalizedPackageInfo('packageName');
-						$archive->getTar()->close();
-						break;
-					}
-					catch (SystemException $e) {}
+				try {
+					$archive = new PackageArchive(TMP_DIR.'install/packages/'.$packageFile);
+					$archive->openArchive();
+					$packageNames[] = $archive->getLocalizedPackageInfo('packageName');
+					$archive->getTar()->close();
 				}
+				catch (SystemException $e) {}
 			}
 		}
 		$tar->close();
 		
+		sort($packageNames);
+		
 		// assign package name
-		WCF::getTPL()->assign(['setupPackageName' => self::$setupPackageName]);
+		WCF::getTPL()->assign(['setupPackageNames' => $packageNames]);
 	}
 }

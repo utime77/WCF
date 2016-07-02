@@ -4,11 +4,13 @@ use wcf\data\application\Application;
 use wcf\data\application\ApplicationList;
 use wcf\data\box\Box;
 use wcf\data\box\BoxList;
+use wcf\data\language\Language;
 use wcf\data\page\Page;
 use wcf\data\page\PageAction;
 use wcf\data\page\PageEditor;
 use wcf\data\page\PageNodeTree;
 use wcf\form\AbstractForm;
+use wcf\system\acl\simple\SimpleAclHandler;
 use wcf\system\exception\IllegalLinkException;
 use wcf\system\exception\UserInputException;
 use wcf\system\html\input\HtmlInputProcessor;
@@ -24,12 +26,10 @@ use wcf\util\StringUtil;
  * Shows the page add form.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Form
+ * @since	3.0
  */
 class PageAddForm extends AbstractForm {
 	/**
@@ -97,6 +97,12 @@ class PageAddForm extends AbstractForm {
 	public $availableBoxes = [];
 	
 	/**
+	 * list of available languages
+	 * @var	Language[]
+	 */
+	public $availableLanguages = [];
+	
+	/**
 	 * page custom URL
 	 * @var	string[]
 	 */
@@ -133,6 +139,17 @@ class PageAddForm extends AbstractForm {
 	public $boxIDs = [];
 	
 	/**
+	 * acl values
+	 * @var array
+	 */
+	public $aclValues = [];
+	
+	/**
+	 * @var HtmlInputProcessor[]
+	 */
+	public $htmlInputProcessors = [];
+	
+	/**
 	 * @inheritDoc
 	 */
 	public function readParameters() {
@@ -145,7 +162,10 @@ class PageAddForm extends AbstractForm {
 		$applicationList->readObjects();
 		$this->availableApplications = $applicationList->getObjects();
 		
-		// get boxes
+		// get available languages
+		$this->availableLanguages = LanguageFactory::getInstance()->getLanguages();
+		
+		// get available boxes
 		$boxList = new BoxList();
 		$boxList->sqlOrderBy = 'box.name';
 		$boxList->readObjects();
@@ -155,7 +175,7 @@ class PageAddForm extends AbstractForm {
 	/**
 	 * Reads basic page parameters controlling type and i18n.
 	 * 
-	 * @throws      IllegalLinkException
+	 * @throws	IllegalLinkException
 	 */
 	protected function readPageType() {
 		if (!empty($_REQUEST['isMultilingual'])) $this->isMultilingual = 1;
@@ -193,6 +213,10 @@ class PageAddForm extends AbstractForm {
 		if (isset($_POST['metaDescription']) && is_array($_POST['metaDescription'])) $this->metaDescription = ArrayUtil::trim($_POST['metaDescription']);
 		if (isset($_POST['metaKeywords']) && is_array($_POST['metaKeywords'])) $this->metaKeywords = ArrayUtil::trim($_POST['metaKeywords']);
 		if (isset($_POST['boxIDs']) && is_array($_POST['boxIDs'])) $this->boxIDs = ArrayUtil::toIntegerArray($_POST['boxIDs']);
+		$box = Box::getBoxByIdentifier('com.woltlab.wcf.MainMenu');
+		if (!in_array($box->boxID, $this->boxIDs)) $this->boxIDs[] = $box->boxID;
+		
+		if (isset($_POST['aclValues']) && is_array($_POST['aclValues'])) $this->aclValues = $_POST['aclValues'];
 	}
 	
 	/**
@@ -209,9 +233,22 @@ class PageAddForm extends AbstractForm {
 		
 		$this->validateApplicationPackageID();
 		
-		$this->validateCustomUrl();
+		$this->validateCustomUrls();
 		
 		$this->validateBoxIDs();
+		
+		if ($this->pageType == 'text') {
+			if ($this->isMultilingual) {
+				foreach (LanguageFactory::getInstance()->getLanguages() as $language) {
+					$this->htmlInputProcessors[$language->languageID] = new HtmlInputProcessor();
+					$this->htmlInputProcessors[$language->languageID]->process((!empty($this->content[$language->languageID]) ? $this->content[$language->languageID] : ''), 'com.woltlab.wcf.page.content');
+				}
+			}
+			else {
+				$this->htmlInputProcessors[0] = new HtmlInputProcessor();
+				$this->htmlInputProcessors[0]->process((!empty($this->content[0]) ? $this->content[0] : ''), 'com.woltlab.wcf.page.content');
+			}
+		}
 	}
 	
 	/**
@@ -229,7 +266,7 @@ class PageAddForm extends AbstractForm {
 	/**
 	 * Validates page type.
 	 * 
-	 * @throws      UserInputException
+	 * @throws	UserInputException
 	 */
 	protected function validatePageType() {
 		if (!in_array($this->pageType, Page::$availablePageTypes) || $this->pageType == 'system') {
@@ -244,7 +281,7 @@ class PageAddForm extends AbstractForm {
 	/**
 	 * Validates parent page id.
 	 * 
-	 * @throws      UserInputException
+	 * @throws	UserInputException
 	 */
 	protected function validateParentPageID() {
 		if ($this->parentPageID) {
@@ -258,7 +295,7 @@ class PageAddForm extends AbstractForm {
 	/**
 	 * Validates package id.
 	 * 
-	 * @throws      UserInputException
+	 * @throws	UserInputException
 	 */
 	protected function validateApplicationPackageID() {
 		if (!isset($this->availableApplications[$this->applicationPackageID])) {
@@ -269,12 +306,51 @@ class PageAddForm extends AbstractForm {
 	/**
 	 * Validates custom urls.
 	 * 
-	 * @throws      UserInputException
+	 * @throws	UserInputException
 	 */
-	protected function validateCustomUrl() {
-		foreach ($this->customURL as $type => $customURL) {
-			if (!empty($customURL) && !RouteHandler::isValidCustomUrl($customURL)) {
-				throw new UserInputException('customURL_' . $type, 'invalid');
+	protected function validateCustomUrls() {
+		if (empty($this->customURL) && $this->pageType != 'system') {
+			if ($this->isMultilingual) {
+				$language1 = reset($this->availableLanguages);
+				throw new UserInputException('customURL_'.$language1->languageID);
+			}
+			else {
+				throw new UserInputException('customURL_0');
+			}
+		} 
+		
+		foreach ($this->customURL as $languageID => $customURL) {
+			$this->validateCustomUrl($languageID, $customURL);
+		}
+	}
+	
+	/**
+	 * Validates given custom url.
+	 * 
+	 * @param       integer                 $languageID
+	 * @param       string                  $customURL
+	 *
+	 * @throws	UserInputException
+	 */
+	protected function validateCustomUrl($languageID, $customURL) {
+		if (empty($customURL)) {
+			if ($this->pageType != 'system') {
+				throw new UserInputException('customURL_' . $languageID, 'invalid');
+			}
+		}
+		else if (!RouteHandler::isValidCustomUrl($customURL)) {
+			throw new UserInputException('customURL_' . $languageID, 'invalid');
+		}
+		else {
+			// check whether url is already in use
+			if (!PageEditor::isUniqueCustomUrl($customURL, $this->applicationPackageID)) {
+				throw new UserInputException('customURL_' . $languageID, 'notUnique');
+			}
+			
+			foreach ($this->customURL as $languageID2 => $customURL2) {
+				if ($languageID != $languageID2 && $customURL == $customURL2) {
+					throw new UserInputException('customURL_' . $languageID, 'notUnique');
+				}
 			}
 		}
 	}
@@ -282,7 +358,7 @@ class PageAddForm extends AbstractForm {
 	/**
 	 * Validates box ids.
 	 * 
-	 * @throws      UserInputException
+	 * @throws	UserInputException
 	 */
 	protected function validateBoxIDs() {
 		foreach ($this->boxIDs as $boxID) {
@@ -295,7 +371,7 @@ class PageAddForm extends AbstractForm {
 	/**
 	 * Prepares box to page assignments
 	 * 
-	 * @return      mixed[]
+	 * @return	mixed[]
 	 */
 	protected function getBoxToPage() {
 		$boxToPage = [];
@@ -327,35 +403,28 @@ class PageAddForm extends AbstractForm {
 	public function save() {
 		parent::save();
 		
-		$parseHTML = function($content) {
-			if ($this->pageType == 'text') {
-				$htmlInputProcessor = new HtmlInputProcessor();
-				$content = $htmlInputProcessor->process($content);
-			}
-			
-			return $content;
-		};
-		
 		// prepare page content
 		$content = [];
 		if ($this->isMultilingual) {
 			foreach (LanguageFactory::getInstance()->getLanguages() as $language) {
 				$content[$language->languageID] = [
-					'customURL' => (!empty($_POST['customURL'][$language->languageID]) ? $_POST['customURL'][$language->languageID] : ''),
-					'title' => (!empty($_POST['title'][$language->languageID]) ? $_POST['title'][$language->languageID] : ''),
-					'content' => (!empty($_POST['content'][$language->languageID]) ? $parseHTML($_POST['content'][$language->languageID]) : ''),
-					'metaDescription' => (!empty($_POST['metaDescription'][$language->languageID]) ? $_POST['metaDescription'][$language->languageID] : ''),
-					'metaKeywords' => (!empty($_POST['metaKeywords'][$language->languageID]) ? $_POST['metaKeywords'][$language->languageID] : '')
+					'customURL' => (!empty($this->customURL[$language->languageID]) ? $this->customURL[$language->languageID] : ''),
+					'title' => (!empty($this->title[$language->languageID]) ? $this->title[$language->languageID] : ''),
+					'content' => (!empty($this->content[$language->languageID]) ? $this->content[$language->languageID] : ''),
+					'htmlInputProcessor' => (isset($this->htmlInputProcessors[$language->languageID]) ? $this->htmlInputProcessors[$language->languageID] : null),
+					'metaDescription' => (!empty($this->metaDescription[$language->languageID]) ? $this->metaDescription[$language->languageID] : ''),
+					'metaKeywords' => (!empty($this->metaKeywords[$language->languageID]) ? $this->metaKeywords[$language->languageID] : '')
 				];
 			}
 		}
 		else {
 			$content[0] = [
-				'customURL' => (!empty($_POST['customURL'][0]) ? $_POST['customURL'][0] : ''),
-				'title' => (!empty($_POST['title'][0]) ? $_POST['title'][0] : ''),
-				'content' => (!empty($_POST['content'][0]) ? $parseHTML($_POST['content'][0]) : ''),
-				'metaDescription' => (!empty($_POST['metaDescription'][0]) ? $_POST['metaDescription'][0] : ''),
-				'metaKeywords' => (!empty($_POST['metaKeywords'][0]) ? $_POST['metaKeywords'][0] : '')
+				'customURL' => (!empty($this->customURL[0]) ? $this->customURL[0] : ''),
+				'title' => (!empty($this->title[0]) ? $this->title[0] : ''),
+				'content' => (!empty($this->content[0]) ? $this->content[0] : ''),
+				'htmlInputProcessor' => (isset($this->htmlInputProcessors[0]) ? $this->htmlInputProcessors[0] : null),
+				'metaDescription' => (!empty($this->metaDescription[0]) ? $this->metaDescription[0] : ''),
+				'metaKeywords' => (!empty($this->metaKeywords[0]) ? $this->metaKeywords[0] : '')
 			];
 		}
 		
@@ -378,19 +447,27 @@ class PageAddForm extends AbstractForm {
 		// set generic page identifier
 		$pageEditor = new PageEditor($page);
 		$pageEditor->update([
-			'identifier' => 'com.woltlab.wcf.generic'.$pageEditor->pageID
+			'identifier' => 'com.woltlab.wcf.generic'.$page->pageID
 		]);
 		
 		if ($this->isLandingPage) {
 			$page->setAsLandingPage();
 		}
 		
+		// save acl
+		SimpleAclHandler::getInstance()->setValues('com.woltlab.wcf.page', $page->pageID, $this->aclValues);
+		
 		// call saved event
 		$this->saved();
 		
-		// forward to page list
-		HeaderUtil::redirect(LinkHandler::getInstance()->getLink('PageList'));
-		exit;
+		// show success
+		WCF::getTPL()->assign('success', true);
+		
+		// reset variables
+		$this->parentPageID = $this->isDisabled = $this->isLandingPage = 0;
+		$this->applicationPackageID = 1;
+		$this->name = '';
+		$this->customURL = $this->title = $this->content = $this->metaDescription = $this->metaKeywords = $this->boxIDs = $this->aclValues = [];
 	}
 	
 	/**
@@ -429,9 +506,10 @@ class PageAddForm extends AbstractForm {
 			'metaKeywords' => $this->metaKeywords,
 			'boxIDs' => $this->boxIDs,
 			'availableApplications' => $this->availableApplications,
-			'availableLanguages' => LanguageFactory::getInstance()->getLanguages(),
+			'availableLanguages' => $this->availableLanguages,
 			'availableBoxes' => $this->availableBoxes,
-			'pageNodeList' => (new PageNodeTree())->getNodeList()
+			'pageNodeList' => (new PageNodeTree())->getNodeList(),
+			'aclValues' => SimpleAclHandler::getInstance()->getOutputValues($this->aclValues)
 		]);
 	}
 }

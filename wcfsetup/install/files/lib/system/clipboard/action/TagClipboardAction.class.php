@@ -1,32 +1,31 @@
 <?php
 namespace wcf\system\clipboard\action;
 use wcf\data\clipboard\action\ClipboardAction;
+use wcf\data\tag\TagAction;
 use wcf\system\WCF;
 
 /**
  * Clipboard action implementation for tags.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.clipboard.action
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Clipboard\Action
+ * @since	3.0
  */
 class TagClipboardAction extends AbstractClipboardAction {
 	/**
-	 * @see	\wcf\system\clipboard\action\AbstractClipboardAction::$actionClassActions
+	 * @inheritDoc
 	 */
-	protected $actionClassActions = array('delete');
+	protected $actionClassActions = ['delete'];
 	
 	/**
-	 * @see	\wcf\system\clipboard\action\AbstractClipboardAction::$supportedActions
+	 * @inheritDoc
 	 */
-	protected $supportedActions = array('delete', 'setAsSynonyms');
+	protected $supportedActions = ['delete', 'setAsSynonyms'];
 	
 	/**
-	 * @see	\wcf\system\clipboard\action\IClipboardAction::execute()
+	 * @inheritDoc
 	 */
 	public function execute(array $objects, ClipboardAction $action) {
 		$item = parent::execute($objects, $action);
@@ -54,14 +53,14 @@ class TagClipboardAction extends AbstractClipboardAction {
 	}
 	
 	/**
-	 * @see	\wcf\system\clipboard\action\IClipboardAction::getClassName()
+	 * @inheritDoc
 	 */
 	public function getClassName() {
-		return 'wcf\data\tag\TagAction';
+		return TagAction::class;
 	}
 	
 	/**
-	 * @see	\wcf\system\clipboard\action\IClipboardAction::getTypeName()
+	 * @inheritDoc
 	 */
 	public function getTypeName() {
 		return 'com.woltlab.wcf.tag';

@@ -6,11 +6,9 @@ use wcf\system\WCF;
  * Abstract implementation of a stat handler.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.stat
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Stat
  */
 abstract class AbstractStatDailyHandler implements IStatDailyHandler {
 	/**
@@ -26,7 +24,7 @@ abstract class AbstractStatDailyHandler implements IStatDailyHandler {
 			FROM	" . $tableName . "
 			WHERE	" . $dateColumnName . " BETWEEN ? AND ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($date, $date + 86399));
+		$statement->execute([$date, $date + 86399]);
 		return $statement->fetchColumn();
 	}
 	
@@ -43,12 +41,12 @@ abstract class AbstractStatDailyHandler implements IStatDailyHandler {
 			FROM	" . $tableName . "
 			WHERE	" . $dateColumnName . " < ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($date + 86400));
+		$statement->execute([$date + 86400]);
 		return $statement->fetchColumn();
 	}
 	
 	/**
-	 * @see	\wcf\system\stat\IStatDailyHandler::getFormattedCounter()
+	 * @inheritDoc
 	 */
 	public function getFormattedCounter($counter) {
 		return $counter;

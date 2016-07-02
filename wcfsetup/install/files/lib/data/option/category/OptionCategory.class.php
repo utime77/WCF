@@ -8,11 +8,9 @@ use wcf\data\TDatabaseObjectPermissions;
  * Represents an option category.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.option.category
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Option\Category
  *
  * @property-read	integer		$categoryID
  * @property-read	integer		$packageID
@@ -27,12 +25,12 @@ class OptionCategory extends DatabaseObject {
 	use TDatabaseObjectPermissions;
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'option_category';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'categoryID';
 }

@@ -20,15 +20,13 @@ use wcf\util\StringUtil;
  * Shows the style add form.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Form
  */
 class StyleAddForm extends AbstractForm {
 	/**
-	 * @see	\wcf\page\AbstractPage::$activeMenuItem
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.style.add';
 	
@@ -116,7 +114,7 @@ class StyleAddForm extends AbstractForm {
 	public $license = '';
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededPermissions
+	 * @inheritDoc
 	 */
 	public $neededPermissions = ['admin.style.canManageStyle'];
 	
@@ -175,7 +173,7 @@ class StyleAddForm extends AbstractForm {
 	public $specialVariables = [];
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -189,6 +187,7 @@ class StyleAddForm extends AbstractForm {
 		
 		$templateGroupList = new TemplateGroupList();
 		$templateGroupList->sqlOrderBy = "templateGroupName";
+		$templateGroupList->getConditionBuilder()->add('templateGroupFolderName <> ?', ['_wcf_email/']);
 		$templateGroupList->readObjects();
 		$this->availableTemplateGroups = $templateGroupList->getObjects();
 		
@@ -201,7 +200,7 @@ class StyleAddForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::readFormParameters()
+	 * @inheritDoc
 	 */
 	public function readFormParameters() {
 		parent::readFormParameters();
@@ -258,7 +257,7 @@ class StyleAddForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::validate()
+	 * @inheritDoc
 	 */
 	public function validate() {
 		parent::validate();
@@ -388,7 +387,7 @@ class StyleAddForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		parent::readData();
@@ -504,7 +503,7 @@ class StyleAddForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		parent::save();
@@ -559,7 +558,7 @@ class StyleAddForm extends AbstractForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();

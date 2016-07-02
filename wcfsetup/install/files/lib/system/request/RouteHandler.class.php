@@ -16,11 +16,9 @@ use wcf\util\FileUtil;
  * the Microsoft Public License (MS-PL) http://www.opensource.org/licenses/ms-pl.html
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.request
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Request
  */
 class RouteHandler extends SingletonFactory {
 	/**
@@ -69,7 +67,7 @@ class RouteHandler extends SingletonFactory {
 	 * list of available routes
 	 * @var	IRoute[]
 	 */
-	protected $routes = array();
+	protected $routes = [];
 	
 	/**
 	 * parsed route data
@@ -208,7 +206,7 @@ class RouteHandler extends SingletonFactory {
 	 * 
 	 * @param	string	$customUrl	url to perform sanitiy checks on
 	 * @return	bool	true if `$customUrl` passes the sanity check
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	public static function isValidCustomUrl($customUrl) {
 		return preg_match('~^[a-zA-Z0-9\-_/]+$~', $customUrl) === 1;
@@ -263,7 +261,7 @@ class RouteHandler extends SingletonFactory {
 	 * @param	array		$removeComponents
 	 * @return	string
 	 */
-	public static function getPath(array $removeComponents = array()) {
+	public static function getPath(array $removeComponents = []) {
 		if (empty(self::$path)) {
 			self::$path = FileUtil::addTrailingSlash(dirname($_SERVER['SCRIPT_NAME']));
 		}
@@ -368,7 +366,7 @@ class RouteHandler extends SingletonFactory {
 	 */
 	protected function loadDefaultControllers() {
 		if ($this->defaultControllers === null) {
-			$this->defaultControllers = array();
+			$this->defaultControllers = [];
 			
 			foreach (ApplicationHandler::getInstance()->getApplications() as $application) {
 				$app = WCF::getApplicationObject($application);

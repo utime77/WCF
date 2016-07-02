@@ -6,11 +6,9 @@ use wcf\system\exception\SystemException;
  * Reads and validates xml documents.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	util
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Util
  */
 class XML {
 	/**
@@ -152,15 +150,15 @@ class XML {
 	 * @return	string[][]
 	 */
 	protected function pollErrors() {
-		$errors = array();
+		$errors = [];
 		$errorList = libxml_get_errors();
 		
 		foreach ($errorList as $error) {
-			$errors[] = array(
+			$errors[] = [
 				'message' => $error->message,
 				'line' => $error->line,
 				'file' => $this->path
-			);
+			];
 		}
 		
 		libxml_clear_errors();
@@ -175,7 +173,7 @@ class XML {
 	 * @param	array		$errors
 	 * @throws	SystemException
 	 */
-	protected function throwException($message, array $errors = array()) {
+	protected function throwException($message, array $errors = []) {
 		if (!empty($errors)) {
 			$description = '<b>LibXML output:</b><pre>';
 			foreach ($errors as $error) {

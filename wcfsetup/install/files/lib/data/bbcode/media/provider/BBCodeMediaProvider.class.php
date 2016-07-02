@@ -12,9 +12,7 @@ use wcf\util\StringUtil;
  * @author	Tim Duesterhus
  * @copyright	2011-2013 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.bbcode.media.provider
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Bbcode\Media\Provider
  *
  * @property-read	integer		$providerID
  * @property-read	string		$title
@@ -23,12 +21,12 @@ use wcf\util\StringUtil;
  */
 class BBCodeMediaProvider extends DatabaseObject implements IRouteController {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'bbcode_media_provider';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'providerID';
 	
@@ -107,7 +105,7 @@ class BBCodeMediaProvider extends DatabaseObject implements IRouteController {
 	}
 	
 	/**
-	 * @see	\wcf\data\ITitledObject::getTitle()
+	 * @inheritDoc
 	 */
 	public function getTitle() {
 		return $this->title;

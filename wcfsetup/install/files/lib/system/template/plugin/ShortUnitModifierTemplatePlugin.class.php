@@ -12,39 +12,13 @@ use wcf\util\StringUtil;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.template.plugin
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Template\Plugin
  */
 class ShortUnitModifierTemplatePlugin implements IModifierTemplatePlugin {
 	/**
-	 * @see	\wcf\system\template\IModifierTemplatePlugin::execute()
+	 * @inheritDoc
 	 */
 	public function execute($tagArgs, TemplateEngine $tplObj) {
-		$number = $tagArgs[0];
-		$unitPrefix = '';
-		
-		if ($number >= 1000000) {
-			$number /= 1000000;
-			if ($number > 10) {
-				$number = floor($number);
-			}
-			else {
-				$number = round($number, 1);
-			}
-			$unitPrefix = 'M';
-		}
-		else if ($number >= 1000) {
-			$number /= 1000;
-			if ($number > 10) {
-				$number = floor($number);
-			}
-			else {
-				$number = round($number, 1);
-			}
-			$unitPrefix = 'k';
-		}
-		
-		return StringUtil::formatNumeric($number) . $unitPrefix;
+		return StringUtil::getShortUnit($tagArgs[0]);
 	}
 }

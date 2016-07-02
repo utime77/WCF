@@ -6,18 +6,16 @@ use wcf\util\StringUtil;
  * FormDocument holds the page structure based upon form element containers.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Form
  */
 class FormDocument {
 	/**
 	 * list of FormElementContainer objects
 	 * @var	IFormElementContainer[]
 	 */
-	protected $containers = array();
+	protected $containers = [];
 	
 	/**
 	 * form document name
@@ -106,7 +104,7 @@ class FormDocument {
 	 * Handles request input variables.
 	 */
 	public function handleRequest() {
-		$variables = array();
+		$variables = [];
 		
 		foreach ($_REQUEST as $key => $value) {
 			if (mb_strpos($key, $this->getName().'_') !== false) {

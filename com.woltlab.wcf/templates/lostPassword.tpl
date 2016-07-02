@@ -1,7 +1,3 @@
-{capture assign='pageTitle'}{lang}wcf.user.lostPassword{/lang}{/capture}
-
-{capture assign='contentTitle'}{lang}wcf.user.lostPassword{/lang}{/capture}
-
 {include file='header'}
 
 <p class="info">{lang}wcf.user.lostPassword.description{/lang}</p>
@@ -15,7 +11,7 @@
 				<label for="usernameInput">{lang}wcf.user.username{/lang}</label>
 			</dt>
 			<dd>
-				<input type="text" id="usernameInput" name="username" value="{$username}" class="medium" />
+				<input type="text" id="usernameInput" name="username" value="{$username}" class="medium">
 				{if $errorField == 'username'}
 					<small class="innerError">
 						{if $errorType == 'empty'}{lang}wcf.global.form.error.empty{/lang}{/if}
@@ -31,7 +27,7 @@
 				<label for="emailInput">{lang}wcf.user.email{/lang}</label>
 			</dt>
 			<dd>
-				<input type="email" id="emailInput" name="email" value="{$email}" class="medium" />
+				<input type="email" id="emailInput" name="email" value="{$email}" class="medium">
 				{if $errorField == 'email'}
 					<small class="innerError">
 						{if $errorType == 'empty'}{lang}wcf.global.form.error.empty{/lang}{/if}
@@ -49,7 +45,7 @@
 	{include file='captcha'}
 	
 	<div class="formSubmit">
-		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s">
 		{@SECURITY_TOKEN_INPUT_TAG}
 	</div>
 </form>

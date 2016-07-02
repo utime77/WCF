@@ -15,11 +15,9 @@ use wcf\util\StringStack;
  * Parses message before inserting them into the database.
  * 
  * @author	Tim Duesterhus, Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.bbcode
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Bbcode
  */
 class PreParser extends SingletonFactory {
 	/**
@@ -47,10 +45,10 @@ class PreParser extends SingletonFactory {
 	public $text = '';
 	
 	/**
-	 * @see	\wcf\system\SingletonFactory::init()
+	 * @inheritDoc
 	 */
 	protected function init() {
-		$sourceCodeTags = array();
+		$sourceCodeTags = [];
 		foreach (BBCodeCache::getInstance()->getBBCodes() as $bbcode) {
 			if ($bbcode->isSourceCode) $sourceCodeTags[] = $bbcode->bbcodeTag;
 		}
@@ -171,7 +169,7 @@ class PreParser extends SingletonFactory {
 	/**
 	 * Parses user mentions.
 	 * 
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	protected function parseUserMentions() {
 		static $userRegex = null;
@@ -229,7 +227,7 @@ class PreParser extends SingletonFactory {
 		$matches = $userRegex->getMatches();
 		
 		if (!empty($matches)) {
-			$usernames = array();
+			$usernames = [];
 			foreach ($matches as $match) {
 				// we don't care about the full match
 				array_shift($match);
@@ -243,28 +241,28 @@ class PreParser extends SingletonFactory {
 			if (!empty($usernames)) {
 				// fetch users
 				$userList = new UserList();
-				$userList->getConditionBuilder()->add('user_table.username IN (?)', array($usernames));
+				$userList->getConditionBuilder()->add('user_table.username IN (?)', [$usernames]);
 				$userList->readObjects();
-				$users = array();
+				$users = [];
 				foreach ($userList as $user) {
 					$users[mb_strtolower($user->username)] = $user;
 				}
 				
 				$text = $userRegex->replace($text, new Callback(function ($matches) use ($users) {
 					// containing the full match
-					$usernames = array($matches[1]);
+					$usernames = [$matches[1]];
 					
 					// containing only the part before the first space
 					if (isset($matches[2])) $usernames[] = $matches[2];
 					
-					$usernames = array_map(array(PreParser::class, 'getUsername'), $usernames);
+					$usernames = array_map([PreParser::class, 'getUsername'], $usernames);
 					
 					foreach ($usernames as $username) {
 						if (!isset($users[$username])) continue;
-						$link = LinkHandler::getInstance()->getLink('User', array(
+						$link = LinkHandler::getInstance()->getLink('User', [
 							'appendSession' => false,
 							'object' => $users[$username]
-						));
+						]);
 						
 						$mention = "[url='".$link."']@".$users[$username]->username.'[/url]';
 						
@@ -362,7 +360,7 @@ class PreParser extends SingletonFactory {
 	 * 
 	 * @param	string		$match
 	 * @return	string
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	public static function getUsername($match) {
 		// remove escaped single quotation mark

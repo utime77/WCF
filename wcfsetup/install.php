@@ -19,7 +19,7 @@ set_exception_handler('handleException');
 set_error_handler('handleError', E_ALL);
 
 // define list of needed file
-$neededFilesPattern = array(
+$neededFilesPattern = [
 	'!^setup/.*!',
 	'!^install/files/acp/images/wcfLogo.*!',
 	'!^install/files/acp/style/setup/.*!',
@@ -29,9 +29,10 @@ $neededFilesPattern = array(
 	'!^install/files/lib/system/.*!',
 	'!^install/files/lib/util/.*!',
 	'!^install/lang/.*!',
-	'!^install/packages/.*!');
+	'!^install/packages/.*!'];
 	
 // define needed functions and classes
+/** @noinspection PhpMultipleClassesDeclarationsInOneFile */
 /**
  * WCF::handleException() calls the show method on exceptions that implement this interface.
  *
@@ -45,6 +46,7 @@ interface IPrintableException {
 // define needed classes
 // needed are:
 // SystemException, PrintableException, BasicFileUtil, Tar, File, ZipFile
+/** @noinspection PhpMultipleClassesDeclarationsInOneFile */
 /**
  * A SystemException is thrown when an unexpected error occurs.
  *
@@ -131,15 +133,15 @@ class SystemException extends \Exception implements IPrintableException {
 			
 			<h2>Information:</h2>
 			<p>
-				<b>error message:</b> <?php echo htmlspecialchars($this->getMessage()); ?><br />
-				<b>error code:</b> <?php echo intval($this->getCode()); ?><br />
+				<b>error message:</b> <?php echo htmlspecialchars($this->getMessage()); ?><br>
+				<b>error code:</b> <?php echo intval($this->getCode()); ?><br>
 				<?php echo $this->information; ?>
-				<b>file:</b> <?php echo htmlspecialchars($this->getFile()); ?> (<?php echo $this->getLine(); ?>)<br />
-				<b>php version:</b> <?php echo htmlspecialchars(phpversion()); ?><br />
-				<b>wcf version:</b> <?php if (defined('WCF_VERSION')) echo WCF_VERSION; ?><br />
-				<b>date:</b> <?php echo gmdate('r'); ?><br />
-				<b>request:</b> <?php if (isset($_SERVER['REQUEST_URI'])) echo htmlspecialchars($_SERVER['REQUEST_URI']); ?><br />
-				<b>referer:</b> <?php if (isset($_SERVER['HTTP_REFERER'])) echo htmlspecialchars($_SERVER['HTTP_REFERER']); ?><br />
+				<b>file:</b> <?php echo htmlspecialchars($this->getFile()); ?> (<?php echo $this->getLine(); ?>)<br>
+				<b>php version:</b> <?php echo htmlspecialchars(phpversion()); ?><br>
+				<b>wcf version:</b> <?php if (defined('WCF_VERSION')) echo WCF_VERSION; ?><br>
+				<b>date:</b> <?php echo gmdate('r'); ?><br>
+				<b>request:</b> <?php if (isset($_SERVER['REQUEST_URI'])) echo htmlspecialchars($_SERVER['REQUEST_URI']); ?><br>
+				<b>referer:</b> <?php if (isset($_SERVER['HTTP_REFERER'])) echo htmlspecialchars($_SERVER['HTTP_REFERER']); ?><br>
 			</p>
 			
 			<h2>Stacktrace:</h2>
@@ -185,15 +187,23 @@ function escapeString($string) {
 /**
  * Calls the show method on the given exception.
  *
- * @param	Exception	$e
+ * @param	mixed	$e
  */
-function handleException(\Exception $e) {
-	if ($e instanceof IPrintableException || $e instanceof \wcf\system\exception\IPrintableException) {
-		$e->show();
-		exit;
+function handleException($e) {
+	try {
+		if (!($e instanceof \Exception)) throw $e;
+		
+		if ($e instanceof IPrintableException || $e instanceof \wcf\system\exception\IPrintableException) {
+			$e->show();
+			exit;
+		}
 	}
-	
-	print $e;
+	catch (\Throwable $exception) {
+		die("<pre>WCF::handleException() Unhandled exception: ".$exception->getMessage()."\n\n".$exception->getTraceAsString());
+	}
+	catch (\Exception $exception) {
+		die("<pre>WCF::handleException() Unhandled exception: ".$exception->getMessage()."\n\n".$exception->getTraceAsString());
+	}
 }
 
 /**
@@ -219,6 +229,7 @@ function handleError($errorNo, $message, $filename, $lineNo) {
 	}
 }
 
+/** @noinspection PhpMultipleClassesDeclarationsInOneFile */
 /**
  * BasicFileUtil contains file-related functions.
  *
@@ -344,7 +355,6 @@ class BasicFileUtil {
 			}
 		}
 		
-		$startIndex = 0;
 		if (is_dir($filename)) {
 			if (self::$mode == 0644) {
 				@chmod($filename, 0755);
@@ -363,6 +373,7 @@ class BasicFileUtil {
 	}
 }
 
+/** @noinspection PhpMultipleClassesDeclarationsInOneFile */
 /**
  * Opens tar or tar.gz archives.
  *
@@ -376,7 +387,7 @@ class BasicFileUtil {
  */
 class Tar {
 	protected $archiveName = '';
-	protected $contentList = array();
+	protected $contentList = [];
 	protected $opened = false;
 	protected $read = false;
 	protected $file = null;
@@ -581,7 +592,7 @@ class Tar {
 	 * This does not get the entire to memory but only parts of it.
 	 */
 	protected function readContent() {
-		$this->contentList = array();
+		$this->contentList = [];
 		$this->read = true;
 		$i = 0;
 		
@@ -629,7 +640,7 @@ class Tar {
 			return false;
 		}
 		
-		$header = array();
+		$header = [];
 		$checksum = 0;
 		// First part of the header
 		for ($i = 0; $i < 148; $i++) {
@@ -680,6 +691,7 @@ class Tar {
 	}
 }
 
+/** @noinspection PhpMultipleClassesDeclarationsInOneFile */
 /**
  * The File class handles all file operations.
  *
@@ -739,6 +751,7 @@ class File {
 	}
 }
 
+/** @noinspection PhpMultipleClassesDeclarationsInOneFile */
 /**
  * The File class handles all file operations on a zipped file.
  *
@@ -752,6 +765,7 @@ class ZipFile extends File {
 	 */
 	protected static $gzopen64 = null;
 	
+	/** @noinspection PhpMissingParentConstructorInspection */
 	/**
 	 * Opens a new zipped file.
 	 *

@@ -10,9 +10,7 @@ use wcf\system\WCF;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.box
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Box
  */
 class PageCommentListBoxController extends AbstractDatabaseObjectListBoxController {
 	/**
@@ -34,12 +32,14 @@ class PageCommentListBoxController extends AbstractDatabaseObjectListBoxControll
 	 * @inheritDoc
 	 */
 	protected function getTemplate() {
+		/** @noinspection PhpUndefinedMethodInspection */
 		return WCF::getTPL()->fetch('boxPageComments', 'wcf', [
 			'commentCanAdd' => WCF::getSession()->getPermission('user.pageComment.canAddComment'),
 			'commentList' => $this->objectList,
 			'commentObjectTypeID' => CommentHandler::getInstance()->getObjectTypeID('com.woltlab.wcf.page'),
 			'lastCommentTime' => $this->objectList->getMinCommentTime(),
-			'pageID' => RequestHandler::getInstance()->getActiveRequest()->getPageID()
+			'pageID' => RequestHandler::getInstance()->getActiveRequest()->getPageID(),
+			'likeData' => ((MODULE_LIKE && $this->objectList) ? $this->objectList->getLikeData() : []),
 		]);
 	}
 	

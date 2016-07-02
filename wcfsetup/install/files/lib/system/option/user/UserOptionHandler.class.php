@@ -5,6 +5,7 @@ use wcf\data\option\Option;
 use wcf\data\user\option\UserOption;
 use wcf\data\user\option\ViewableUserOption;
 use wcf\data\user\User;
+use wcf\system\cache\builder\UserOptionCacheBuilder;
 use wcf\system\exception\UserInputException;
 use wcf\system\option\ISearchableConditionUserOption;
 use wcf\system\option\OptionHandler;
@@ -17,15 +18,13 @@ use wcf\util\MessageUtil;
  * @author	Alexander Ebert, Joshua Ruesweg
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.option.user
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Option\User
  */
 class UserOptionHandler extends OptionHandler {
 	/**
-	 * @see	\wcf\system\option\OptionHandler::$cacheClass
+	 * @inheritDoc
 	 */
-	protected $cacheClass = 'wcf\system\cache\builder\UserOptionCacheBuilder';
+	protected $cacheClass = UserOptionCacheBuilder::class;
 	
 	/**
 	 * true if within registration process
@@ -65,6 +64,8 @@ class UserOptionHandler extends OptionHandler {
 	
 	/**
 	 * Shows empty options.
+	 * 
+	 * @param	boolean		$show
 	 */
 	public function showEmptyOptions($show = true) {
 		$this->removeEmptyOptions = !$show;
@@ -105,7 +106,7 @@ class UserOptionHandler extends OptionHandler {
 	 * @param	\wcf\data\user\User	$user
 	 */
 	public function setUser(User $user) {
-		$this->optionValues = array();
+		$this->optionValues = [];
 		$this->user = $user;
 		
 		$this->init();
@@ -119,7 +120,7 @@ class UserOptionHandler extends OptionHandler {
 	 * Resets the option values.
 	 */
 	public function resetOptionValues() {
-		$this->optionValues = array();
+		$this->optionValues = [];
 	}
 	
 	/**
@@ -158,7 +159,7 @@ class UserOptionHandler extends OptionHandler {
 	}
 	
 	/**
-	 * @see	\wcf\system\option\OptionHandler::getOption()
+	 * @inheritDoc
 	 */
 	public function getOption($optionName) {
 		$optionData = parent::getOption($optionName);
@@ -178,7 +179,7 @@ class UserOptionHandler extends OptionHandler {
 	}
 	
 	/**
-	 * @see	\wcf\system\option\IOptionType::getFormElement()
+	 * @inheritDoc
 	 */
 	protected function getFormElement($type, Option $option) {
 		if ($this->searchMode) return $this->getTypeObject($type)->getSearchFormElement($option, (isset($this->optionValues[$option->optionName]) ? $this->optionValues[$option->optionName] : null));
@@ -187,7 +188,7 @@ class UserOptionHandler extends OptionHandler {
 	}
 	
 	/**
-	 * @see	\wcf\system\option\OptionHandler::validateOption()
+	 * @inheritDoc
 	 */
 	protected function validateOption(Option $option) {
 		parent::validateOption($option);
@@ -210,7 +211,7 @@ class UserOptionHandler extends OptionHandler {
 	}
 	
 	/**
-	 * @see	\wcf\system\option\OptionHandler::checkCategory()
+	 * @inheritDoc
 	 */
 	protected function checkCategory(OptionCategory $category) {
 		if ($category->categoryName == 'hidden') {
@@ -221,9 +222,11 @@ class UserOptionHandler extends OptionHandler {
 	}
 	
 	/**
-	 * @see	\wcf\system\option\OptionHandler::checkVisibility()
+	 * @inheritDoc
 	 */
 	protected function checkVisibility(Option $option) {
+		/** @var UserOption $option */
+		
 		if ($option->isDisabled) {
 			return false;
 		}
@@ -257,7 +260,7 @@ class UserOptionHandler extends OptionHandler {
 	}
 	
 	/**
-	 * @see	\wcf\system\option\OptionHandler::save()
+	 * @inheritDoc
 	 */
 	public function save($categoryName = null, $optionPrefix = null) {
 		$options = parent::save($categoryName, $optionPrefix);
@@ -275,7 +278,7 @@ class UserOptionHandler extends OptionHandler {
 	}
 	
 	/**
-	 * @see	\wcf\system\option\IOptionHandler::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		foreach ($this->options as $option) {
@@ -284,7 +287,7 @@ class UserOptionHandler extends OptionHandler {
 	}
 	
 	/**
-	 * @see	\wcf\system\option\IOptionHandler::readUserInput()
+	 * @inheritDoc
 	 */
 	public function readUserInput(array &$source) {
 		parent::readUserInput($source);

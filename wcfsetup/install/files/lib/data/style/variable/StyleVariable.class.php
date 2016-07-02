@@ -6,11 +6,9 @@ use wcf\data\DatabaseObject;
  * Represents a style variable.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.style.variable
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Style\Variable
  *
  * @property-read	integer		$variableID		unique id of the style variable
  * @property-read	string		$variableName		name of the style variable
@@ -18,12 +16,12 @@ use wcf\data\DatabaseObject;
  */
 class StyleVariable extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'style_variable';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'variableID';
 	

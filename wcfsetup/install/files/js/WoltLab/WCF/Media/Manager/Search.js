@@ -22,7 +22,7 @@ define(['Ajax', 'Core', 'Dom/Traverse', 'Dom/Util', 'Language', 'WoltLab/WCF/Med
 		this._input.addEventListener('keypress', this._keyPress.bind(this));
 		
 		this._cancelButton = elById(this._getIdPrefix() + 'SearchCancelButton');
-		this._cancelButton.addEventListener('click', this._cancelSearch.bind(this));
+		this._cancelButton.addEventListener(WCF_CLICK_EVENT, this._cancelSearch.bind(this));
 	};
 	Core.inherit(MediaManagerSearch, MediaSearch, {
 		/**
@@ -95,7 +95,7 @@ define(['Ajax', 'Core', 'Dom/Traverse', 'Dom/Util', 'Language', 'WoltLab/WCF/Med
 					else {
 						innerInfo = elCreate('p');
 						innerInfo.className = 'innerInfo';
-						innerInfo.textContent = Language.get('wcf.media.search.info.searchStringTreshold');
+						innerInfo.textContent = Language.get('wcf.media.search.info.searchStringThreshold');
 						
 						DomUtil.insertAfter(innerInfo, this._input.parentNode);
 					}
@@ -104,7 +104,7 @@ define(['Ajax', 'Core', 'Dom/Traverse', 'Dom/Util', 'Language', 'WoltLab/WCF/Med
 		},
 		
 		/**
-		 * Sends an AJAX request to fetch seach results.
+		 * Sends an AJAX request to fetch search results.
 		 */
 		_search: function() {
 			this._searchMode = true;

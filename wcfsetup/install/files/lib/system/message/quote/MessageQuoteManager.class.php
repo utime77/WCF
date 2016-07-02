@@ -15,9 +15,7 @@ use wcf\util\ArrayUtil;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.message.quote
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Message\Quote
  */
 class MessageQuoteManager extends SingletonFactory {
 	/**
@@ -244,7 +242,6 @@ class MessageQuoteManager extends SingletonFactory {
 		}
 		
 		// find the quote and simulate a regular call to render quotes
-		$quoteData = [];
 		foreach ($this->quotes as $objectType => $objectIDs) {
 			foreach ($objectIDs as $objectID => $quoteIDs) {
 				if (isset($quoteIDs[$quoteID])) {

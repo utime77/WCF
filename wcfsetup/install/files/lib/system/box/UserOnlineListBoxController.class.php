@@ -10,16 +10,20 @@ use wcf\system\WCF;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.box
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Box
+ * @since	3.0
  */
 class UserOnlineListBoxController extends AbstractDatabaseObjectListBoxController {
 	/**
 	 * @inheritDoc
 	 */
 	protected $supportedPositions = ['footerBoxes', 'sidebarLeft', 'sidebarRight'];
+	
+	/**
+	 * enables the display of the user online record
+	 * @var boolean
+	 */
+	public $showRecord = true;
 	
 	/**
 	 * @inheritDoc
@@ -49,14 +53,14 @@ class UserOnlineListBoxController extends AbstractDatabaseObjectListBoxControlle
 			$templateName = 'boxUsersOnline';
 		}
 		
-		return WCF::getTPL()->fetch($templateName, 'wcf', ['usersOnlineList' => $this->objectList]);
+		return WCF::getTPL()->fetch($templateName, 'wcf', ['usersOnlineList' => $this->objectList, '__showRecord' => $this->showRecord]);
 	}
 	
 	/**
 	 * @inheritDoc
 	 */
 	public function hasContent() {
-		if (!MODULE_USERS_ONLINE || WCF::getSession()->getPermission('user.profile.canViewUsersOnlineList')) {
+		if (!MODULE_USERS_ONLINE || !WCF::getSession()->getPermission('user.profile.canViewUsersOnlineList')) {
 			return false;
 		}
 		

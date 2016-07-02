@@ -7,11 +7,9 @@ use wcf\data\moderation\queue\ViewableModerationQueue;
  * Default interface for moderation queue handlers.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.moderation.queue
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Moderation\Queue
  */
 interface IModerationQueueHandler {
 	/**
@@ -64,6 +62,7 @@ interface IModerationQueueHandler {
 	/**
 	 * Returns true if the affected content may be removed.
 	 * 
+	 * @param	ModerationQueue		$queue
 	 * @return	boolean
 	 */
 	public function canRemoveContent(ModerationQueue $queue);
@@ -90,7 +89,7 @@ interface IModerationQueueHandler {
 	 * and comment reponses on moderation queues of this type. 
 	 * 
 	 * @return	string
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	public function getCommentNotificationLanguageItemPrefix();
 }

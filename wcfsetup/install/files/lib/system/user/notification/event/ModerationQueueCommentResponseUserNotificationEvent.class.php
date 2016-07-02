@@ -14,10 +14,8 @@ use wcf\system\WCF;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.user.notification.event
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\User\Notification\Event
+ * @since	3.0
  */
 class ModerationQueueCommentResponseUserNotificationEvent extends AbstractSharedUserNotificationEvent {
 	/**
@@ -76,7 +74,7 @@ class ModerationQueueCommentResponseUserNotificationEvent extends AbstractShared
 			]);
 		}
 		
-		$comment = CommentRuntimeCache::getInstance()->getComment($this->userNotificationObject->commentID);
+		$comment = CommentRuntimeCache::getInstance()->getObject($this->userNotificationObject->commentID);
 		if ($comment->userID) {
 			$commentAuthor = UserProfileRuntimeCache::getInstance()->getObject($comment->userID);
 		}

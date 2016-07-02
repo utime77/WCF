@@ -1,16 +1,25 @@
 <?php
 namespace wcf\system\html\metacode\converter;
 
+/**
+ * Converts color bbcode into `<woltlab-color>`.
+ * 
+ * @author      Alexander Ebert
+ * @copyright   2001-2016 WoltLab GmbH
+ * @license     GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
+ * @package     WoltLabSuite\Core\System\Html\Metacode\Converter
+ * @since       3.0
+ */
 class ColorMetacodeConverter extends AbstractMetacodeConverter {
 	/**
 	 * @inheritDoc
 	 */
 	public function convert(\DOMDocumentFragment $fragment, array $attributes) {
-		$woltlabColor = $fragment->ownerDocument->createElement('woltlab-color');
-		$woltlabColor->setAttribute('class', 'woltlab-color-' . strtoupper(substr($attributes[0], 1)));
-		$woltlabColor->appendChild($fragment);
+		$element = $fragment->ownerDocument->createElement('woltlab-color');
+		$element->setAttribute('class', 'woltlab-color-' . strtoupper(substr($attributes[0], 1)));
+		$element->appendChild($fragment);
 		
-		return $woltlabColor;
+		return $element;
 	}
 	
 	/**

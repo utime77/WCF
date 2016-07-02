@@ -7,6 +7,8 @@ use wcf\data\poll\Poll;
 use wcf\data\poll\PollAction;
 use wcf\data\poll\PollList;
 use wcf\system\database\util\PreparedStatementConditionBuilder;
+use wcf\system\exception\ImplementationException;
+use wcf\system\exception\ParentClassException;
 use wcf\system\exception\SystemException;
 use wcf\system\exception\UserInputException;
 use wcf\system\SingletonFactory;
@@ -17,18 +19,16 @@ use wcf\util\StringUtil;
  * Provides methods to create and manage polls.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.poll
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Poll
  */
 class PollManager extends SingletonFactory {
 	/**
 	 * list of object types
 	 * @var	ObjectType[]
 	 */
-	protected $cache = array();
+	protected $cache = [];
 	
 	/**
 	 * current object id
@@ -52,7 +52,7 @@ class PollManager extends SingletonFactory {
 	 * poll data
 	 * @var	mixed[]
 	 */
-	protected $pollData = array(
+	protected $pollData = [
 		'endTime' => '',
 		'isChangeable' => 0,
 		'isPublic' => 0,
@@ -60,7 +60,7 @@ class PollManager extends SingletonFactory {
 		'question' => '',
 		'resultsRequireVote' => 0,
 		'sortByVotes' => 0
-	);
+	];
 	
 	/**
 	 * poll id
@@ -72,10 +72,10 @@ class PollManager extends SingletonFactory {
 	 * list of poll options
 	 * @var	string[]
 	 */
-	protected $pollOptions = array();
+	protected $pollOptions = [];
 	
 	/**
-	 * @see	\wcf\system\SingletonFactory::init()
+	 * @inheritDoc
 	 */
 	protected function init() {
 		$objectTypes = ObjectTypeCache::getInstance()->getObjectTypes('com.woltlab.wcf.poll');
@@ -91,7 +91,7 @@ class PollManager extends SingletonFactory {
 	 */
 	public function removePolls(array $pollIDs) {
 		$conditions = new PreparedStatementConditionBuilder();
-		$conditions->add("pollID IN (?)", array($pollIDs));
+		$conditions->add("pollID IN (?)", [$pollIDs]);
 		
 		$sql = "DELETE FROM	wcf".WCF_N."_poll
 			".$conditions;
@@ -128,7 +128,7 @@ class PollManager extends SingletonFactory {
 			}
 			
 			// populate poll data
-			$this->pollData = array(
+			$this->pollData = [
 				'endTime' => $this->poll->endTime,
 				'isChangeable' => $this->poll->isChangeable,
 				'isPublic' => $this->poll->isPublic,
@@ -136,7 +136,7 @@ class PollManager extends SingletonFactory {
 				'question' => $this->poll->question,
 				'resultsRequireVote' => $this->poll->resultsRequireVote,
 				'sortByVotes' => $this->poll->sortByVotes
-			);
+			];
 			
 			// load poll options
 			$sql = "SELECT		optionID, optionValue
@@ -144,7 +144,7 @@ class PollManager extends SingletonFactory {
 				WHERE		pollID = ?
 				ORDER BY	showOrder ASC";
 			$statement = WCF::getDB()->prepareStatement($sql);
-			$statement->execute(array($this->poll->pollID));
+			$statement->execute([$this->poll->pollID]);
 			while ($row = $statement->fetchArray()) {
 				$this->pollOptions[] = $row;
 			}
@@ -155,27 +155,33 @@ class PollManager extends SingletonFactory {
 	
 	/**
 	 * Reads form parameters for polls.
+	 * 
+	 * @param	array	$postData	optional post data to be used instead of $_POST
 	 */
-	public function readFormParameters() {
+	public function readFormParameters(array $postData = []) {
+		if (empty($postData)) {
+			$postData =& $_POST;
+		}
+		
 		// reset poll data and options prior to reading form input
-		$this->pollData = $this->pollOptions = array();
+		$this->pollData = $this->pollOptions = [];
 		
 		// poll data
-		if (isset($_POST['pollEndTime'])) {
-			$d = \DateTime::createFromFormat('Y-m-d H:i', $_POST['pollEndTime'], WCF::getUser()->getTimeZone());
+		if (isset($postData['pollEndTime'])) {
+			$d = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $postData['pollEndTime'], WCF::getUser()->getTimeZone());
 			$this->pollData['endTime'] = ($d !== false) ? $d->getTimestamp() : 0;
 		}
 		
-		if (isset($_POST['pollMaxVotes'])) $this->pollData['maxVotes'] = max(intval($_POST['pollMaxVotes']), 1); // force a minimum of 1
-		if (isset($_POST['pollQuestion'])) $this->pollData['question'] = StringUtil::trim($_POST['pollQuestion']);
+		if (isset($postData['pollMaxVotes'])) $this->pollData['maxVotes'] = max(intval($postData['pollMaxVotes']), 1); // force a minimum of 1
+		if (isset($postData['pollQuestion'])) $this->pollData['question'] = StringUtil::trim($postData['pollQuestion']);
 		
 		// boolean values
-		$this->pollData['isChangeable'] = (isset($_POST['pollIsChangeable'])) ? 1 : 0;
-		$this->pollData['resultsRequireVote'] = (isset($_POST['pollResultsRequireVote'])) ? 1 : 0;
-		$this->pollData['sortByVotes'] = (isset($_POST['pollSortByVotes'])) ? 1 : 0;
+		$this->pollData['isChangeable'] = (isset($postData['pollIsChangeable'])) ? 1 : 0;
+		$this->pollData['resultsRequireVote'] = (isset($postData['pollResultsRequireVote'])) ? 1 : 0;
+		$this->pollData['sortByVotes'] = (isset($postData['pollSortByVotes'])) ? 1 : 0;
 		
 		if ($this->poll === null) {
-			$this->pollData['isPublic'] = (isset($_POST['pollIsPublic']) && $this->canStartPublicPoll()) ? 1 : 0;
+			$this->pollData['isPublic'] = (isset($postData['pollIsPublic']) && $this->canStartPublicPoll()) ? 1 : 0;
 		}
 		else {
 			// visibility cannot be changed after creation
@@ -183,13 +189,13 @@ class PollManager extends SingletonFactory {
 		}
 		
 		// poll options
-		if (isset($_POST['pollOptions']) && is_array($_POST['pollOptions'])) {
-			foreach ($_POST['pollOptions'] as $showOrder => $value) {
+		if (isset($postData['pollOptions']) && is_array($postData['pollOptions'])) {
+			foreach ($postData['pollOptions'] as $showOrder => $value) {
 				list($optionID, $optionValue) = explode('_', $value, 2);
-				$this->pollOptions[$showOrder] = array(
+				$this->pollOptions[$showOrder] = [
 					'optionID' => intval($optionID),
 					'optionValue' => StringUtil::trim($optionValue)
-				);
+				];
 			}
 		}
 	}
@@ -262,29 +268,29 @@ class PollManager extends SingletonFactory {
 			$data['objectTypeID'] = $this->cache[$this->objectType]->objectTypeID;
 			$data['time'] = TIME_NOW;
 			
-			$action = new PollAction(array(), 'create', array(
+			$action = new PollAction([], 'create', [
 				'data' => $data,
 				'options' => $this->pollOptions
-			));
+			]);
 			$returnValues = $action->executeAction();
 			$this->poll = $returnValues['returnValues'];
 		}
 		else {
 			// remove poll
 			if (empty($this->pollData['question'])) {
-				$action = new PollAction(array($this->poll), 'delete');
-				$returnValues = $action->executeAction();
+				$action = new PollAction([$this->poll], 'delete');
+				$action->executeAction();
 				$this->poll = null;
 				
 				return 0;
 			}
 			else {
 				// update existing poll
-				$action = new PollAction(array($this->poll), 'update', array(
+				$action = new PollAction([$this->poll], 'update', [
 					'data' => $this->pollData,
 					'options' => $this->pollOptions
-				));
-				$returnValues = $action->executeAction();
+				]);
+				$action->executeAction();
 			}
 		}
 		
@@ -295,11 +301,11 @@ class PollManager extends SingletonFactory {
 	 * Assigns variables for poll management or display.
 	 */
 	public function assignVariables() {
-		$variables = array(
+		$variables = [
 			'__showPoll' => true,
 			'pollID' => ($this->poll === null ? 0 : $this->poll->pollID),
 			'pollOptions' => $this->pollOptions
-		);
+		];
 		foreach ($this->pollData as $key => $value) {
 			if ($key == 'endTime') {
 				if (!$value) $value = '';
@@ -340,7 +346,7 @@ class PollManager extends SingletonFactory {
 		
 		// invalid poll ids
 		if (empty($polls)) {
-			return array();
+			return [];
 		}
 		
 		// fetch options for every poll
@@ -362,7 +368,7 @@ class PollManager extends SingletonFactory {
 	 */
 	public function getPollOptions(array $pollIDs) {
 		$optionList = new PollOptionList();
-		$optionList->getConditionBuilder()->add("poll_option.pollID IN (?)", array($pollIDs));
+		$optionList->getConditionBuilder()->add("poll_option.pollID IN (?)", [$pollIDs]);
 		
 		// check for user votes
 		if (WCF::getUser()->userID) {
@@ -421,14 +427,14 @@ class PollManager extends SingletonFactory {
 		
 		// validates against object type's class
 		$className = $this->cache[$objectType]->className;
-		if (!is_subclass_of($className, 'wcf\system\poll\IPollHandler')) {
-			throw new SystemException("'".$className."' does not implement 'wcf\system\poll\IPollHandler'");
+		if (!is_subclass_of($className, IPollHandler::class)) {
+			throw new ImplementationException($className, IPollHandler::class);
 		}
-		else if (!is_subclass_of($className, 'wcf\system\SingletonFactory')) {
-			throw new SystemException("'".$className."' does not extend 'wcf\system\SingletonFactory'");
+		else if (!is_subclass_of($className, SingletonFactory::class)) {
+			throw new ParentClassException($className, SingletonFactory::class);
 		}
 		
-		$object = call_user_func(array($className, 'getInstance'));
+		$object = call_user_func([$className, 'getInstance']);
 		return $object;
 	}
 }

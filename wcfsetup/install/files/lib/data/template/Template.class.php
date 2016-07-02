@@ -10,11 +10,9 @@ use wcf\util\FileUtil;
  * Represents a template.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.template
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Template
  *
  * @property-read	integer		$templateID		unique id of the template
  * @property-read	integer		$packageID		id of the package which delivers the template
@@ -25,17 +23,18 @@ use wcf\util\FileUtil;
  */
 class Template extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'template';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'templateID';
 	
+	/** @noinspection PhpMissingParentConstructorInspection */
 	/**
-	 * @see	\wcf\data\DatabaseObject::__construct()
+	 * @inheritDoc
 	 */
 	public function __construct($id, $row = null, DatabaseObject $object = null) {
 		if ($id !== null) {
@@ -48,7 +47,7 @@ class Template extends DatabaseObject {
 				ON		(package.packageID = template.packageID)
 				WHERE		template.templateID = ?";
 			$statement = WCF::getDB()->prepareStatement($sql);
-			$statement->execute(array($id));
+			$statement->execute([$id]);
 			$row = $statement->fetchArray();
 			
 			if ($row !== false) {
@@ -63,7 +62,7 @@ class Template extends DatabaseObject {
 				$row['packageDir'] = PackageCache::getInstance()->getPackage($application->packageID)->packageDir;
 			}
 			else {
-				$row = array();
+				$row = [];
 			}
 		}
 		else if ($object !== null) {
@@ -79,6 +78,7 @@ class Template extends DatabaseObject {
 	 * @return	string
 	 */
 	public function getPath() {
+		/** @noinspection PhpUndefinedFieldInspection */
 		$path = FileUtil::getRealPath(WCF_DIR . $this->packageDir) . 'templates/' . $this->templateGroupFolderName . $this->templateName . '.tpl';
 		return $path;
 	}

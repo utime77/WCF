@@ -12,12 +12,14 @@ use wcf\system\WCF;
  * Executes menu item related actions.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.menu.item
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Data\Menu\Item
+ * @since	3.0
+ * 
+ * @method	MenuItem		create()
+ * @method	MenuItemEditor[]	getObjects()
+ * @method	MenuItemEditor		getSingleObject()
  */
 class MenuItemAction extends AbstractDatabaseObjectAction implements ISortableAction, IToggleAction {
 	/**
@@ -51,7 +53,7 @@ class MenuItemAction extends AbstractDatabaseObjectAction implements ISortableAc
 	public function validateToggle() {
 		parent::validateUpdate();
 	
-		foreach ($this->objects as $object) {
+		foreach ($this->getObjects() as $object) {
 			if (!$object->canDisable()) {
 				throw new PermissionDeniedException();
 			}
@@ -62,8 +64,8 @@ class MenuItemAction extends AbstractDatabaseObjectAction implements ISortableAc
 	 * @inheritDoc
 	 */
 	public function toggle() {
-		foreach ($this->objects as $object) {
-			$object->update(array('isDisabled' => ($object->isDisabled) ? 0 : 1));
+		foreach ($this->getObjects() as $object) {
+			$object->update(['isDisabled' => ($object->isDisabled) ? 0 : 1]);
 		}
 	}
 	

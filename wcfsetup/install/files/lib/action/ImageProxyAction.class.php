@@ -12,12 +12,10 @@ use wcf\util\StringUtil;
  * Proxies requests for embedded images.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	action
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Action
+ * @since	3.0
  */
 class ImageProxyAction extends AbstractAction {
 	/**
@@ -27,7 +25,7 @@ class ImageProxyAction extends AbstractAction {
 	public $key = '';
 	
 	/**
-	 * @see	\wcf\action\IAction::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -36,7 +34,7 @@ class ImageProxyAction extends AbstractAction {
 	}
 	
 	/**
-	 * @see	\wcf\action\IAction::execute()
+	 * @inheritDoc
 	 */
 	public function execute() {
 		parent::execute();
@@ -50,6 +48,7 @@ class ImageProxyAction extends AbstractAction {
 			// prepare path
 			$fileExtension = pathinfo($url, PATHINFO_EXTENSION);
 			$fileLocation = WCF_DIR.'images/proxy/'.substr($fileName, 0, 2).'/'.$fileName.($fileExtension ? '.'.$fileExtension : '');
+			$imageData = getimagesize($fileLocation);
 			$dir = dirname($fileLocation);
 			if (!@file_exists($dir)) {
 				FileUtil::makePath($dir);

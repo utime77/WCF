@@ -1,18 +1,14 @@
 <?php
 namespace wcf\system\user\notification\event;
-use wcf\system\cache\runtime\CommentRuntimeCache;
 use wcf\system\cache\runtime\UserProfileRuntimeCache;
-use wcf\system\request\LinkHandler;
 
 /**
- * User notification event for profile commment responses.
+ * User notification event for profile comment responses.
  * 
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.user.notification.event
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\User\Notification\Event
  */
 class UserProfileCommentResponseUserNotificationEvent extends AbstractSharedUserNotificationEvent {
 	/**
@@ -24,9 +20,7 @@ class UserProfileCommentResponseUserNotificationEvent extends AbstractSharedUser
 	 * @inheritDoc
 	 */
 	protected function prepare() {
-		CommentRuntimeCache::getInstance()->cacheObjectID($this->userNotificationObject->commentID);
 		UserProfileRuntimeCache::getInstance()->cacheObjectID($this->additionalData['objectID']);
-		UserProfileRuntimeCache::getInstance()->cacheObjectID($this->additionalData['userID']);
 	}
 	
 	/**
@@ -48,8 +42,7 @@ class UserProfileCommentResponseUserNotificationEvent extends AbstractSharedUser
 	 * @inheritDoc
 	 */
 	public function getMessage() {
-		$comment = CommentRuntimeCache::getInstance()->getObject($this->userNotificationObject->commentID);
-		$owner = UserProfileRuntimeCache::getInstance()->getObject($comment->objectID);
+		$owner = UserProfileRuntimeCache::getInstance()->getObject($this->additionalData['objectID']);
 		
 		$authors = $this->getAuthors();
 		if (count($authors) > 1) {
@@ -77,8 +70,7 @@ class UserProfileCommentResponseUserNotificationEvent extends AbstractSharedUser
 	 * @inheritDoc
 	 */
 	public function getEmailMessage($notificationType = 'instant') {
-		$comment = CommentRuntimeCache::getInstance()->getObject($this->userNotificationObject->commentID);
-		$owner = UserProfileRuntimeCache::getInstance()->getObject($comment->objectID);
+		$owner = UserProfileRuntimeCache::getInstance()->getObject($this->additionalData['objectID']);
 		
 		$authors = $this->getAuthors();
 		if (count($authors) > 1) {
@@ -111,10 +103,7 @@ class UserProfileCommentResponseUserNotificationEvent extends AbstractSharedUser
 	 * @inheritDoc
 	 */
 	public function getLink() {
-		$comment = CommentRuntimeCache::getInstance()->getObject($this->userNotificationObject->commentID);
-		$user = UserProfileRuntimeCache::getInstance()->getObject($comment->objectID);
-		
-		return LinkHandler::getInstance()->getLink('User', ['object' => $user], '#wall');
+		return UserProfileRuntimeCache::getInstance()->getObject($this->additionalData['objectID'])->getLink() . '#wall';
 	}
 	
 	/**

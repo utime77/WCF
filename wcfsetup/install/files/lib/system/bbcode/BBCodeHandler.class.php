@@ -8,24 +8,22 @@ use wcf\system\SingletonFactory;
  * Handles BBCodes displayed as buttons within the WYSIWYG editor.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.bbcode
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Bbcode
  */
 class BBCodeHandler extends SingletonFactory {
 	/**
 	 * list of BBCodes allowed for usage
 	 * @var	BBCode[]
 	 */
-	protected $allowedBBCodes = array();
+	protected $allowedBBCodes = [];
 	
 	/**
 	 * list of BBCodes displayed as buttons
 	 * @var	BBCode[]
 	 */
-	protected $buttonBBCodes = array();
+	protected $buttonBBCodes = [];
 	
 	/**
 	 * list of BBCodes which contain raw code (disabled BBCode parsing)
@@ -34,7 +32,7 @@ class BBCodeHandler extends SingletonFactory {
 	protected $sourceBBCodes = null;
 	
 	/**
-	 * @see	\wcf\system\SingletonFactory::init()
+	 * @inheritDoc
 	 */
 	protected function init() {
 		foreach (BBCodeCache::getInstance()->getBBCodes() as $bbcode) {
@@ -51,6 +49,9 @@ class BBCodeHandler extends SingletonFactory {
 	 * @return	boolean
 	 */
 	public function isAvailableBBCode($bbCodeTag) {
+		// TODO
+		return true;
+		
 		$bbCode = BBCodeCache::getInstance()->getBBCodeByTag($bbCodeTag);
 		if ($bbCode === null || $bbCode->isDisabled) {
 			return false;
@@ -78,11 +79,17 @@ class BBCodeHandler extends SingletonFactory {
 	/**
 	 * Returns a list of BBCodes displayed as buttons.
 	 * 
+	 * @param       boolean         $excludeCoreBBCodes     do not return bbcodes that are available by default
 	 * @return	BBCode[]
 	 */
-	public function getButtonBBCodes() {
-		$buttons = array();
+	public function getButtonBBCodes($excludeCoreBBCodes = false) {
+		$buttons = [];
+		$coreBBCodes = ['align', 'b', 'color', 'i', 'img', 'list', 's', 'size', 'sub', 'sup', 'quote', 'table', 'u', 'url'];
 		foreach ($this->buttonBBCodes as $bbcode) {
+			if ($excludeCoreBBCodes && in_array($bbcode->bbcodeTag, $coreBBCodes)) {
+				continue;
+			}
+			
 			if ($this->isAvailableBBCode($bbcode->bbcodeTag)) {
 				$buttons[] = $bbcode;
 			}
@@ -107,11 +114,11 @@ class BBCodeHandler extends SingletonFactory {
 	 */
 	public function getSourceBBCodes() {
 		if (empty($this->allowedBBCodes)) {
-			return array();
+			return [];
 		}
 		
 		if ($this->sourceBBCodes === null) {
-			$this->sourceBBCodes = array();
+			$this->sourceBBCodes = [];
 			
 			foreach (BBCodeCache::getInstance()->getBBCodes() as $bbcode) {
 				if (!$bbcode->isSourceCode) {

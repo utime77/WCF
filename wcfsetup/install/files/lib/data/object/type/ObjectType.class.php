@@ -4,6 +4,7 @@ use wcf\data\object\type\definition\ObjectTypeDefinition;
 use wcf\data\ProcessibleDatabaseObject;
 use wcf\data\TDatabaseObjectOptions;
 use wcf\data\TDatabaseObjectPermissions;
+use wcf\system\exception\ImplementationException;
 use wcf\system\exception\SystemException;
 use wcf\system\SingletonFactory;
 
@@ -13,9 +14,7 @@ use wcf\system\SingletonFactory;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.object.type
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Object\Type
  * 
  * @property-read	integer		$objectTypeID
  * @property-read	integer		$definitionID
@@ -87,7 +86,7 @@ class ObjectType extends ProcessibleDatabaseObject {
 					throw new SystemException("Unable to find class '".$this->className."'");
 				}
 				if (($definitionInterface = ObjectTypeCache::getInstance()->getDefinition($this->definitionID)->interfaceName) && !is_subclass_of($this->className, $definitionInterface)) {
-					throw new SystemException("'".$this->className."' does not implement '".$definitionInterface."'");
+					throw new ImplementationException($this->className, $definitionInterface);
 				}
 				
 				if (is_subclass_of($this->className, SingletonFactory::class)) {
@@ -106,7 +105,7 @@ class ObjectType extends ProcessibleDatabaseObject {
 	 * Returns the object type definition of the object type.
 	 * 
 	 * @return	ObjectTypeDefinition
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	public function getDefinition() {
 		return ObjectTypeCache::getInstance()->getDefinition($this->definitionID);

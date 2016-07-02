@@ -9,10 +9,8 @@ use wcf\system\database\util\PreparedStatementConditionBuilder;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.media
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Data\Media
+ * @since	3.0
  *
  * @method	Media		current()
  * @method	Media[]		getObjects()
@@ -21,7 +19,7 @@ use wcf\system\database\util\PreparedStatementConditionBuilder;
  */
 class MediaList extends DatabaseObjectList {
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public $className = Media::class;
 	

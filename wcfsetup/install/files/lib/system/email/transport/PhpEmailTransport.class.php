@@ -1,5 +1,6 @@
 <?php
 namespace wcf\system\email\transport;
+use wcf\system\email\transport\exception\TransientFailure;
 use wcf\system\email\Email;
 use wcf\system\email\Mailbox;
 use wcf\util\StringUtil;
@@ -8,21 +9,21 @@ use wcf\util\StringUtil;
  * PhpEmailTransport is an implementation of an email transport which sends emails using mail().
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.email.transport
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\System\Email\Transport
+ * @since	3.0
  */
 class PhpEmailTransport implements EmailTransport {
 	/**
 	 * Delivers the given email via mail().
 	 * 
-	 * @param	\wcf\system\email\Email		$email
-	 * @param	\wcf\system\email\Mailbox	$envelopeTo
+	 * @param	Email		$email
+	 * @param	Mailbox		$envelopeFrom
+	 * @param	Mailbox		$envelopeTo
+	 * @throws	TransientFailure
 	 */
-	public function deliver(Email $email, Mailbox $envelopeTo) {
+	public function deliver(Email $email, Mailbox $envelopeFrom, Mailbox $envelopeTo) {
 		$headers = array_filter($email->getHeaders(), function ($item) {
 			// filter out headers that are either
 			//   a) automatically added by PHP
@@ -40,6 +41,15 @@ class PhpEmailTransport implements EmailTransport {
 			return implode(': ', $item);
 		}, $headers));
 		
-		mail($envelopeTo->getAddress(), $email->getSubject(), StringUtil::unifyNewlines($email->getBodyString()), $headers, '-f'.$email->getSender()->getAddress());
+		if (MAIL_USE_F_PARAM) {
+			$return = mail($envelopeTo->getAddress(), $email->getSubject(), StringUtil::unifyNewlines($email->getBodyString()), $headers, '-f'.$envelopeFrom->getAddress());
+		}
+		else {
+			$return = mail($envelopeTo->getAddress(), $email->getSubject(), StringUtil::unifyNewlines($email->getBodyString()), $headers);
+		}
+		
+		if (!$return) {
+			throw new TransientFailure("mail() returned false");
+		}
 	}
 }

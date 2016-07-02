@@ -10,21 +10,19 @@ use wcf\system\WCF;
  * Manages the edit history.
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.search
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Search
  */
 class EditHistoryManager extends SingletonFactory {
 	/**
 	 * list of available object types
 	 * @var	array
 	 */
-	protected $availableObjectTypes = array();
+	protected $availableObjectTypes = [];
 	
 	/**
-	 * @see	\wcf\system\SingletonFactory::init()
+	 * @inheritDoc
 	 */
 	protected function init() {
 		// get available object types
@@ -67,7 +65,7 @@ class EditHistoryManager extends SingletonFactory {
 					(objectTypeID, objectID, message, time, obsoletedAt, userID, username, editReason, obsoletedByUserID)
 			VALUES		(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($this->getObjectTypeID($objectType), $objectID, $message, $time, TIME_NOW, $userID, $username, $editReason, $obsoletedByUserID));
+		$statement->execute([$this->getObjectTypeID($objectType), $objectID, $message, $time, TIME_NOW, $userID, $username, $editReason, $obsoletedByUserID]);
 	}
 	
 	/**
@@ -85,7 +83,7 @@ class EditHistoryManager extends SingletonFactory {
 		$statement = WCF::getDB()->prepareStatement($sql);
 		WCF::getDB()->beginTransaction();
 		foreach ($objectIDs as $objectID) {
-			$statement->execute(array($objectTypeID, $objectID));
+			$statement->execute([$objectTypeID, $objectID]);
 		}
 		WCF::getDB()->commitTransaction();
 	}
@@ -127,9 +125,9 @@ class EditHistoryManager extends SingletonFactory {
 			GROUP BY revertTo.objectTypeID, revertTo.objectID";
 		$statement = WCF::getDB()->prepareStatement($sql);
 		$statement->execute(array_merge(
-			array(TIME_NOW - $timeframe),
+			[TIME_NOW - $timeframe],
 			$userIDs,
-			array(TIME_NOW - $timeframe),
+			[TIME_NOW - $timeframe],
 			$userIDs
 		));
 		
@@ -137,7 +135,7 @@ class EditHistoryManager extends SingletonFactory {
 		if (empty($entryIDs)) return;
 		
 		$list = new EditHistoryEntryList();
-		$list->getConditionBuilder()->add('entryID IN(?)', array($entryIDs));
+		$list->getConditionBuilder()->add('entryID IN(?)', [$entryIDs]);
 		$list->readObjects();
 		foreach ($list as $entry) {
 			$entry->getObject()->revertVersion($entry);

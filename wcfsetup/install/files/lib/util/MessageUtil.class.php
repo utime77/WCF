@@ -7,11 +7,9 @@ use wcf\system\Regex;
  * Contains message-related functions.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	util
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Util
  */
 class MessageUtil {
 	/**
@@ -77,7 +75,7 @@ class MessageUtil {
 			return $matches[1];
 		}
 		
-		return array();
+		return [];
 	}
 	
 	/**
@@ -87,7 +85,7 @@ class MessageUtil {
 	 * @return	string[]
 	 */
 	public static function getQuotedUsers($text) {
-		$usernames = array();
+		$usernames = [];
 		if (preg_match_all("~(?:\[(quote)=(?:')?(.+?)(?:')?(?:,[^\]]*)?\]|\[/quote\])~i", $text, $matches)) {
 			$level = 0;
 			

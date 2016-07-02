@@ -13,11 +13,9 @@ use wcf\util\ArrayUtil;
  * Condition implementation for the languages of a user.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.condition
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Condition
  */
 class UserLanguageCondition extends AbstractSingleFieldCondition implements IContentCondition, IObjectListCondition, IUserCondition {
 	use TObjectListUserCondition;
@@ -74,7 +72,7 @@ class UserLanguageCondition extends AbstractSingleFieldCondition implements ICon
 	protected function getFieldElement() {
 		$returnValue = "";
 		foreach (LanguageFactory::getInstance()->getLanguages() as $language) {
-			$returnValue .= "<label><input type=\"checkbox\" name=\"languageIDs[]\" value=\"".$language->languageID."\"".(in_array($language->languageID, $this->languageIDs) ? ' checked="checked"' : "")." /> ".$language->languageName."</label>";
+			$returnValue .= "<label><input type=\"checkbox\" name=\"languageIDs[]\" value=\"".$language->languageID."\"".(in_array($language->languageID, $this->languageIDs) ? ' checked' : "")."> ".$language->languageName."</label>";
 		}
 		
 		return $returnValue;

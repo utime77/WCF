@@ -11,9 +11,7 @@ use wcf\system\WCF;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.like.object
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Like\Object
  *
  * @property-read	integer		$likeObjectID		unique id of the liked object
  * @property-read	integer		$objectTypeID		id of the object type of the liked object
@@ -45,7 +43,7 @@ class LikeObject extends DatabaseObject {
 	 * list of users who liked this object
 	 * @var	User[]
 	 */
-	protected $users = array();
+	protected $users = [];
 	
 	/**
 	 * @inheritDoc
@@ -110,14 +108,14 @@ class LikeObject extends DatabaseObject {
 			WHERE	objectTypeID = ?
 				AND objectID = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array(
+		$statement->execute([
 			$objectTypeID,
 			$objectID
-		));
+		]);
 		$row = $statement->fetchArray();
 		
 		if (!$row) {
-			$row = array();
+			$row = [];
 		}
 		
 		return new LikeObject(null, $row);

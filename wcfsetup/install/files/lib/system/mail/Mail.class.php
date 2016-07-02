@@ -9,11 +9,9 @@ use wcf\util\StringUtil;
  * This class represents an e-mail.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.mail
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Mail
  * @deprecated	The Community Framework < 2.2 mail API is deprecated in favor of \wcf\system\email\*.
  */
 class Mail {
@@ -45,7 +43,7 @@ class Mail {
 	 * mail recipients
 	 * @var	string[]
 	 */
-	protected $to = array();
+	protected $to = [];
 	
 	/**
 	 * mail subject
@@ -69,19 +67,19 @@ class Mail {
 	 * mail carbon copy
 	 * @var	string[]
 	 */
-	protected $cc = array();
+	protected $cc = [];
 	
 	/**
 	 * mail blind carbon copy
 	 * @var	string[]
 	 */
-	protected $bcc = array();
+	protected $bcc = [];
 	
 	/**
 	 * mail attachments
 	 * @var	array
 	 */
-	protected $attachments = array();
+	protected $attachments = [];
 	
 	/**
 	 * priority of the mail
@@ -111,13 +109,13 @@ class Mail {
 	 * @param	string		$cc
 	 * @param	string		$bcc
 	 * @param	array		$attachments
-	 * @param	integer		$priority
+	 * @param	integer|string	$priority
 	 * @param	string		$header
 	 */
-	public function __construct($to = '', $subject = '', $message = '', $from = '', $cc = '', $bcc = '', $attachments = array(), $priority = '', $header = '') {
+	public function __construct($to = '', $subject = '', $message = '', $from = '', $cc = '', $bcc = '', $attachments = [], $priority = '', $header = '') {
 		$this->setBoundary();
 		
-		if (empty($from)) $from = array(MAIL_FROM_NAME => MAIL_FROM_ADDRESS);
+		if (empty($from)) $from = [MAIL_FROM_NAME => MAIL_FROM_ADDRESS];
 		if (empty($priority)) $priority = 3;
 		
 		$this->setFrom($from);
@@ -145,7 +143,7 @@ class Mail {
 		
 		$this->header .=
 			'X-Priority: 3'.self::$lineEnding
-			.'X-Mailer: WoltLab Community Framework Mail Package'.self::$lineEnding
+			.'X-Mailer: WoltLab Suite Mail Package'.self::$lineEnding
 			.'From: '.$this->getFrom().self::$lineEnding
 			.($this->getCCString() != '' ? 'CC:'.$this->getCCString().self::$lineEnding : '')
 			.($this->getBCCString() != '' ? 'BCC:'.$this->getBCCString().self::$lineEnding : '');
@@ -438,7 +436,7 @@ class Mail {
 	 * @param	string		$name		filename
 	 */
 	public function addAttachment($path, $name = '') {
-		$this->attachments[] = array('path' => $path, 'name' => ($name ?: basename($path)));
+		$this->attachments[] = ['path' => $path, 'name' => ($name ?: basename($path))];
 	}
 	
 	/**
@@ -526,6 +524,9 @@ class Mail {
 	
 	/**
 	 * Encodes string for MIME header.
+	 * 
+	 * @param	string		$string
+	 * @return	string
 	 */
 	public static function encodeMIMEHeader($string) {
 		if (function_exists('mb_encode_mimeheader')) {

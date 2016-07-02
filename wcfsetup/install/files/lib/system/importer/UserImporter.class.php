@@ -12,29 +12,27 @@ use wcf\system\WCF;
  * Imports users.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.importer
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Importer
  */
 class UserImporter extends AbstractImporter {
 	/**
-	 * @see	\wcf\system\importer\AbstractImporter::$className
+	 * @inheritDoc
 	 */
-	protected $className = 'wcf\data\user\User';
+	protected $className = User::class;
 	
 	/**
 	 * ids of default notification events
 	 * @var	integer[]
 	 */
-	protected $eventIDs = array();
+	protected $eventIDs = [];
 	
 	/**
 	 * list of user options
 	 * @var	UserOption[]
 	 */
-	protected $userOptions = array();
+	protected $userOptions = [];
 	
 	const MERGE_MODE_EMAIL = 4;
 	const MERGE_MODE_USERNAME_OR_EMAIL = 5;
@@ -48,7 +46,7 @@ class UserImporter extends AbstractImporter {
 			FROM	wcf".WCF_N."_user_notification_event
 			WHERE	preset = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array(1));
+		$statement->execute([1]);
 		$this->eventIDs = $statement->fetchAll(\PDO::FETCH_COLUMN);
 		
 		$userOptionList = new UserOptionList();
@@ -57,15 +55,18 @@ class UserImporter extends AbstractImporter {
 	}
 	
 	/**
-	 * @see	\wcf\system\importer\IImporter::import()
+	 * @inheritDoc
 	 */
-	public function import($oldID, array $data, array $additionalData = array()) {
+	public function import($oldID, array $data, array $additionalData = []) {
+		$targetUser = null;
+		
 		// whether to perform a merge
 		$performMerge = false;
 		
 		// fetch user with same username
 		$conflictingUser = User::getUserByUsername($data['username']);
 		switch (ImportHandler::getInstance()->getUserMergeMode()) {
+			/** @noinspection PhpMissingBreakStatementInspection */
 			case self::MERGE_MODE_USERNAME_OR_EMAIL:
 				// merge target will be the conflicting user
 				$targetUser = $conflictingUser;
@@ -102,7 +103,7 @@ class UserImporter extends AbstractImporter {
 		}
 		
 		// handle user options
-		$userOptions = array();
+		$userOptions = [];
 		if (isset($additionalData['options'])) {
 			foreach ($additionalData['options'] as $optionName => $optionValue) {
 				if (is_int($optionName)) $optionID = ImportHandler::getInstance()->getNewID('com.woltlab.wcf.user.option', $optionName);
@@ -145,7 +146,7 @@ class UserImporter extends AbstractImporter {
 			}
 		}
 		
-		$languageIDs = array();
+		$languageIDs = [];
 		if (isset($additionalData['languages'])) {
 			foreach ($additionalData['languages'] as $languageCode) {
 				$language = LanguageFactory::getInstance()->getLanguageByCode($languageCode);
@@ -167,7 +168,7 @@ class UserImporter extends AbstractImporter {
 		$userEditor->updateUserOptions($userOptions);
 		
 		// save user groups
-		$groupIDs = array();
+		$groupIDs = [];
 		if (isset($additionalData['groupIDs'])) {
 			foreach ($additionalData['groupIDs'] as $oldGroupID) {
 				$newGroupID = ImportHandler::getInstance()->getNewID('com.woltlab.wcf.user.group', $oldGroupID);
@@ -175,8 +176,8 @@ class UserImporter extends AbstractImporter {
 			}
 		}
 		
-		if (!$user->activationCode) $defaultGroupIDs = UserGroup::getGroupIDsByType(array(UserGroup::EVERYONE, UserGroup::USERS));
-		else $defaultGroupIDs = UserGroup::getGroupIDsByType(array(UserGroup::EVERYONE, UserGroup::GUESTS));
+		if (!$user->activationCode) $defaultGroupIDs = UserGroup::getGroupIDsByType([UserGroup::EVERYONE, UserGroup::USERS]);
+		else $defaultGroupIDs = UserGroup::getGroupIDsByType([UserGroup::EVERYONE, UserGroup::GUESTS]);
 		
 		$groupIDs = array_merge($groupIDs, $defaultGroupIDs);
 		$sql = "INSERT IGNORE INTO	wcf".WCF_N."_user_to_group
@@ -184,10 +185,10 @@ class UserImporter extends AbstractImporter {
 			VALUES			(?, ?)";
 		$statement = WCF::getDB()->prepareStatement($sql);
 		foreach ($groupIDs as $groupID) {
-			$statement->execute(array(
+			$statement->execute([
 				$user->userID,
 				$groupID
-			));
+			]);
 		}
 		
 		// save languages
@@ -196,10 +197,10 @@ class UserImporter extends AbstractImporter {
 			VALUES			(?, ?)";
 		$statement = WCF::getDB()->prepareStatement($sql);
 		foreach ($languageIDs as $languageID) {
-			$statement->execute(array(
+			$statement->execute([
 				$user->userID,
 				$languageID
-			));
+			]);
 		}
 		
 		// save default user events
@@ -208,10 +209,10 @@ class UserImporter extends AbstractImporter {
 			VALUES			(?, ?)";
 		$statement = WCF::getDB()->prepareStatement($sql);
 		foreach ($this->eventIDs as $eventID) {
-			$statement->execute(array(
+			$statement->execute([
 				$user->userID,
 				$eventID
-			));
+			]);
 		}
 		
 		// save mapping
@@ -228,7 +229,6 @@ class UserImporter extends AbstractImporter {
 	 */
 	private static function resolveDuplicate($username) {
 		$i = 0;
-		$newUsername = '';
 		do {
 			$i++;
 			$newUsername = 'Duplicate'.($i > 1 ? $i : '').' '.$username;
@@ -237,7 +237,7 @@ class UserImporter extends AbstractImporter {
 				FROM	wcf".WCF_N."_user
 				WHERE	username = ?";
 			$statement = WCF::getDB()->prepareStatement($sql);
-			$statement->execute(array($newUsername));
+			$statement->execute([$newUsername]);
 			$row = $statement->fetchArray();
 			if (empty($row['userID'])) break;
 		}

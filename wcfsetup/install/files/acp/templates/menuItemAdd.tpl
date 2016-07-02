@@ -48,7 +48,7 @@
 					<option value="0">{lang}wcf.global.noSelection{/lang}</option>
 					
 					{foreach from=$menuItemNodeList item=menuItemNode}
-						<option value="{@$menuItemNode->itemID}"{if $menuItemNode->itemID == $parentItemID} selected="selected"{/if}>{if $menuItemNode->getDepth() > 1}{@"&nbsp;&nbsp;&nbsp;&nbsp;"|str_repeat:($menuItemNode->getDepth() - 1)}{/if}{lang}{$menuItemNode->title}{/lang}</option>
+						<option value="{@$menuItemNode->itemID}"{if $menuItemNode->itemID == $parentItemID} selected{/if}>{if $menuItemNode->getDepth() > 1}{@"&nbsp;&nbsp;&nbsp;&nbsp;"|str_repeat:($menuItemNode->getDepth() - 1)}{/if}{lang}{$menuItemNode->title}{/lang}</option>
 					{/foreach}
 				</select>
 				{if $errorField == 'parentItemID'}
@@ -66,7 +66,7 @@
 		<dl{if $errorField == 'title'} class="formError"{/if}>
 			<dt><label for="title">{lang}wcf.global.name{/lang}</label></dt>
 			<dd>
-				<input type="text" name="title" id="title" value="{$title}" class="long" required="required" />
+				<input type="text" name="title" id="title" value="{$title}" class="long" required>
 				{if $errorField == 'title'}
 					<small class="innerError">
 						{if $errorType == 'multilingual'}
@@ -81,6 +81,22 @@
 			</dd>
 		</dl>
 		
+		<dl>
+			<dt><label for="showOrder">{lang}wcf.global.showOrder{/lang}</label></dt>
+			<dd>
+				<input type="number" name="showOrder" id="showOrder" value="{@$showOrder}" class="tiny" min="0">
+			</dd>
+		</dl>
+		
+		{if $action == 'add' || !$menuItem->isLandingPage}
+			<dl>
+				<dt></dt>
+				<dd>
+					<label><input type="checkbox" name="isDisabled" id="isDisabled" value="1"{if $isDisabled} checked{/if}> <span>{lang}wcf.acp.menu.item.isDisabled{/lang}</span></label>
+				</dd>
+			</dl>
+		{/if}
+		
 		{event name='dataFields'}
 	</div>
 	
@@ -90,19 +106,19 @@
 		<dl>
 			<dt></dt>
 			<dd class="floated">
-				<label><input type="radio" name="isInternalLink" value="1"{if $isInternalLink} checked="checked"{/if} /> {lang}wcf.acp.menu.item.link.internal{/lang}</label>
-				<label><input type="radio" name="isInternalLink" value="0"{if !$isInternalLink} checked="checked"{/if} /> {lang}wcf.acp.menu.item.link.external{/lang}</label>
+				<label><input type="radio" name="isInternalLink" value="1"{if $isInternalLink} checked{/if}> {lang}wcf.acp.menu.item.link.internal{/lang}</label>
+				<label><input type="radio" name="isInternalLink" value="0"{if !$isInternalLink} checked{/if}> {lang}wcf.acp.menu.item.link.external{/lang}</label>
 			</dd>
 		</dl>
 		
 		<dl id="pageIDContainer"{if $errorField == 'pageID'} class="formError"{/if}{if !$isInternalLink} style="display: none;"{/if}>
-			<dt><label for="pageID">{lang}wcf.acp.page.parentPageID{/lang}</label></dt>
+			<dt><label for="pageID">{lang}wcf.acp.page.page{/lang}</label></dt>
 			<dd>
 				<select name="pageID" id="pageID">
 					<option value="0">{lang}wcf.global.noSelection{/lang}</option>
 					
 					{foreach from=$pageNodeList item=pageNode}
-						<option value="{@$pageNode->pageID}"{if $pageNode->pageID == $pageID} selected="selected"{/if}>{if $pageNode->getDepth() > 1}{@"&nbsp;&nbsp;&nbsp;&nbsp;"|str_repeat:($pageNode->getDepth() - 1)}{/if}{$pageNode->name}</option>
+						<option value="{@$pageNode->pageID}"{if $pageNode->pageID == $pageID} selected{/if}>{if $pageNode->getDepth() > 1}{@"&nbsp;&nbsp;&nbsp;&nbsp;"|str_repeat:($pageNode->getDepth() - 1)}{/if}{$pageNode->name}</option>
 					{/foreach}
 				</select>
 				{if $errorField == 'pageID'}
@@ -118,7 +134,7 @@
 		</dl>
 		
 		<dl id="pageObjectIDContainer"{if $errorField == 'pageObjectID'} class="formError"{/if}{if !$pageID || !$pageHandler[$pageID]|isset} style="display: none;"{/if}>
-			<dt><label for="pageObjectID">{lang}wcf.acp.page.pageObjectID{/lang}</label></dt>
+			<dt><label for="pageObjectID">{lang}wcf.acp.page.objectID{/lang}</label></dt>
 			<dd>
 				<div class="inputAddon">
 					<input type="text" id="pageObjectID" name="pageObjectID" value="{$pageObjectID}" class="short">
@@ -139,7 +155,7 @@
 		<dl id="externalURLContainer"{if $errorField == 'externalURL'} class="formError"{/if}{if $isInternalLink} style="display: none;"{/if}>
 			<dt><label for="externalURL">{lang}wcf.acp.menu.item.externalURL{/lang}</label></dt>
 			<dd>
-				<input type="text" name="externalURL" id="externalURL" value="{$externalURL}" class="long" />
+				<input type="text" name="externalURL" id="externalURL" value="{$externalURL}" class="long" maxlength="255" placeholder="http://">
 				{if $errorField == 'externalURL'}
 					<small class="innerError">
 						{if $errorType == 'empty'}
@@ -157,33 +173,11 @@
 		{event name='linkFields'}
 	</section>
 	
-	<section class="section">
-		<h2 class="sectionTitle">{lang}wcf.acp.menu.item.advanced{/lang}</h2>
-		
-		<dl>
-			<dt><label for="showOrder">{lang}wcf.acp.menu.item.showOrder{/lang}</label></dt>
-			<dd>
-				<input type="number" name="showOrder" id="showOrder" value="{@$showOrder}" class="tiny" min="0" />
-			</dd>
-		</dl>
-		
-		{if $action == 'add' || !$menuItem->isLandingPage}
-			<dl>
-				<dt></dt>
-				<dd>
-					<label><input type="checkbox" name="isDisabled" id="isDisabled" value="1"{if $isDisabled} checked="checked"{/if} /> <span>{lang}wcf.acp.menu.item.isDisabled{/lang}</span></label>
-				</dd>
-			</dl>
-		{/if}
-		
-		{event name='advancedFields'}
-	</section>
-		
 	{event name='sections'}
 	
 	<div class="formSubmit">
-		<input type="submit" value="{lang}wcf.global.button.submit{/lang}" />
-		{if $action == 'add'}<input type="hidden" name="menuID" value="{@$menuID}" />{/if}
+		<input type="submit" value="{lang}wcf.global.button.submit{/lang}">
+		{if $action == 'add'}<input type="hidden" name="menuID" value="{@$menuID}">{/if}
 		{@SECURITY_TOKEN_INPUT_TAG}
 	</div>
 </form>

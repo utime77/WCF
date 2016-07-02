@@ -4,21 +4,20 @@ use wcf\data\template\group\TemplateGroup;
 use wcf\data\template\group\TemplateGroupAction;
 use wcf\form\AbstractForm;
 use wcf\system\exception\IllegalLinkException;
+use wcf\system\exception\PermissionDeniedException;
 use wcf\system\WCF;
 
 /**
  * Shows the form for editing template groups.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.form
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Acp\Form
  */
 class TemplateGroupEditForm extends TemplateGroupAddForm {
 	/**
-	 * @see	\wcf\page\AbstractPage::$activeMenuItem
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.template';
 	
@@ -35,7 +34,7 @@ class TemplateGroupEditForm extends TemplateGroupAddForm {
 	public $templateGroup = null;
 	
 	/**
-	 * @see	\wcf\patge\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -45,10 +44,13 @@ class TemplateGroupEditForm extends TemplateGroupAddForm {
 		if (!$this->templateGroup->templateGroupID) {
 			throw new IllegalLinkException();
 		}
+		if ($this->templateGroup->isImmutable()) {
+			throw new PermissionDeniedException();
+		}
 	}
 	
 	/**
-	 * @see	\wcf\acp\form\TemplateGroupAddForm::validateName()
+	 * @inheritDoc
 	 */
 	protected function validateName() {
 		if ($this->templateGroupName != $this->templateGroup->templateGroupName) {
@@ -57,7 +59,7 @@ class TemplateGroupEditForm extends TemplateGroupAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\acp\form\TemplateGroupAddForm::validateFolderName()
+	 * @inheritDoc
 	 */
 	protected function validateFolderName() {
 		if ($this->templateGroupFolderName != $this->templateGroup->templateGroupFolderName) {
@@ -66,30 +68,30 @@ class TemplateGroupEditForm extends TemplateGroupAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\form\IForm::save()
+	 * @inheritDoc
 	 */
 	public function save() {
 		AbstractForm::save();
 		
-		$this->objectAction = new TemplateGroupAction(array($this->templateGroup), 'update', array('data' => array_merge($this->additionalFields, array(
+		$this->objectAction = new TemplateGroupAction([$this->templateGroup], 'update', ['data' => array_merge($this->additionalFields, [
 			'templateGroupName' => $this->templateGroupName,
 			'templateGroupFolderName' => $this->templateGroupFolderName,
 			'parentTemplateGroupID' => ($this->parentTemplateGroupID ?: null)
-		))));
+		])]);
 		$this->objectAction->executeAction();
 		$this->saved();
 		
 		// show success
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'success' => true
-		));
+		]);
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
-		$this->availableTemplateGroups = TemplateGroup::getSelectList(array($this->templateGroupID), 1);
+		$this->availableTemplateGroups = TemplateGroup::getSelectList([$this->templateGroupID, -1], 1);
 		
 		AbstractForm::readData();
 		
@@ -102,15 +104,15 @@ class TemplateGroupEditForm extends TemplateGroupAddForm {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'action' => 'edit',
 			'templateGroupID' => $this->templateGroupID,
 			'templateGroup' => $this->templateGroup
-		));
+		]);
 	}
 }

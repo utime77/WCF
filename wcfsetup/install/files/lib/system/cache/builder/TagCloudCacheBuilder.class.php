@@ -10,27 +10,25 @@ use wcf\system\WCF;
  * Caches the tag cloud.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.cache.builder
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Cache\Builder
  */
 class TagCloudCacheBuilder extends AbstractCacheBuilder {
 	/**
 	 * list of tags
 	 * @var	TagCloudTag[]
 	 */
-	protected $tags = array();
+	protected $tags = [];
 	
 	/**
 	 * language ids
 	 * @var	integer
 	 */
-	protected $languageIDs = array();
+	protected $languageIDs = [];
 	
 	/**
-	 * @see	\wcf\system\cache\builder\AbstractCacheBuilder::$maxLifetime
+	 * @inheritDoc
 	 */
 	protected $maxLifetime = 3600;
 	
@@ -38,10 +36,10 @@ class TagCloudCacheBuilder extends AbstractCacheBuilder {
 	 * object type ids
 	 * @var	integer
 	 */
-	protected $objectTypeIDs = array();
+	protected $objectTypeIDs = [];
 	
 	/**
-	 * @see	\wcf\system\cache\builder\AbstractCacheBuilder::rebuild()
+	 * @inheritDoc
 	 */
 	protected function rebuild(array $parameters) {
 		$this->languageIDs = $this->parseLanguageIDs($parameters);
@@ -68,7 +66,7 @@ class TagCloudCacheBuilder extends AbstractCacheBuilder {
 		// handle special '0' value
 		if (in_array(0, $parameters)) {
 			// discard all language ids
-			$parameters = array();
+			$parameters = [];
 		}
 		
 		return $parameters;
@@ -78,14 +76,14 @@ class TagCloudCacheBuilder extends AbstractCacheBuilder {
 	 * Reads associated tags.
 	 */
 	protected function getTags() {
-		$this->tags = array();
+		$this->tags = [];
 		
 		if (!empty($this->objectTypeIDs)) {
 			// get tag ids
-			$tagIDs = array();
+			$tagIDs = [];
 			$conditionBuilder = new PreparedStatementConditionBuilder();
-			$conditionBuilder->add('object.objectTypeID IN (?)', array($this->objectTypeIDs));
-			$conditionBuilder->add('object.languageID IN (?)', array($this->languageIDs));
+			$conditionBuilder->add('object.objectTypeID IN (?)', [$this->objectTypeIDs]);
+			$conditionBuilder->add('object.languageID IN (?)', [$this->languageIDs]);
 			$sql = "SELECT		COUNT(*) AS counter, object.tagID
 				FROM		wcf".WCF_N."_tag_to_object object
 				".$conditionBuilder."
@@ -110,7 +108,7 @@ class TagCloudCacheBuilder extends AbstractCacheBuilder {
 				}
 				
 				// sort by counter
-				uasort($this->tags, array('self', 'compareTags'));
+				uasort($this->tags, ['self', 'compareTags']);
 			}
 		}
 	}

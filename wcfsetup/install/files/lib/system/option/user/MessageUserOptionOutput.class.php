@@ -10,15 +10,13 @@ use wcf\util\StringUtil;
  * User option output implementation for a formatted textarea value.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.option.user
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Option\User
  */
 class MessageUserOptionOutput implements IUserOptionOutput {
 	/**
-	 * @see	\wcf\system\option\user\IUserOptionOutput::getOutput()
+	 * @inheritDoc
 	 */
 	public function getOutput(User $user, UserOption $option, $value) {
 		$value = StringUtil::trim($value);
@@ -28,10 +26,10 @@ class MessageUserOptionOutput implements IUserOptionOutput {
 		
 		MessageParser::getInstance()->setOutputType('text/html');
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'option' => $option,
-			'value' => MessageParser::getInstance()->parse($value),
-		));
+			'value' => MessageParser::getInstance()->parse($value)
+		]);
 		return WCF::getTPL()->fetch('messageUserOptionOutput');
 	}
 }

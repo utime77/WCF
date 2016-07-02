@@ -7,12 +7,10 @@ namespace wcf\system\exception;
  * way to log errors.
  * 
  * @author	Tim Duesterhus, Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.exception
- * @category	Community Framework
- * @deprecated	2.2 - Fatal Exceptions are logged automatically.
+ * @package	WoltLabSuite\Core\System\Exception
+ * @deprecated	3.0 - Fatal Exceptions are logged automatically.
  */
 class LoggedException extends \Exception {
 	/**

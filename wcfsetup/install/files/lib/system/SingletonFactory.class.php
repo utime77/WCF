@@ -8,16 +8,14 @@ use wcf\system\exception\SystemException;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System
  */
 abstract class SingletonFactory {
 	/**
 	 * list of singletons
 	 * @var	SingletonFactory[]
 	 */
-	protected static $__singletonObjects = array();
+	protected static $__singletonObjects = [];
 	
 	/**
 	 * Singletons do not support a public constructor. Override init() if

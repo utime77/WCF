@@ -1,19 +1,19 @@
 <?php
 namespace wcf\system\html\input\node;
-use wcf\system\bbcode\HtmlBBCodeParser;
-use wcf\system\exception\SystemException;
 use wcf\system\html\metacode\converter\IMetacodeConverter;
-use wcf\system\html\metacode\converter\SimpleMetacodeConverter;
-use wcf\system\html\node\AbstractHtmlNode;
-use wcf\system\html\node\HtmlNodeProcessor;
+use wcf\system\html\node\AbstractHtmlNodeProcessor;
 use wcf\util\DOMUtil;
-use wcf\util\StringUtil;
 
 /**
- * TOOD documentation
- * @since	2.2
+ * Processes `<woltlab-metacode>` and converts them if appropriate.
+ *
+ * @author      Alexander Ebert
+ * @copyright   2001-2016 WoltLab GmbH
+ * @license     GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
+ * @package     WoltLabSuite\Core\System\Html\Input\Node
+ * @since       3.0
  */
-class HtmlInputNodeWoltlabMetacode extends AbstractHtmlNode {
+class HtmlInputNodeWoltlabMetacode extends AbstractHtmlInputNode {
 	/**
 	 * static mapping of attribute-less metacodes that map to
 	 * an exact HTML tag without the need of further processing
@@ -27,9 +27,15 @@ class HtmlInputNodeWoltlabMetacode extends AbstractHtmlNode {
 		'u' => 'u'
 	];
 	
+	/**
+	 * @inheritDoc
+	 */
 	protected $tagName = 'woltlab-metacode';
 	
-	public function process(array $elements, HtmlNodeProcessor $htmlNodeProcessor) {
+	/**
+	 * @inheritDoc
+	 */
+	public function process(array $elements, AbstractHtmlNodeProcessor $htmlNodeProcessor) {
 		/** @var IMetacodeConverter[] $converters */
 		$converters = [];
 		
@@ -41,16 +47,14 @@ class HtmlInputNodeWoltlabMetacode extends AbstractHtmlNode {
 			}
 			
 			// handle simple mapping types
-			if (isset($name, $this->simpleMapping)) {
+			if (isset($this->simpleMapping[$name])) {
 				$newElement = $element->ownerDocument->createElement($this->simpleMapping[$name]);
 				DOMUtil::replaceElement($element, $newElement);
 				
 				continue;
 			}
 			
-			$attributes = $element->getAttribute('data-attributes');
-			if (!empty($attributes)) $attributes = @json_decode(base64_decode($attributes), true);
-			if (!is_array($attributes)) $attributes = [];
+			$attributes = $htmlNodeProcessor->parseAttributes($element->getAttribute('data-attributes'));
 			
 			// check for converters
 			$converter = (isset($converters[$name])) ? $converters[$name] : null;
@@ -72,7 +76,7 @@ class HtmlInputNodeWoltlabMetacode extends AbstractHtmlNode {
 			if ($converter->validateAttributes($attributes)) {
 				$newElement = $converter->convert(DOMUtil::childNodesToFragment($element), $attributes);
 				if (!($newElement instanceof \DOMElement)) {
-					throw new SystemException("Expected a valid DOMElement as return value.");
+					throw new \UnexpectedValueException("Expected a valid DOMElement as return value.");
 				}
 				
 				DOMUtil::replaceElement($element, $newElement);
@@ -84,11 +88,10 @@ class HtmlInputNodeWoltlabMetacode extends AbstractHtmlNode {
 		}
 	}
 	
+	/**
+	 * @inheritDoc
+	 */
 	public function replaceTag(array $data) {
 		return $data['parsedTag'];
-	}
-	
-	protected function getPlaceholderElement() {
-		return new \DOMElement('woltlab-placeholder');
 	}
 }

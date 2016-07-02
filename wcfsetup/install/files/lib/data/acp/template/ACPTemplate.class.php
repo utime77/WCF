@@ -6,11 +6,9 @@ use wcf\data\DatabaseObject;
  * Represents an ACP template.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.acp.template
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Acp\Template
  *
  * @property-read	integer		$templateID
  * @property-read	integer|null	$packageID
@@ -19,12 +17,12 @@ use wcf\data\DatabaseObject;
  */
 class ACPTemplate extends DatabaseObject {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'acp_template';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'templateID';
 }

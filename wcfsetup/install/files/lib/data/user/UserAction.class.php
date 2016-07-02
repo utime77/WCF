@@ -20,11 +20,12 @@ use wcf\util\UserRegistrationUtil;
  * Executes user-related actions.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User
+ * 
+ * @method	UserEditor[]	getObjects()
+ * @method	UserEditor	getSingleObject()
  */
 class UserAction extends AbstractDatabaseObjectAction implements IClipboardAction, ISearchAction {
 	/**
@@ -122,7 +123,7 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 		
 		// delete avatars
 		$avatarIDs = [];
-		foreach ($this->objects as $user) {
+		foreach ($this->getObjects() as $user) {
 			if ($user->avatarID) $avatarIDs[] = $user->avatarID;
 		}
 		if (!empty($avatarIDs)) {
@@ -246,15 +247,11 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 	}
 	
 	/**
-	 * Creates a new user.
-	 * 
+	 * @inheritDoc
 	 * @return	User
 	 */
 	public function create() {
-		if (!isset($this->parameters['data']['socialNetworkPrivacySettings'])) {
-			$this->parameters['data']['socialNetworkPrivacySettings'] = '';
-		}
-		
+		/** @var User $user */
 		$user = parent::create();
 		$userEditor = new UserEditor($user);
 		
@@ -306,7 +303,7 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 			parent::update();
 			
 			if (isset($this->parameters['data']['languageID'])) {
-				foreach ($this->objects as $object) {
+				foreach ($this->getObjects() as $object) {
 					if ($object->userID == WCF::getUser()->userID) {
 						if ($this->parameters['data']['languageID'] != WCF::getUser()->languageID) {
 							WCF::setLanguage($this->parameters['data']['languageID']);
@@ -343,7 +340,7 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 			$action->executeAction();
 		}
 		
-		foreach ($this->objects as $userEditor) {
+		foreach ($this->getObjects() as $userEditor) {
 			if (!empty($userOptions)) {
 				$userEditor->updateUserOptions($userOptions);
 			}
@@ -407,7 +404,7 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 		
 		$groupIDs = $this->parameters['groups'];
 		
-		foreach ($this->objects as $userEditor) {
+		foreach ($this->getObjects() as $userEditor) {
 			$userEditor->removeFromGroups($groupIDs);
 		}
 		
@@ -439,7 +436,7 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 		if (isset($this->parameters['deleteOldGroups'])) $deleteOldGroups = $this->parameters['deleteOldGroups'];
 		if (isset($this->parameters['addDefaultGroups'])) $addDefaultGroups = $this->parameters['addDefaultGroups'];
 		
-		foreach ($this->objects as $userEditor) {
+		foreach ($this->getObjects() as $userEditor) {
 			$userEditor->addToGroups($groupIDs, $deleteOldGroups, $addDefaultGroups);
 		}
 		
@@ -586,7 +583,7 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 		
 		// send e-mail notification
 		if (empty($this->parameters['skipNotification'])) {
-			foreach ($this->objects as $user) {
+			foreach ($this->getObjects() as $user) {
 				$mail = new Mail([$user->username => $user->email], $user->getLanguage()->getDynamicVariable('wcf.acp.user.activation.mail.subject'), $user->getLanguage()->getDynamicVariable('wcf.acp.user.activation.mail', [
 					'username' => $user->username
 				]));
@@ -607,7 +604,7 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 			'data' => [
 				'activationCode' => UserRegistrationUtil::getActivationCode()
 			],
-			'removeGroups' => UserGroup::getGroupIDsByType([UserGroup::USERS]),
+			'removeGroups' => UserGroup::getGroupIDsByType([UserGroup::USERS])
 		]);
 		$action->executeAction();
 		$action = new UserAction($this->objects, 'addToGroups', [
@@ -670,7 +667,7 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 			$disableSignatureExpires = 0;
 		}
 		
-		foreach ($this->objects as $userEditor) {
+		foreach ($this->getObjects() as $userEditor) {
 			$userEditor->update([
 				'disableSignature' => 1,
 				'disableSignatureReason' => $this->parameters['disableSignatureReason'],
@@ -704,7 +701,7 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 			$this->readObjects();
 		}
 		
-		foreach ($this->objects as $userEditor) {
+		foreach ($this->getObjects() as $userEditor) {
 			$userEditor->update([
 				'disableSignature' => 0
 			]);
@@ -737,7 +734,7 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 			$disableAvatarExpires = 0;
 		}
 		
-		foreach ($this->objects as $userEditor) {
+		foreach ($this->getObjects() as $userEditor) {
 			$userEditor->update([
 				'disableAvatar' => 1,
 				'disableAvatarReason' => $this->parameters['disableAvatarReason'],
@@ -771,7 +768,7 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 			$this->readObjects();
 		}
 		
-		foreach ($this->objects as $userEditor) {
+		foreach ($this->getObjects() as $userEditor) {
 			$userEditor->update([
 				'disableAvatar' => 0
 			]);
@@ -780,6 +777,7 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 	
 	/**
 	 * Validates parameters to retrieve the social network privacy settings.
+	 * @deprecated 3.0
 	 */
 	public function validateGetSocialNetworkPrivacySettings() {
 		// does nothing
@@ -787,59 +785,25 @@ class UserAction extends AbstractDatabaseObjectAction implements IClipboardActio
 	
 	/**
 	 * Returns the social network privacy settings.
-	 * 
-	 * @return	string[]
+	 * @deprecated 3.0
 	 */
 	public function getSocialNetworkPrivacySettings() {
-		$settings = @unserialize(WCF::getUser()->socialNetworkPrivacySettings);
-		if (!is_array($settings)) {
-			$settings = [
-				'facebook' => false,
-				'google' => false,
-				'reddit' => false,
-				'twitter' => false
-			];
-		}
-		
-		WCF::getTPL()->assign([
-			'settings' => $settings
-		]);
-		
-		return [
-			'template' => WCF::getTPL()->fetch('shareButtonsPrivacySettings')
-		];
+		// does nothing
 	}
 	
 	/**
 	 * Validates the 'saveSocialNetworkPrivacySettings' action.
+	 * @deprecated 3.0
 	 */
 	public function validateSaveSocialNetworkPrivacySettings() {
-		$this->readBoolean('facebook', true);
-		$this->readBoolean('google', true);
-		$this->readBoolean('reddit', true);
-		$this->readBoolean('twitter', true);
+		// does nothing
 	}
 	
 	/**
 	 * Saves the social network privacy settings.
-	 * 
-	 * @return	boolean[]
+	 * @deprecated 3.0
 	 */
 	public function saveSocialNetworkPrivacySettings() {
-		$settings = [
-			'facebook' => $this->parameters['facebook'],
-			'google' => $this->parameters['google'],
-			'reddit' => $this->parameters['reddit'],
-			'twitter' => $this->parameters['twitter']
-		];
-		
-		$userEditor = new UserEditor(WCF::getUser());
-		$userEditor->update([
-			'socialNetworkPrivacySettings' => serialize($settings)
-		]);
-		
-		return [
-			'settings' => $settings
-		];
+		// does nothing
 	}
 }

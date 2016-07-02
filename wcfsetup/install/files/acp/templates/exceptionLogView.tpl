@@ -41,24 +41,28 @@
 		<section class="section">
 			<h2 class="sectionTitle">{lang}wcf.acp.exceptionLog.search{/lang}</h2>
 			
-			<dl>
-				<dt><label for="exceptionID">{lang}wcf.acp.exceptionLog.search.exceptionID{/lang}</label></dt>
-				<dd>
-					<input type="text" id="exceptionID" name="exceptionID" value="{$exceptionID}" autofocus="autofocus" class="long" />
-				</dd>
-			</dl>
-			<dl>
-				<dt><label for="logFile">{lang}wcf.acp.exceptionLog.search.logFile{/lang}</label></dt>
-				<dd>
-					<select id="logFile" name="logFile">
-						{htmlOptions options=$logFiles selected=$logFile}
-					</select>
-				</dd>
-			</dl>
+			<div class="row rowColGap formGrid">
+				<dl class="col-xs-12 col-md-4">
+					<dt></dt>
+					<dd>
+						<input type="text" id="exceptionID" name="exceptionID" value="{$exceptionID}" placeholder="{lang}wcf.acp.exceptionLog.search.exceptionID{/lang}" autofocus class="long">
+					</dd>
+				</dl>
+				
+				<dl class="col-xs-12 col-md-4">
+					<dt></dt>
+					<dd>
+						<select id="logFile" name="logFile">
+							<option value="">{lang}wcf.acp.exceptionLog.search.logFile{/lang}</option>
+							{htmlOptions options=$logFiles selected=$logFile}
+						</select>
+					</dd>
+				</dl>
+			</div>	
 		</section>
 		
 		<div class="formSubmit">
-			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s" />
+			<input type="submit" value="{lang}wcf.global.button.submit{/lang}" accesskey="s">
 		</div>
 	</form>
 {/if}
@@ -116,13 +120,13 @@
 							{foreach from=$chain[stack] item=stack}
 							<li>{$stack[file]} ({$stack[line]}): {$stack[class]}{$stack[type]}{$stack[function]}(&hellip;)</li>
 							{/foreach}
-						</ul>
+						</ol>
 					</dd>
 				</dl>
 				{/foreach}
 				<dl>
 					<dt><label for="copyException{$exceptionKey}">{lang}wcf.acp.exceptionLog.exception.copy{/lang}</label></dt>
-					<dd><textarea id="copyException{$exceptionKey}" rows="5" cols="40" class="jsCopyException" readonly="readonly">{$exception[0]}</textarea></dd>
+					<dd><textarea id="copyException{$exceptionKey}" rows="5" cols="40" class="jsCopyException" readonly>{$exception[0]}</textarea></dd>
 				</dl>
 			</section>
 		{/foreach}

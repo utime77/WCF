@@ -3,16 +3,15 @@ namespace wcf\data\user\notification\event;
 use wcf\data\ProcessibleDatabaseObject;
 use wcf\data\TDatabaseObjectOptions;
 use wcf\data\TDatabaseObjectPermissions;
+use wcf\system\user\notification\event\IUserNotificationEvent;
 
 /**
  * Represents a user notification event.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.user.notification.event
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\User\Notification\Event
  *
  * @property-read	integer		$eventID			unique id of the user notification event
  * @property-read	integer		$packageID			id of the package which delivers the user notification event
@@ -29,17 +28,17 @@ class UserNotificationEvent extends ProcessibleDatabaseObject {
 	use TDatabaseObjectPermissions;
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'user_notification_event';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'eventID';
 	
 	/**
-	 * @see	\wcf\data\ProcessibleDatabaseObject::$processorInterface
+	 * @inheritDoc
 	 */
-	protected static $processorInterface = 'wcf\system\user\notification\event\IUserNotificationEvent';
+	protected static $processorInterface = IUserNotificationEvent::class;
 }

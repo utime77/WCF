@@ -5,6 +5,7 @@ use wcf\acp\form\MasterPasswordInitForm;
 use wcf\data\menu\Menu;
 use wcf\data\menu\MenuCache;
 use wcf\system\application\ApplicationHandler;
+use wcf\system\cache\builder\ACPSearchProviderCacheBuilder;
 use wcf\system\event\EventHandler;
 use wcf\system\exception\AJAXException;
 use wcf\system\exception\PermissionDeniedException;
@@ -22,9 +23,7 @@ use wcf\util\HeaderUtil;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System
  */
 class WCFACP extends WCF {
 	/**
@@ -39,6 +38,7 @@ class WCFACP extends WCF {
 	 */
 	protected static $rescueModePageURL;
 	
+	/** @noinspection PhpMissingParentConstructorInspection */
 	/**
 	 * Calls all init functions of the WCF and the WCFACP class. 
 	 */
@@ -73,8 +73,8 @@ class WCFACP extends WCF {
 	/**
 	 * Returns the main menu object.
 	 * 
-	 * @return      Menu|null       menu object
-	 * @since       2.2
+	 * @return	Menu|null	menu object
+	 * @since	3.0
 	 */
 	public function getFrontendMenu() {
 		return MenuCache::getInstance()->getMainMenu();
@@ -162,14 +162,14 @@ class WCFACP extends WCF {
 				// work-around for AJAX-requests within ACP
 				if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
 					try {
-						WCF::getSession()->checkPermissions(array('admin.general.canUseAcp'));
+						WCF::getSession()->checkPermissions(['admin.general.canUseAcp']);
 					}
 					catch (PermissionDeniedException $e) {
 						throw new AJAXException(self::getLanguage()->get('wcf.ajax.error.permissionDenied'), AJAXException::INSUFFICIENT_PERMISSIONS, $e->getTraceAsString());
 					}
 				}
 				else {
-					WCF::getSession()->checkPermissions(array('admin.general.canUseAcp'));
+					WCF::getSession()->checkPermissions(['admin.general.canUseAcp']);
 				}
 				
 				// force debug mode if in ACP and authenticated
@@ -179,7 +179,7 @@ class WCFACP extends WCF {
 	}
 	
 	/**
-	 * @see	\wcf\system\WCF::initSession()
+	 * @inheritDoc
 	 */
 	protected function initSession() {
 		self::$sessionObj = SessionHandler::getInstance();
@@ -192,7 +192,7 @@ class WCFACP extends WCF {
 	}
 	
 	/**
-	 * @see	\wcf\system\WCF::initTPL()
+	 * @inheritDoc
 	 */
 	protected function initTPL() {
 		self::$tplObj = ACPTemplateEngine::getInstance();
@@ -201,7 +201,7 @@ class WCFACP extends WCF {
 	}
 	
 	/**
-	 * @see	\wcf\system\WCF::assignDefaultTemplateVariables()
+	 * @inheritDoc
 	 */
 	protected function assignDefaultTemplateVariables() {
 		parent::assignDefaultTemplateVariables();
@@ -210,9 +210,17 @@ class WCFACP extends WCF {
 		$host = RouteHandler::getHost();
 		$path = RouteHandler::getPath();
 		
-		self::getTPL()->assign(array(
-			'baseHref' => $host . $path
-		));
+		// available acp search providers
+		$availableAcpSearchProviders = [];
+		foreach (ACPSearchProviderCacheBuilder::getInstance()->getData() as $searchProvider) {
+			$availableAcpSearchProviders[$searchProvider->providerName] = self::getLanguage()->get('wcf.acp.search.provider.'.$searchProvider->providerName);
+		}
+		asort($availableAcpSearchProviders);
+		
+		self::getTPL()->assign([
+			'baseHref' => $host . $path,
+			'availableAcpSearchProviders' => $availableAcpSearchProviders
+		]);
 	}
 	
 	/**

@@ -123,7 +123,7 @@ define(['Dictionary', 'EventHandler', 'Dom/Traverse', 'Dom/Util'], function(Dict
 			// bind listeners
 			this._tabs.forEach((function(tab) {
 				if (!oldTabs || oldTabs.get(elData(tab, 'name')) !== tab) {
-					tab.children[0].addEventListener('click', this._onClick.bind(this));
+					tab.children[0].addEventListener(WCF_CLICK_EVENT, this._onClick.bind(this));
 				}
 			}).bind(this));
 			
@@ -233,11 +233,11 @@ define(['Dictionary', 'EventHandler', 'Dom/Traverse', 'Dom/Util'], function(Dict
 			tab.classList.add('active');
 			var newContent = this._containers.get(name);
 			newContent.classList.add('active');
+			newContent.classList.remove('hidden');
 			
 			if (this._isLegacy) {
 				tab.classList.add('ui-state-active');
 				newContent.classList.add('ui-state-active');
-				newContent.classList.remove('hidden');
 			}
 			
 			if (this._store) {

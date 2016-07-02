@@ -13,12 +13,10 @@ use wcf\system\WCF;
  * Installs, updates and deletes menus.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.package.plugin
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Package\Plugin
+ * @since	3.0
  */
 class MenuPackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin {
 	/**
@@ -161,15 +159,15 @@ class MenuPackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 			FROM	wcf".WCF_N."_menu
 			WHERE	identifier = ?
 				AND packageID = ?";
-		$parameters = array(
+		$parameters = [
 			$data['identifier'],
 			$this->installation->getPackageID()
-		);
+		];
 		
-		return array(
+		return [
 			'sql' => $sql,
 			'parameters' => $parameters
-		);
+		];
 	}
 	
 	/**
@@ -202,6 +200,8 @@ class MenuPackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 		$statement = WCF::getDB()->prepareStatement($sql);
 		$statement->execute($conditions->getParameters());
 		$boxes = [];
+		
+		/** @var Box $box */
 		while ($box = $statement->fetchObject(Box::class)) {
 			$boxes[$box->identifier] = $box;
 		}
@@ -217,12 +217,12 @@ class MenuPackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 		}
 		
 		// handle visibility exceptions
-		$sql = "DELETE FROM     wcf".WCF_N."_box_to_page
-			WHERE           boxID = ?";
+		$sql = "DELETE FROM	wcf".WCF_N."_box_to_page
+			WHERE		boxID = ?";
 		$deleteStatement = WCF::getDB()->prepareStatement($sql);
-		$sql = "INSERT IGNORE   wcf".WCF_N."_box_to_page
+		$sql = "INSERT IGNORE	wcf".WCF_N."_box_to_page
 					(boxID, pageID, visible)
-			VALUES          (?, ?, ?)";
+			VALUES		(?, ?, ?)";
 		$insertStatement = WCF::getDB()->prepareStatement($sql);
 		foreach ($this->boxData as $identifier => $data) {
 			// connect box with menu
@@ -253,8 +253,8 @@ class MenuPackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 				// get page ids
 				$conditionBuilder = new PreparedStatementConditionBuilder();
 				$conditionBuilder->add('identifier IN (?)', [$this->visibilityExceptions[$identifier]]);
-				$sql = "SELECT  pageID
-					FROM    wcf" . WCF_N . "_page
+				$sql = "SELECT	pageID
+					FROM	wcf" . WCF_N . "_page
 					" . $conditionBuilder;
 				$statement = WCF::getDB()->prepareStatement($sql);
 				$statement->execute($conditionBuilder->getParameters());

@@ -10,17 +10,15 @@ use wcf\system\WCF;
  * The merge of option values returns true if at least one value is true.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.option.user.group
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Option\User\Group
  */
 class BooleanUserGroupOptionType extends BooleanOptionType implements IUserGroupOptionType, IUserGroupGroupOptionType {
 	use TUserGroupOptionType;
 	
 	/**
-	 * @see	\wcf\system\option\IOptionType::getFormElement()
+	 * @inheritDoc
 	 */
 	public function getFormElement(Option $option, $value) {
 		$options = Option::parseEnableOptions($option->enableOptions);
@@ -37,14 +35,14 @@ class BooleanUserGroupOptionType extends BooleanOptionType implements IUserGroup
 	}
 	
 	/**
-	 * @see	\wcf\system\option\IOptionType::getData()
+	 * @inheritDoc
 	 */
 	public function getData(Option $option, $newValue) {
 		return ($newValue == -1) ? -1 : parent::getData($option, $newValue);
 	}
 	
 	/**
-	 * @see	\wcf\system\option\user\group\IUserGroupOptionType::merge()
+	 * @inheritDoc
 	 */
 	public function merge($defaultValue, $groupValue) {
 		// force value for 'Never'

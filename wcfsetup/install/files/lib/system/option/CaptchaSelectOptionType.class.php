@@ -9,36 +9,34 @@ use wcf\system\WCF;
  * Option type implementation for selecting a captcha type.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.option
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Option
  */
 class CaptchaSelectOptionType extends AbstractOptionType {
 	/**
-	 * @see	\wcf\system\option\IOptionType::getFormElement()
+	 * @inheritDoc
 	 */
 	public function getFormElement(Option $option, $value) {
 		$selectOptions = CaptchaHandler::getInstance()->getCaptchaSelection();
 		if ($option->allowemptyvalue) {
 			$selectOptions = array_merge(
-				array(
+				[
 					'' => WCF::getLanguage()->get('wcf.captcha.useNoCaptcha')
-				),
+				],
 				$selectOptions
 			);
 		}
 		
-		return WCF::getTPL()->fetch('selectOptionType', 'wcf', array(
+		return WCF::getTPL()->fetch('selectOptionType', 'wcf', [
 			'selectOptions' => $selectOptions,
 			'option' => $option,
 			'value' => $value
-		));
+		]);
 	}
 	
 	/**
-	 * @see	\wcf\system\option\IOptionType::validate()
+	 * @inheritDoc
 	 */
 	public function validate(Option $option, $newValue) {
 		if (!$newValue) return;

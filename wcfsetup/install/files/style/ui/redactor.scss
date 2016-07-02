@@ -1,3 +1,12 @@
+.wysiwygTextarea {
+	background-color: transparent !important;
+	border: 1px solid $wcfContentBorderInner !important;
+	color: transparent !important;
+	display: block;
+	height: 238px;
+	width: 100%;
+}
+
 .redactor-box {
 	position: relative;
 	
@@ -79,9 +88,12 @@
 	}
 	
 	img {
-		// TODO: the border was required for 'Old Redactor', check if it is still a thing
-		border: 1px solid transparent;
 		max-width: 100%;
+		
+		&:not(.smiley) {
+			// show cursor to indicate editing capability excluding smilies
+			cursor: pointer;
+		}
 	}
 	
 	// TODO: this is somewhat out of sync
@@ -94,32 +106,6 @@
 			border: 1px solid #ddd;
 			padding: 5px;
 			vertical-align: top;
-		}
-	}
-	
-	.quoteBox {
-		position: relative;
-		
-		&::before {
-			content: attr(data-quote-header);
-			cursor: pointer;
-			display: block;
-			font-style: normal;
-			margin-bottom: 20px;
-			padding-right: 25px;
-			
-			@include wcfFontHeadline;
-		}
-		
-		&::after {
-			content: $fa-var-pencil;
-			cursor: pointer;
-			font-family: FontAwesome;
-			position: absolute;
-			right: 24px;
-			top: 10px;
-			
-			@include wcfFontHeadline;
 		}
 	}
 	
@@ -211,6 +197,21 @@
 		flex: 0 0 auto;
 		margin-bottom: 1px;
 		
+		&.redactor-toolbar-separator {
+			margin-left: 11px;
+			position: relative;
+			
+			&::before {
+				bottom: 7px;
+				border-left: 1px solid $wcfHeaderMenuLink;
+				content: "";
+				left: -6px;
+				opacity: .6;
+				position: absolute;
+				top: 7px;
+			}
+		}
+		
 		> a {
 			color: $wcfHeaderMenuLink;
 			display: block;
@@ -220,17 +221,22 @@
 			
 			@include wcfFontSmall;
 			
-			&.redactor-button-disabled,
-			&.redactor-button-disabled:before,
-			&.redactor-button-disabled > i:before {
-				color: $wcfButtonDisabledText;
+			&.redactor-button-disabled {
+				background-color: transparent !important;
+				color: $wcfButtonDisabledText !important;
+				cursor: default;
 			}
 			
 			&:hover,
 			&.redactor-act,
 			&.dropact {
-				background-color: $wcfHeaderMenuBackgroundActive;
+				background-color: $wcfHeaderMenuLinkBackgroundActive;
 				color: $wcfHeaderMenuLinkActive;
+			}
+			
+			.icon {
+				color: inherit;
+				cursor: inherit !important;
 			}
 		}
 	}
@@ -253,22 +259,6 @@
 		top: -5px;
 		transform: translateX(-50%);
 	}
-}
-
-.re-bold {
-	font-weight: 600;
-}
-
-.re-italic {
-	font-style: italic;
-}
-
-.re-underline {
-	text-decoration: underline !important;
-}
-
-.re-deleted {
-	text-decoration: line-through !important;
 }
 
 #redactor-image-box {
@@ -374,4 +364,126 @@
 
 .redactor-voice-label {
 	display: none;
+}
+
+/* format */
+.redactor-dropdown-h2 {
+	@include wcfFontSection;
+}
+
+.redactor-dropdown-h3 {
+	@include wcfFontHeadline;
+}
+
+.redactor-dropdown-h4 {
+	// TODO: add styling
+}
+
+/* alignment plugin */
+.text-center {
+	text-align: center;
+}
+
+.text-right {
+	text-align: right;
+}
+
+/* alignment plugin / custom value */
+.text-justify {
+	text-align: justify;
+	
+	-webkit-hyphens: auto;
+	-moz-hyphens: auto;
+	-ms-hyphens: auto;
+	hyphens: auto;
+}
+
+/* text color */
+.woltlab-color-000000 { color: #000000 !important; }
+.woltlab-color-000080 { color: #000080 !important; }
+.woltlab-color-0000CD { color: #0000CD !important; }
+.woltlab-color-0000FF { color: #0000FF !important; }
+.woltlab-color-006400 { color: #006400 !important; }
+.woltlab-color-008000 { color: #008000 !important; }
+.woltlab-color-008080 { color: #008080 !important; }
+.woltlab-color-00FF00 { color: #00FF00 !important; }
+.woltlab-color-00FFFF { color: #00FFFF !important; }
+.woltlab-color-2F4F4F { color: #2F4F4F !important; }
+.woltlab-color-40E0D0 { color: #40E0D0 !important; }
+.woltlab-color-4B0082 { color: #4B0082 !important; }
+.woltlab-color-696969 { color: #696969 !important; }
+.woltlab-color-800000 { color: #800000 !important; }
+.woltlab-color-800080 { color: #800080 !important; }
+.woltlab-color-808080 { color: #808080 !important; }
+.woltlab-color-8B4513 { color: #8B4513 !important; }
+.woltlab-color-A52A2A { color: #A52A2A !important; }
+.woltlab-color-A9A9A9 { color: #A9A9A9 !important; }
+.woltlab-color-ADD8E6 { color: #ADD8E6 !important; }
+.woltlab-color-AFEEEE { color: #AFEEEE !important; }
+.woltlab-color-B22222 { color: #B22222 !important; }
+.woltlab-color-D3D3D3 { color: #D3D3D3 !important; }
+.woltlab-color-DAA520 { color: #DAA520 !important; }
+.woltlab-color-DDA0DD { color: #DDA0DD !important; }
+.woltlab-color-E6E6FA { color: #E6E6FA !important; }
+.woltlab-color-EE82EE { color: #EE82EE !important; }
+.woltlab-color-F0F8FF { color: #F0F8FF !important; }
+.woltlab-color-F0FFF0 { color: #F0FFF0 !important; }
+.woltlab-color-F0FFFF { color: #F0FFFF !important; }
+.woltlab-color-FAEBD7 { color: #FAEBD7 !important; }
+.woltlab-color-FF0000 { color: #FF0000 !important; }
+.woltlab-color-FF8C00 { color: #FF8C00 !important; }
+.woltlab-color-FFA07A { color: #FFA07A !important; }
+.woltlab-color-FFA500 { color: #FFA500 !important; }
+.woltlab-color-FFD700 { color: #FFD700 !important; }
+.woltlab-color-FFF0F5 { color: #FFF0F5 !important; }
+.woltlab-color-FFFF00 { color: #FFFF00 !important; }
+.woltlab-color-FFFFE0 { color: #FFFFE0 !important; }
+.woltlab-color-FFFFFF { color: #FFFFFF !important; }
+
+/* text color selection */
+.redactor-dropdown-box-woltlabColor {
+	> ul {
+		display: flex !important;
+		flex-wrap: wrap;
+		width: 272px;
+		
+		> li:first-child {
+			flex: 0 0 100%;
+			margin-bottom: 10px;
+		}
+	}
+	
+	.woltlab-color-selection {
+		flex: 0 0 30px;
+		margin: 2px;
+		overflow: hidden;
+		
+		> a {
+			background-color: currentColor !important;
+			color: inherit !important;
+			display: block;
+			height: 30px;
+			width: 30px;
+		}
+	}
+}
+
+/* font size */
+.woltlab-size-8 { font-size: 8px; }
+.woltlab-size-10 { font-size: 10px; }
+.woltlab-size-12 { font-size: 12px; }
+.woltlab-size-14 { font-size: 14px; }
+.woltlab-size-18 { font-size: 18px; }
+.woltlab-size-24 { font-size: 24px; }
+.woltlab-size-36 { font-size: 36px; }
+
+/* image float */
+.messageFloatObjectLeft {
+	float: left;
+	margin: 0 20px 20px 0;
+}
+
+.messageFloatObjectRight {
+	float: right;
+	margin: 0 0 20px 20px;
 }

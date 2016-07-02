@@ -7,11 +7,9 @@ use wcf\system\Regex;
  * Provides functions to compute password hashes.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	util
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Util
  */
 final class PasswordUtil {
 	/**
@@ -30,7 +28,7 @@ final class PasswordUtil {
 	 * list of supported encryption type by software identifier
 	 * @var	string[]
 	 */
-	private static $supportedEncryptionTypes = array(
+	private static $supportedEncryptionTypes = [
 		'ipb2',		// Invision Power Board 2.x
 		'ipb3',		// Invision Power Board 3.x
 		'mybb1',	// MyBB 1.x
@@ -43,7 +41,7 @@ final class PasswordUtil {
 		'vb5',		// vBulletin 5.x
 		'wbb2',		// WoltLab Burning Board 2.x
 		'wcf1',		// WoltLab Community Framework 1.x
-		'wcf2',		// WoltLab Community Framework 2.x
+		'wcf2',		// WoltLab Suite 3.x / WoltLab Community Framework 2.x
 		'xf1',		// XenForo 1.0 / 1.1
 		'xf12',		// XenForo 1.2+
 		'joomla1',	// Joomla 1.x
@@ -51,7 +49,7 @@ final class PasswordUtil {
 		'joomla3',	// Joomla 3.x
 		'cryptMD5',
 		'invalid',	// Never going to match anything
-	);
+	];
 	
 	/**
 	 * blowfish cost factor
@@ -219,16 +217,21 @@ final class PasswordUtil {
 	public static function getRandomPassword($length = 12) {
 		$charset = self::PASSWORD_CHARSET;
 		$password = '';
-
+		
 		for ($i = 0, $maxIndex = (strlen($charset) - 1); $i < $length; $i++) {
 			$password .= $charset[self::secureRandomNumber(0, $maxIndex)];
 		}
-
+		
 		return $password;
 	}
 	
 	/**
-	 * @see	\wcf\util\CryptoUtil::secureCompare()
+	 * Compares two strings in a constant time manner.
+	 * This function effectively is a polyfill for the PHP 5.6 `hash_equals`.
+	 *
+	 * @param	string		$hash1
+	 * @param	string		$hash2
+	 * @return	boolean
 	 * @deprecated	Use \wcf\util\CryptoUtil::secureCompare()
 	 */
 	public static function secureCompare($hash1, $hash2) {
@@ -575,7 +578,7 @@ final class PasswordUtil {
 	}
 	
 	/**
-	 * Validates the password hash for WoltLab Community Framework 2.x (wcf2).
+	 * Validates the password hash for Woltlab Suite 3.x / WoltLab Community Framework 2.x (wcf2).
 	 * 
 	 * @param	string		$username
 	 * @param	string		$password
@@ -694,5 +697,10 @@ final class PasswordUtil {
 		return false;
 	}
 	
-	private function __construct() { }
+	/**
+	 * Forbid creation of PasswordUtil objects.
+	 */
+	private function __construct() {
+		// does nothing
+	}
 }

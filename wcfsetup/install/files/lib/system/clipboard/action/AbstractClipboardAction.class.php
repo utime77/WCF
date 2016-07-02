@@ -10,33 +10,31 @@ use wcf\system\WCF;
  * Abstract implementation of a clipboard action handler.
  * 
  * @author	Matthias Schmidt
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.clipboard.action
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Clipboard\Action
  */
 abstract class AbstractClipboardAction implements IClipboardAction {
 	/**
 	 * list of the clipboard actions which are executed by the action class
 	 * @var	string[]
 	 */
-	protected $actionClassActions = array();
+	protected $actionClassActions = [];
 	
 	/**
 	 * relevant database objects
 	 * @var	DatabaseObject[]
 	 */
-	protected $objects = array();
+	protected $objects = [];
 	
 	/**
 	 * list of the supported clipboard actions
 	 * @var	string[]
 	 */
-	protected $supportedActions = array();
+	protected $supportedActions = [];
 	
 	/**
-	 * @see	\wcf\system\clipboard\action\IClipboardAction::execute()
+	 * @inheritDoc
 	 */
 	public function execute(array $objects, ClipboardAction $action) {
 		if (!in_array($action->actionName, $this->supportedActions)) {
@@ -69,11 +67,11 @@ abstract class AbstractClipboardAction implements IClipboardAction {
 	}
 	
 	/**
-	 * @see	\wcf\system\clipboard\action\IClipboardAction::getEditorLabel()
+	 * @inheritDoc
 	 */
 	public function getEditorLabel(array $objects) {
-		return WCF::getLanguage()->getDynamicVariable('wcf.clipboard.label.'.$this->getTypeName().'.marked', array(
+		return WCF::getLanguage()->getDynamicVariable('wcf.clipboard.label.'.$this->getTypeName().'.marked', [
 			'count' => count($objects)
-		));
+		]);
 	}
 }

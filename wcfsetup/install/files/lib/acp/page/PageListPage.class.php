@@ -2,6 +2,7 @@
 namespace wcf\acp\page;
 use wcf\data\application\Application;
 use wcf\data\application\ApplicationList;
+use wcf\data\page\PageList;
 use wcf\page\SortablePage;
 use wcf\system\WCF;
 use wcf\util\StringUtil;
@@ -12,36 +13,41 @@ use wcf\util\StringUtil;
  * @author	Marcel Werk
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.page
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Page
+ * @since	3.0
+ *
+ * @property	PageList	$objectList
  */
 class PageListPage extends SortablePage {
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public $activeMenuItem = 'wcf.acp.menu.link.cms.page.list';
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
-	public $objectListClassName = 'wcf\data\page\PageList';
+	public $objectListClassName = PageList::class;
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public $neededPermissions = ['admin.content.cms.canManagePage'];
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public $defaultSortField = 'name';
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
-	public $validSortFields = ['pageID', 'name', 'lastUpdateTime'];
+	public $validSortFields = ['pageID', 'name', 'lastUpdateTime', 'pageType'];
+	
+	/**
+	 * @inheritDoc
+	 */
+	public $itemsPerPage = 50;
 	
 	/**
 	 * name
@@ -71,7 +77,7 @@ class PageListPage extends SortablePage {
 	 * page type
 	 * @var string
 	 */
-	public $pageType = 'static';
+	public $pageType = '';
 	
 	/**
 	 * list of available applications
@@ -86,7 +92,7 @@ class PageListPage extends SortablePage {
 	public $showPageAddDialog = 0;
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -105,7 +111,7 @@ class PageListPage extends SortablePage {
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected function initObjectList() {
 		parent::initObjectList();
@@ -122,16 +128,13 @@ class PageListPage extends SortablePage {
 		if (!empty($this->applicationPackageID)) {
 			$this->objectList->getConditionBuilder()->add('page.applicationPackageID = ?', [$this->applicationPackageID]);
 		}
-		if ($this->pageType == 'static') {
-			$this->objectList->getConditionBuilder()->add('page.pageType IN (?, ?, ?)', ['text', 'html', 'tpl']);
-		}
-		else if ($this->pageType == 'system') {
-			$this->objectList->getConditionBuilder()->add('page.pageType IN (?)', ['system']);
+		if (!empty($this->pageType)) {
+			$this->objectList->getConditionBuilder()->add('page.pageType = (?)', [$this->pageType]);
 		}
 	}
 	
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();

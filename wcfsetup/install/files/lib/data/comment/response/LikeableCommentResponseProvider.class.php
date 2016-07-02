@@ -15,9 +15,7 @@ use wcf\system\WCF;
  * @author	Matthias Schmidt
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.comment.response
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Comment\Response
  * 
  * @method	LikeableCommentResponse		getObjectByID($objectID)
  * @method	LikeableCommentResponse[]	getObjectsByIDs(array $objectIDs)
@@ -42,6 +40,8 @@ class LikeableCommentResponseProvider extends AbstractObjectTypeProvider impleme
 	 * @inheritDoc
 	 */
 	public function checkPermissions(ILikeObject $response) {
+		/** @var CommentResponse $response */
+		
 		if (!$response->responseID) return false;
 		$comment = new Comment($response->commentID);
 		if (!$comment->commentID) {
@@ -90,6 +90,7 @@ class LikeableCommentResponseProvider extends AbstractObjectTypeProvider impleme
 		foreach ($likeData as $objectTypeID => $likes) {
 			$objectType = CommentHandler::getInstance()->getObjectType($objectTypeID);
 			if (CommentHandler::getInstance()->getCommentManager($objectType->objectType) instanceof IViewableLikeProvider) {
+				/** @noinspection PhpUndefinedMethodInspection */
 				CommentHandler::getInstance()->getCommentManager($objectType->objectType)->prepare($likes);
 			}
 		}

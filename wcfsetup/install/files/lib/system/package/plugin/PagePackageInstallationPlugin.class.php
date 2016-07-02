@@ -1,6 +1,7 @@
 <?php
 namespace wcf\system\package\plugin;
 use wcf\data\package\PackageCache;
+use wcf\data\page\Page;
 use wcf\data\page\PageEditor;
 use wcf\system\exception\SystemException;
 use wcf\system\language\LanguageFactory;
@@ -14,10 +15,8 @@ use wcf\util\StringUtil;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	acp.package.plugin
- * @category	Community Framework
- * @since	2.2
+ * @package	WoltLabSuite\Core\Acp\Package\Plugin
+ * @since	3.0
  */
 class PagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin {
 	/**
@@ -88,23 +87,21 @@ class PagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 	 * @throws	SystemException
 	 */
 	protected function prepareImport(array $data) {
-		$isStatic = false;
+		$pageType = $data['elements']['pageType'];
 		
 		if (!empty($data['elements']['content'])) {
-			$isStatic = true;
-			
 			$content = [];
 			foreach ($data['elements']['content'] as $language => $contentData) {
-				if (!RouteHandler::isValidCustomUrl($contentData['customURL'])) {
+				if ($pageType != 'system' && !RouteHandler::isValidCustomUrl($contentData['customURL'])) {
 					throw new SystemException("Invalid custom url for page content '" . $language . "', page identifier '" . $data['attributes']['identifier'] . "'");
 				}
 				
 				$content[$language] = [
-					'content' => $contentData['content'],
-					'customURL' => $contentData['customURL'],
+					'content' => (!empty($contentData['content'])) ? StringUtil::trim($contentData['content']) : '',
+					'customURL' => (!empty($contentData['customURL'])) ? StringUtil::trim($contentData['customURL']) : '',
 					'metaDescription' => (!empty($contentData['metaDescription'])) ? StringUtil::trim($contentData['metaDescription']) : '',
 					'metaKeywords' => (!empty($contentData['metaKeywords'])) ? StringUtil::trim($contentData['metaKeywords']) : '',
-					'title' => $contentData['title']
+					'title' => (!empty($contentData['title'])) ? StringUtil::trim($contentData['title']) : ''
 				];
 			}
 			
@@ -141,14 +138,10 @@ class PagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 			$parentPageID = $row['pageID'];
 		}
 		
-		$controllerCustomURL = ($isStatic || empty($data['elements']['controllerCustomURL'])) ? '' : $data['elements']['controllerCustomURL'];
-		if ($controllerCustomURL && !RouteHandler::isValidCustomUrl($controllerCustomURL)) {
-			throw new SystemException("Invalid custom url for page identifier '" . $data['attributes']['identifier'] . "'");
-		}
-		
 		// validate page type
-		$pageType = $data['elements']['pageType'];
 		$controller = '';
+		$handler = '';
+		$controllerCustomURL = '';
 		$identifier = $data['attributes']['identifier'];
 		$isMultilingual = 0;
 		switch ($pageType) {
@@ -157,6 +150,18 @@ class PagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 					throw new SystemException("Missing required element 'controller' for 'system'-type page '{$identifier}'");
 				}
 				$controller = $data['elements']['controller'];
+				
+				if (!empty($data['elements']['handler'])) {
+					$handler = $data['elements']['handler'];
+				}
+				
+				if (!empty($data['elements']['controllerCustomURL'])) {
+					$controllerCustomURL = $data['elements']['controllerCustomURL'];
+					if ($controllerCustomURL && !RouteHandler::isValidCustomUrl($controllerCustomURL)) {
+						throw new SystemException("Invalid custom url for page identifier '" . $data['attributes']['identifier'] . "'");
+					}
+				}
+				
 				break;
 			
 			case 'html':
@@ -200,9 +205,9 @@ class PagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 		
 		return [
 			'pageType' => $pageType,
-			'content' => ($isStatic) ? $data['elements']['content'] : [],
+			'content' => (!empty($data['elements']['content'])) ? $data['elements']['content'] : [],
 			'controller' => $controller,
-			'handler' => (!$isStatic && !empty($data['elements']['handler'])) ? $data['elements']['handler'] : '',
+			'handler' => $handler,
 			'controllerCustomURL' => $controllerCustomURL,
 			'identifier' => $identifier,
 			'isMultilingual' => $isMultilingual,
@@ -244,25 +249,26 @@ class PagePackageInstallationPlugin extends AbstractXMLPackageInstallationPlugin
 		$content = $data['content'];
 		unset($data['content']);
 		
+		/** @var Page $page */
 		if (!empty($row)) {
 			// allow only updating of controller, everything else would overwrite user modifications
 			if (!empty($data['controller'])) {
-				$object = parent::import($row, ['controller' => $data['controller']]);
+				$page = parent::import($row, ['controller' => $data['controller']]);
 			}
 			else {
 				$baseClass = call_user_func([$this->className, 'getBaseClass']);
-				$object = new $baseClass(null, $row);
+				$page = new $baseClass(null, $row);
 			}
 		}
 		else {
 			// import
-			$object = parent::import($row, $data);
+			$page = parent::import($row, $data);
 		}
 		
 		// store content for later import
-		$this->content[$object->pageID] = $content;
+		$this->content[$page->pageID] = $content;
 		
-		return $object;
+		return $page;
 	}
 	
 	/**

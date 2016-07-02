@@ -12,28 +12,26 @@ use wcf\util\StringUtil;
  * Shows the a list of tagged objects.
  * 
  * @author	Marcel Werk
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	page
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Page
  */
 class TaggedPage extends MultipleLinkPage {
 	/**
 	 * list of available taggable object types
 	 * @var	ObjectType[]
 	 */
-	public $availableObjectTypes = array();
+	public $availableObjectTypes = [];
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededModules
+	 * @inheritDoc
 	 */
-	public $neededModules = array('MODULE_TAGGING');
+	public $neededModules = ['MODULE_TAGGING'];
 	
 	/**
-	 * @see	\wcf\page\AbstractPage::$neededPermissions
+	 * @inheritDoc
 	 */
-	public $neededPermissions = array('user.tag.canViewTag');
+	public $neededPermissions = ['user.tag.canViewTag'];
 	
 	/**
 	 * tag id
@@ -60,7 +58,7 @@ class TaggedPage extends MultipleLinkPage {
 	public $tagCloud = null;
 	
 	/**
-	 * @see	\wcf\page\IPage::readParameters()
+	 * @inheritDoc
 	 */
 	public function readParameters() {
 		parent::readParameters();
@@ -99,14 +97,14 @@ class TaggedPage extends MultipleLinkPage {
 	}
 	
 	/**
-	 * @see	\wcf\page\MultipleLinkPage::readParameters()
+	 * @inheritDoc
 	 */
 	protected function initObjectList() {
 		$this->objectList = $this->objectType->getProcessor()->getObjectList($this->tag);
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::readData()
+	 * @inheritDoc
 	 */
 	public function readData() {
 		parent::readData();
@@ -115,19 +113,19 @@ class TaggedPage extends MultipleLinkPage {
 	}
 	
 	/**
-	 * @see	\wcf\page\IPage::assignVariables()
+	 * @inheritDoc
 	 */
 	public function assignVariables() {
 		parent::assignVariables();
 		
-		WCF::getTPL()->assign(array(
+		WCF::getTPL()->assign([
 			'tag' => $this->tag,
 			'tags' => $this->tagCloud->getTags(100),
 			'availableObjectTypes' => $this->availableObjectTypes,
 			'objectType' => $this->objectType->objectType,
 			'resultListTemplateName' => $this->objectType->getProcessor()->getTemplateName(),
 			'resultListApplication' => $this->objectType->getProcessor()->getApplication()
-		));
+		]);
 		
 		if (count($this->objectList) === 0) {
 			@header('HTTP/1.0 404 Not Found');

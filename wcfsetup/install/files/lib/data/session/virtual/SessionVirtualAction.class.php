@@ -7,11 +7,13 @@ use wcf\data\acp\session\virtual\ACPSessionVirtualAction;
  * 
  * @see		\wcf\data\acp\session\virtual\ACPSessionVirtualAction
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.session.virtual
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Session\Virtual
+ * 
+ * @method	SessionVirtual		create()
+ * @method	SessionVirtualEditor[]	getObjects()
+ * @method	SessionVirtualEditor	getSingleObject()
  */
 class SessionVirtualAction extends ACPSessionVirtualAction {
 	/**

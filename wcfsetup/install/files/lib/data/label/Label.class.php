@@ -8,11 +8,9 @@ use wcf\system\WCF;
  * Represents a label.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	data.label
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\Data\Label
  *
  * @property-read	integer		$labelID		unique id of the label
  * @property-read	integer		$groupID		id of the label group the label belongs to
@@ -22,12 +20,12 @@ use wcf\system\WCF;
  */
 class Label extends DatabaseObject implements IRouteController {
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseTableName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableName = 'label';
 	
 	/**
-	 * @see	\wcf\data\DatabaseObject::$databaseIndexName
+	 * @inheritDoc
 	 */
 	protected static $databaseTableIndexName = 'labelID';
 	
@@ -42,7 +40,7 @@ class Label extends DatabaseObject implements IRouteController {
 	}
 	
 	/**
-	 * @see	\wcf\data\ITitledObject::getTitle()
+	 * @inheritDoc
 	 */
 	public function getTitle() {
 		return WCF::getLanguage()->get($this->label);

@@ -16,6 +16,7 @@ use wcf\system\cache\CacheHandler;
 use wcf\system\database\statement\PreparedStatement;
 use wcf\system\database\util\PreparedStatementConditionBuilder;
 use wcf\system\event\EventHandler;
+use wcf\system\exception\ImplementationException;
 use wcf\system\exception\SystemException;
 use wcf\system\form\container\GroupFormElementContainer;
 use wcf\system\form\container\MultipleSelectionFormElementContainer;
@@ -40,11 +41,9 @@ use wcf\util\StringUtil;
  * PackageInstallationDispatcher handles the whole installation process.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.package
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Package
  */
 class PackageInstallationDispatcher {
 	/**
@@ -276,7 +275,6 @@ class PackageInstallationDispatcher {
 	 */
 	public function getArchive() {
 		if ($this->archive === null) {
-			$package = $this->getPackage();
 			// check if we're doing an iterative update of the same package
 			if ($this->previousPackageData !== null && $this->getPackage()->package == $this->previousPackageData['package']) {
 				if (Package::compareVersion($this->getPackage()->packageVersion, $this->previousPackageData['packageVersion'], '<')) {
@@ -463,8 +461,8 @@ class PackageInstallationDispatcher {
 				FROM	wcf".WCF_N."_language_category
 				WHERE	languageCategory = ?";
 			$statement2 = WCF::getDB()->prepareStatement($sql);
-			$statement2->execute(array('wcf.acp.package'));
-			$languageCategory = $statement2->fetchObject('wcf\data\language\category\LanguageCategory');
+			$statement2->execute(['wcf.acp.package']);
+			$languageCategory = $statement2->fetchObject(LanguageCategory::class);
 		}
 		else {
 			$languageCategory = LanguageFactory::getInstance()->getCategory('wcf.acp.package');
@@ -478,10 +476,10 @@ class PackageInstallationDispatcher {
 		
 		// update description and name
 		$packageEditor = new PackageEditor($package);
-		$packageEditor->update(array(
+		$packageEditor->update([
 			'packageDescription' => 'wcf.acp.package.packageDescription.package'.$this->queue->packageID,
 			'packageName' => 'wcf.acp.package.packageName.package'.$this->queue->packageID
-		));
+		]);
 	}
 	
 	/**
@@ -520,13 +518,13 @@ class PackageInstallationDispatcher {
 				$value = $infoValues[$language->languageCode];
 			}
 			
-			$statement->execute(array(
+			$statement->execute([
 				$language->languageID,
 				'wcf.acp.package.'.$infoName.'.package'.$package->packageID,
 				$value,
 				$languageCategory->languageCategoryID,
 				1
-			));
+			]);
 		}
 	}
 	
@@ -571,7 +569,7 @@ class PackageInstallationDispatcher {
 		$plugin = new $className($this, $nodeData);
 		
 		if (!($plugin instanceof IPackageInstallationPlugin)) {
-			throw new SystemException("'".$className."' does not implement 'wcf\\system\\package\\plugin\\IPackageInstallationPlugin'");
+			throw new ImplementationException($className, IPackageInstallationPlugin::class);
 		}
 		
 		// execute PIP
@@ -625,7 +623,7 @@ class PackageInstallationDispatcher {
 						$shiftNodes = true;
 					}
 					
-					$queue = PackageInstallationQueueEditor::create(array(
+					$queue = PackageInstallationQueueEditor::create([
 						'parentQueueID' => $queue->queueID,
 						'processNo' => $this->queue->processNo,
 						'userID' => WCF::getUser()->userID,
@@ -633,7 +631,7 @@ class PackageInstallationDispatcher {
 						'packageName' => $package['packageName'],
 						'archive' => $package['archive'],
 						'action' => $queue->action
-					));
+					]);
 					
 					$installation = new PackageInstallationDispatcher($queue);
 					$installation->nodeBuilder->setParentNode($node);
@@ -705,7 +703,7 @@ class PackageInstallationDispatcher {
 				FROM	wcf".WCF_N."_package
 				WHERE	packageDir = ?";
 			$statement = WCF::getDB()->prepareStatement($sql);
-			$statement->execute(array('../'));
+			$statement->execute(['../']);
 			if ($statement->fetchSingleColumn()) {
 				// use abbreviation
 				$defaultPath .= strtolower(Package::getAbbreviation($this->getPackage()->package)) . '/';
@@ -741,9 +739,9 @@ class PackageInstallationDispatcher {
 				
 				// set package dir
 				$packageEditor = new PackageEditor($this->getPackage());
-				$packageEditor->update(array(
+				$packageEditor->update([
 					'packageDir' => FileUtil::getRelativePath(WCF_DIR, $packageDir)
-				));
+				]);
 				
 				// determine domain path, in some environments (e.g. ISPConfig) the $_SERVER paths are
 				// faked and differ from the real filesystem path
@@ -755,7 +753,7 @@ class PackageInstallationDispatcher {
 						FROM	wcf".WCF_N."_application
 						WHERE	packageID = ?";
 					$statement = WCF::getDB()->prepareStatement($sql);
-					$statement->execute(array(1));
+					$statement->execute([1]);
 					$row = $statement->fetchArray();
 					
 					$wcfDomainPath = $row['domainPath'];
@@ -767,10 +765,10 @@ class PackageInstallationDispatcher {
 				// update application path
 				$application = new Application($this->getPackage()->packageID);
 				$applicationEditor = new ApplicationEditor($application);
-				$applicationEditor->update(array(
+				$applicationEditor->update([
 					'domainPath' => $domainPath,
 					'cookiePath' => $domainPath
-				));
+				]);
 				
 				// create directory and set permissions
 				@mkdir($packageDir, 0777, true);
@@ -784,6 +782,7 @@ class PackageInstallationDispatcher {
 	/**
 	 * Prompts a selection of optional packages.
 	 * 
+	 * @param	string[][]	$packages
 	 * @return	mixed
 	 */
 	protected function promptOptionalPackages(array $packages) {
@@ -833,7 +832,7 @@ class PackageInstallationDispatcher {
 	 * Returns current package name.
 	 * 
 	 * @return	string		package name
-	 * @since	2.2
+	 * @since	3.0
 	 */
 	public function getPackageName() {
 		return $this->queue->packageName;
@@ -857,10 +856,10 @@ class PackageInstallationDispatcher {
 	 */
 	public static function openQueue($parentQueueID = 0, $processNo = 0) {
 		$conditions = new PreparedStatementConditionBuilder();
-		$conditions->add("userID = ?", array(WCF::getUser()->userID));
-		$conditions->add("parentQueueID = ?", array($parentQueueID));
-		if ($processNo != 0) $conditions->add("processNo = ?", array($processNo));
-		$conditions->add("done = ?", array(0));
+		$conditions->add("userID = ?", [WCF::getUser()->userID]);
+		$conditions->add("parentQueueID = ?", [$parentQueueID]);
+		if ($processNo != 0) $conditions->add("processNo = ?", [$processNo]);
+		$conditions->add("done = ?", [0]);
 		
 		$sql = "SELECT		*
 			FROM		wcf".WCF_N."_package_installation_queue
@@ -876,7 +875,7 @@ class PackageInstallationDispatcher {
 			exit;
 		}
 		else {
-			$url = LinkHandler::getInstance()->getLink('PackageInstallationConfirm', array(), 'queueID='.$packageInstallation['queueID']);
+			$url = LinkHandler::getInstance()->getLink('PackageInstallationConfirm', [], 'queueID='.$packageInstallation['queueID']);
 			HeaderUtil::redirect($url);
 			exit;
 		}
@@ -895,7 +894,7 @@ class PackageInstallationDispatcher {
 					AND done = 0
 			ORDER BY	queueID ASC";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array(WCF::getUser()->userID));
+		$statement->execute([WCF::getUser()->userID]);
 		$row = $statement->fetchArray();
 		
 		if (!$row) {
@@ -914,7 +913,7 @@ class PackageInstallationDispatcher {
 			FROM	wcf".WCF_N."_package_installation_queue
 			WHERE	processNo = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($this->queue->processNo));
+		$statement->execute([$this->queue->processNo]);
 		while ($row = $statement->fetchArray()) {
 			@unlink($row['archive']);
 		}
@@ -923,7 +922,7 @@ class PackageInstallationDispatcher {
 		$sql = "DELETE FROM	wcf".WCF_N."_package_installation_queue
 			WHERE		processNo = ?";
 		$statement = WCF::getDB()->prepareStatement($sql);
-		$statement->execute(array($this->queue->processNo));
+		$statement->execute([$this->queue->processNo]);
 		
 		// clear language files once whole installation is completed
 		LanguageEditor::deleteLanguageFiles();
@@ -938,9 +937,9 @@ class PackageInstallationDispatcher {
 	public function updatePackage() {
 		if (empty($this->queue->packageName)) {
 			$queueEditor = new PackageInstallationQueueEditor($this->queue);
-			$queueEditor->update(array(
+			$queueEditor->update([
 				'packageName' => $this->getArchive()->getLocalizedPackageInfo('packageName')
-			));
+			]);
 			
 			// reload queue
 			$this->queue = new PackageInstallationQueue($this->queue->queueID);
@@ -954,7 +953,7 @@ class PackageInstallationDispatcher {
 	 * @return	mixed[][]
 	 */
 	public static function validatePHPRequirements(array $requirements) {
-		$errors = array();
+		$errors = [];
 		
 		// validate php version
 		if (isset($requirements['version'])) {
@@ -964,10 +963,10 @@ class PackageInstallationDispatcher {
 			}
 			
 			if (!$passed) {
-				$errors['version'] = array(
+				$errors['version'] = [
 					'required' => $requirements['version'],
 					'installed' => PHP_VERSION
-				);
+				];
 			}
 		}
 		
@@ -977,9 +976,9 @@ class PackageInstallationDispatcher {
 				$passed = (extension_loaded($extension)) ? true : false;
 				
 				if (!$passed) {
-					$errors['extension'][] = array(
+					$errors['extension'][] = [
 						'extension' => $extension
-					);
+					];
 				}
 			}
 		}
@@ -991,11 +990,11 @@ class PackageInstallationDispatcher {
 				
 				$passed = self::compareSetting($setting, $value, $iniValue);
 				if (!$passed) {
-					$errors['setting'][] = array(
+					$errors['setting'][] = [
 						'setting' => $setting,
 						'required' => $value,
 						'installed' => ($iniValue === false) ? '(unknown)' : $iniValue
-					);
+					];
 				}
 			}
 		}
@@ -1007,9 +1006,9 @@ class PackageInstallationDispatcher {
 				
 				$passed = self::functionExists($function);
 				if (!$passed) {
-					$errors['function'][] = array(
+					$errors['function'][] = [
 						'function' => $function
-					);
+					];
 				}
 			}
 		}
@@ -1029,9 +1028,9 @@ class PackageInstallationDispatcher {
 				}
 				
 				if (!$passed) {
-					$errors['class'][] = array(
+					$errors['class'][] = [
 						'class' => $class
-					);
+					];
 				}
 			}
 				
@@ -1077,8 +1076,8 @@ class PackageInstallationDispatcher {
 		if ($compareValue === false) return false;
 		
 		$value = mb_strtolower($value);
-		$trueValues = array('1', 'on', 'true');
-		$falseValues = array('0', 'off', 'false');
+		$trueValues = ['1', 'on', 'true'];
+		$falseValues = ['0', 'off', 'false'];
 		
 		// handle values considered as 'true'
 		if (in_array($value, $trueValues)) {

@@ -2,7 +2,7 @@
  * Date picker with time support.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
  * @module	WoltLab/WCF/Date/Picker
  */
@@ -96,7 +96,7 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 				element.parentNode.insertBefore(shadowElement, element);
 				element.removeAttribute('name');
 				
-				element.addEventListener('click', _callbackOpen);
+				element.addEventListener(WCF_CLICK_EVENT, _callbackOpen);
 				
 				// create input addon
 				var container = elCreate('div');
@@ -104,7 +104,7 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 				
 				var button = elCreate('a');
 				button.className = 'inputSuffix button';
-				button.addEventListener('click', _callbackOpen);
+				button.addEventListener(WCF_CLICK_EVENT, _callbackOpen);
 				container.appendChild(button);
 				
 				var icon = elCreate('span');
@@ -116,8 +116,8 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 				
 				// check if the date input has one of the following classes set otherwise default to 'short'
 				var hasClass = false, knownClasses = ['tiny', 'short', 'medium', 'long'];
-				for (var i = 0; i < 4; i++) {
-					if (element.classList.contains(knownClasses[i])) {
+				for (var j = 0; j < 4; j++) {
+					if (element.classList.contains(knownClasses[j])) {
 						hasClass = true;
 					}
 				}
@@ -232,11 +232,16 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 			if (data.isDateTime) {
 				_dateHour.value = date.getHours();
 				_dateMinute.value = date.getMinutes();
+				
+				_datePicker.classList.add('datePickerTime');
+			}
+			else {
+				_datePicker.classList.remove('datePickerTime');
 			}
 			
 			this._renderPicker(date.getDate(), date.getMonth(), date.getFullYear());
 			
-			UiAlignment.set(_datePicker, _input, { pointer: true });
+			UiAlignment.set(_datePicker, _input);
 		},
 		
 		/**
@@ -260,9 +265,9 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 		/**
 		 * Renders the full picker on init.
 		 * 
-		 * @param	{integer}	day
-		 * @param	{integer}	month
-		 * @param	{integer}	year
+		 * @param	{int}           day
+		 * @param	{int}           month
+		 * @param	{int}           year
 		 */
 		_renderPicker: function(day, month, year) {
 			this._renderGrid(day, month, year);
@@ -283,12 +288,12 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 		/**
 		 * Updates the date grid.
 		 * 
-		 * @param	{integer}	day
-		 * @param	{integer}	month
-		 * @param	{integer}	year
+		 * @param	{int}           day
+		 * @param	{int}           month
+		 * @param	{int}           year
 		 */
 		_renderGrid: function(day, month, year) {
-			var cell, hasDay = (day !== undefined), hasMonth = (month !== undefined);
+			var cell, hasDay = (day !== undefined), hasMonth = (month !== undefined), i;
 			
 			day = ~~day || ~~elData(_dateGrid, 'day');
 			month = ~~month;
@@ -336,7 +341,7 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 				}
 				
 				var selectable;
-				for (var i = 0; i < 35; i++) {
+				for (i = 0; i < 35; i++) {
 					cell = _dateCells[i];
 					
 					cell.textContent = date.getDate();
@@ -368,7 +373,7 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 				}
 				
 				if (rebuildMonths) {
-					for (var i = 0; i < 12; i++) {
+					for (i = 0; i < 12; i++) {
 						var currentMonth = _dateMonth.children[i];
 						
 						currentMonth.disabled = (year === _minDate.getFullYear() && currentMonth.value < _minDate.getMonth()) || (year === _maxDate.getFullYear() && currentMonth.value > _maxDate.getMonth());
@@ -388,7 +393,7 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 			
 			// update active day
 			if (day) {
-				for (var i = 0; i < 35; i++) {
+				for (i = 0; i < 35; i++) {
 					cell = _dateCells[i];
 					
 					cell.classList[(!cell.classList.contains('otherMonth') && ~~cell.textContent === day) ? 'add' : 'remove']('active');
@@ -448,19 +453,15 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 			
 			_datePicker = elCreate('div');
 			_datePicker.className = 'datePicker';
-			_datePicker.addEventListener('click', function(event) { event.stopPropagation(); });
-			
-			var pointer = elCreate('span');
-			pointer.className = 'elementPointer';
-			pointer.innerHTML = '<span></span>';
-			_datePicker.appendChild(pointer);
+			_datePicker.addEventListener(WCF_CLICK_EVENT, function(event) { event.stopPropagation(); });
 			
 			var header = elCreate('header');
 			_datePicker.appendChild(header);
 			
 			_dateMonthPrevious = elCreate('a');
-			_dateMonthPrevious.className = 'icon icon16 fa-arrow-left previous';
-			_dateMonthPrevious.addEventListener('click', this.previousMonth.bind(this));
+			_dateMonthPrevious.className = 'previous';
+			_dateMonthPrevious.innerHTML = '<span class="icon icon16 fa-arrow-left"></span>';
+			_dateMonthPrevious.addEventListener(WCF_CLICK_EVENT, this.previousMonth.bind(this));
 			header.appendChild(_dateMonthPrevious);
 			
 			var monthYearContainer = elCreate('span');
@@ -475,8 +476,8 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 			selectWrapper.appendChild(_dateMonth);
 			monthYearContainer.appendChild(selectWrapper);
 			
-			var months = '', monthNames = Language.get('__monthsShort');
-			for (var i = 0; i < 12; i++) {
+			var i, months = '', monthNames = Language.get('__monthsShort');
+			for (i = 0; i < 12; i++) {
 				months += '<option value="' + i + '">' + monthNames[i] + '</option>';
 			}
 			_dateMonth.innerHTML = months;
@@ -491,8 +492,9 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 			monthYearContainer.appendChild(selectWrapper);
 			
 			_dateMonthNext = elCreate('a');
-			_dateMonthNext.className = 'icon icon16 fa-arrow-right next';
-			_dateMonthNext.addEventListener('click', this.nextMonth.bind(this));
+			_dateMonthNext.className = 'next';
+			_dateMonthNext.innerHTML = '<span class="icon icon16 fa-arrow-right"></span>';
+			_dateMonthNext.addEventListener(WCF_CLICK_EVENT, this.nextMonth.bind(this));
 			header.appendChild(_dateMonthNext);
 			
 			_dateGrid = elCreate('ul');
@@ -503,7 +505,7 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 			_dateGrid.appendChild(item);
 			
 			var span, weekdays = Language.get('__daysShort');
-			for (var i = 0; i < 7; i++) {
+			for (i = 0; i < 7; i++) {
 				var day = i + _firstDayOfWeek;
 				if (day > 6) day -= 7;
 				
@@ -514,13 +516,13 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 			
 			// create date grid
 			var callbackClick = this._click.bind(this), cell, row;
-			for (var i = 0; i < 5; i++) {
+			for (i = 0; i < 5; i++) {
 				row = elCreate('li');
 				_dateGrid.appendChild(row);
 				
 				for (var j = 0; j < 7; j++) {
 					cell = elCreate('a');
-					cell.addEventListener('click', callbackClick);
+					cell.addEventListener(WCF_CLICK_EVENT, callbackClick);
 					_dateCells.push(cell);
 					
 					row.appendChild(cell);
@@ -537,7 +539,7 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 			var tmp = '';
 			var date = new Date(2000, 0, 1);
 			var timeFormat = Language.get('wcf.date.timeFormat').replace(/:/, '').replace(/[isu]/g, '');
-			for (var i = 0; i < 24; i++) {
+			for (i = 0; i < 24; i++) {
 				date.setHours(i);
 				tmp += '<option value="' + i + '">' + DateUtil.format(date, timeFormat) + "</option>";
 			}
@@ -551,8 +553,8 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 			_dateMinute.className = 'minute';
 			_dateMinute.addEventListener('change', this._formatValue.bind(this));
 			
-			var tmp = '';
-			for (var i = 0; i < 60; i++) {
+			tmp = '';
+			for (i = 0; i < 60; i++) {
 				tmp += '<option value="' + i + '">' + (i < 10 ? '0' + i.toString() : i) + '</option>';
 			}
 			_dateMinute.innerHTML = tmp;
@@ -646,8 +648,8 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 		/**
 		 * Sets the date of given element.
 		 * 
-		 * @param	{(Element|string)}	element		input element or id
-		 * @param	{Date}			date		Date object
+		 * @param	{(HTMLInputElement|string)}	element		input element or id
+		 * @param	{Date}			        date		Date object
 		 */
 		setDate: function(element, date) {
 			element = this._getElement(element);
@@ -662,7 +664,7 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 		/**
 		 * Clears the date value of given element.
 		 * 
-		 * @param	{(Element|string)}	element		input element or id
+		 * @param	{(HTMLInputElement|string)}	element		input element or id
 		 */
 		clear: function(element) {
 			element = this._getElement(element);
@@ -678,7 +680,7 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 		/**
 		 * Reverts the date picker into a normal input field.
 		 * 
-		 * @param	{(Element|string)}	element		input element or id
+		 * @param	{(HTMLInputElement|string)}	element		input element or id
 		 */
 		destroy: function(element) {
 			element = this._getElement(element);
@@ -692,7 +694,7 @@ define(['DateUtil', 'Language', 'ObjectMap', 'Dom/ChangeListener', 'Ui/Alignment
 			element.value = data.shadow.value;
 			
 			element.removeAttribute('data-value');
-			element.removeEventListener('click', _callbackOpen);
+			element.removeEventListener(WCF_CLICK_EVENT, _callbackOpen);
 			elRemove(data.shadow);
 			
 			element.classList.remove('inputDatePicker');

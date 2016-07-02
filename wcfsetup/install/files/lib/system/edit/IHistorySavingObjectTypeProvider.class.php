@@ -7,11 +7,9 @@ use wcf\system\exception\PermissionDeniedException;
  * Represents an object which edit history can be saved.
  * 
  * @author	Tim Duesterhus
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.edit
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Edit
  */
 interface IHistorySavingObjectTypeProvider extends IObjectTypeProvider {
 	/**
@@ -28,7 +26,7 @@ interface IHistorySavingObjectTypeProvider extends IObjectTypeProvider {
 	 * Returns the identifier of the appropriate page menu item.
 	 * 
 	 * @return	string
-	 * @deprecated  since 2.2
+	 * @deprecated  3.0
 	 */
 	public function getActivePageMenuItem();
 }

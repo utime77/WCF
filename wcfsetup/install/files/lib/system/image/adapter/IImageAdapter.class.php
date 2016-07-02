@@ -5,11 +5,9 @@ namespace wcf\system\image\adapter;
  * Basic interface for all image adapters.
  * 
  * @author	Alexander Ebert
- * @copyright	2001-2015 WoltLab GmbH
+ * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.image.adapter
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Image\Adapter
  */
 interface IImageAdapter {
 	/**

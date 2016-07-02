@@ -11,9 +11,7 @@ use wcf\system\acl\ACLHandler;
  * @author	Alexander Ebert
  * @copyright	2001-2016 WoltLab GmbH
  * @license	GNU Lesser General Public License <http://opensource.org/licenses/lgpl-license.php>
- * @package	com.woltlab.wcf
- * @subpackage	system.cache.builder
- * @category	Community Framework
+ * @package	WoltLabSuite\Core\System\Cache\Builder
  */
 class LabelCacheBuilder extends AbstractCacheBuilder {
 	/**
@@ -38,9 +36,11 @@ class LabelCacheBuilder extends AbstractCacheBuilder {
 		);
 		
 		// store options
+		/** @noinspection PhpUndefinedMethodInspection */
 		$data['options'] = $permissions['options']->getObjects();
 		
 		// assign permissions for each label group
+		/** @var ViewableLabelGroup $group */
 		foreach ($data['groups'] as $groupID => $group) {
 			// group permissions
 			if (isset($permissions['group'][$groupID])) {
@@ -58,6 +58,7 @@ class LabelCacheBuilder extends AbstractCacheBuilder {
 			$labelList = new LabelList();
 			$labelList->readObjects();
 			foreach ($labelList as $label) {
+				/** @noinspection PhpUndefinedMethodInspection */
 				$data['groups'][$label->groupID]->addLabel($label);
 			}
 		}
