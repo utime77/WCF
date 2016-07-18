@@ -77,7 +77,9 @@
 		<item name="wcf.acp.article.enableComments"><![CDATA[Kommentare aktivieren]]></item>
 		<item name="wcf.acp.article.i18n"><![CDATA[Mehrsprachigkeit]]></item>
 		<item name="wcf.acp.article.i18n.none"><![CDATA[Einsprachiger Artikel]]></item>
+        	<item name="wcf.acp.article.i18n.none.description"><![CDATA[Der Inhalt des Artikels soll nur in einer Sprache verfasst werden.]]></item>
 		<item name="wcf.acp.article.i18n.i18n"><![CDATA[Mehrsprachiger Artikel]]></item>
+        	<item name="wcf.acp.article.i18n.i18n.description"><![CDATA[Artikel-Bild, Titel und Inhalte werden individuell pro Sprache festgelegt.]]></item>
 		<item name="wcf.acp.article.image"><![CDATA[Artikel-Bild]]></item>
 		<item name="wcf.acp.article.publicationDate"><![CDATA[Veröffentlichungsdatum]]></item>
 		<item name="wcf.acp.article.publicationStatus"><![CDATA[Status]]></item>
@@ -326,6 +328,15 @@
 		<item name="wcf.acp.group.list"><![CDATA[Benutzergruppen]]></item>
 		<item name="wcf.acp.group.members"><![CDATA[Mitglieder]]></item>
 		<item name="wcf.acp.group.option.admin.content.cms.canManageMenu"><![CDATA[Kann Seitenmenü verwalten]]></item>
+        
+        	<!-- TODO -->
+        	<item name="wcf.acp.group.option.admin.content.cms.canManagePage"><![CDATA[Kann Seiten verwalten]]></item>
+        	<item name="wcf.acp.group.option.admin.content.cms.canManageBox"><![CDATA[Kann Boxen verwalten]]></item>
+        	<item name="wcf.acp.group.option.admin.content.cms.canManageMedia"><![CDATA[Kann Medien verwalten]]></item>
+        	<item name="wcf.acp.group.option.admin.content.cms.canUseMedia"><![CDATA[Kann Medien verwenden]]></item>
+        	<item name="wcf.acp.group.option.admin.content.article.canManageArticle"><![CDATA[Kann Artikel schreiben]]></item>
+        	<item name="wcf.acp.group.option.admin.content.article.canManageCategory"><![CDATA[Kann Kategorien verwalten]]></item>
+        
 		<item name="wcf.acp.group.option.admin.general.canUseAcp"><![CDATA[Kann Administrationsoberfläche betreten]]></item>
 		<item name="wcf.acp.group.option.admin.general.canUseAcp.description"><![CDATA[Mitglieder dieser Benutzergruppe können die Administrationsoberfläche betreten und dort abhängig von den weiteren Zugriffsrechten verschiedene Aktionen durchführen. Diese Option muss aktiviert sein, wenn diesen Benutzern andere administrative Funktionen erlaubt werden sollen.]]></item>
 		<item name="wcf.acp.group.option.admin.general.canViewPrivateUserOptions"><![CDATA[Kann versteckte Profilinformationen sehen]]></item>
@@ -364,6 +375,7 @@
 		<item name="wcf.acp.group.option.category.admin.user.user"><![CDATA[Benutzer]]></item>
 		<item name="wcf.acp.group.option.category.mod"><![CDATA[Moderative Rechte]]></item>
 		<item name="wcf.acp.group.option.category.user"><![CDATA[Allgemeine Rechte]]></item>
+        	<item name="wcf.acp.group.option.category.user.article"><![CDATA[Artikel]]></item>
 		<item name="wcf.acp.group.option.category.user.message"><![CDATA[Nachrichten]]></item>
 		<item name="wcf.acp.group.option.category.user.message.comment"><![CDATA[Kommentare]]></item>
 		<item name="wcf.acp.group.option.error.cannotDropPrivileges"><![CDATA[Es muss immer mindestens eine Benutzergruppe mit vollen Rechen geben, es ist daher nicht möglich diese Berechtigung einzuschränken.]]></item>
@@ -383,6 +395,10 @@
 		<item name="wcf.acp.group.option.category.admin.user.option"><![CDATA[Benutzerprofilfelder]]></item>
 		<item name="wcf.acp.group.option.admin.user.canManageUserOption"><![CDATA[Kann Benutzerprofilfelder verwalten]]></item>
 		<item name="wcf.acp.group.option.category.user.message.attachment"><![CDATA[Dateianhänge]]></item>
+        	<item name="wcf.acp.group.option.user.article.canReadArticle"><![CDATA[Kann Artikel lesen]]></item>
+        	<item name="wcf.acp.group.option.user.article.canAddComment"><![CDATA[Kann Kommentare erstellen]]></item>
+        	<item name="wcf.acp.group.option.user.article.canEditComment"><![CDATA[Kann eigene Kommentare bearbeiten]]></item>
+        	<item name="wcf.acp.group.option.user.article.canDeleteComment"><![CDATA[Kann eigene Kommentare löschen]]></item>
 		<item name="wcf.acp.group.option.user.attachment.maxSize"><![CDATA[Maximale Dateianhangsgröße]]></item>
 		<item name="wcf.acp.group.option.user.attachment.allowedExtensions"><![CDATA[Erlaubte Dateiendungen]]></item>
 		<item name="wcf.acp.group.option.user.attachment.allowedExtensions.description"><![CDATA[Eine Dateiendung pro Zeile]]></item>
@@ -404,10 +420,20 @@
 		<item name="wcf.acp.group.option.admin.user.canEditActivityPoints"><![CDATA[Kann Aktivitätspunkte bearbeiten]]></item>
 		<item name="wcf.acp.group.option.admin.user.canViewInvisible"><![CDATA[Kann unsichtbare Benutzer sehen]]></item>
 		<item name="wcf.acp.group.option.admin.user.canViewIpAddress"><![CDATA[Kann die IP-Adressen der Benutzer sehen]]></item>
+		
+		<!-- TODO -->
+        	<item name="wcf.acp.group.option.category.user.pageComment"><![CDATA[Seiten]]></item>
+		
 		<item name="wcf.acp.group.option.category.user.profile"><![CDATA[Benutzerprofile]]></item>
 		<item name="wcf.acp.group.option.category.user.profile.avatar"><![CDATA[Avatare]]></item>
 		<item name="wcf.acp.group.option.category.admin.user.rank"><![CDATA[Benutzerränge]]></item>
 		<item name="wcf.acp.group.option.category.user.signature"><![CDATA[Signaturen]]></item>
+		
+		<!-- TODO -->
+        	<item name="wcf.acp.group.option.user.pageComment.canAddComment"><![CDATA[Kann Kommentare erstellen]]></item>
+        	<item name="wcf.acp.group.option.user.pageComment.canEditComment"><![CDATA[Kann eigene Kommentare bearbeiten]]></item>
+        	<item name="wcf.acp.group.option.user.pageComment.canDeleteComment"><![CDATA[Kann eigene Kommentare löschen]]></item>
+        	
 		<item name="wcf.acp.group.option.user.profile.avatar.allowedFileExtensions"><![CDATA[Erlaubte Dateiendungen]]></item>
 		<item name="wcf.acp.group.option.user.profile.avatar.canSeeAvatars"><![CDATA[Kann Avatare anderer Benutzer sehen]]></item>
 		<item name="wcf.acp.group.option.user.profile.avatar.canUploadAvatar"><![CDATA[Kann eigenen Avatar hochladen]]></item>
@@ -444,9 +470,23 @@
 		<item name="wcf.acp.group.option.user.profileComment.canEditComment"><![CDATA[Kann eigene Pinnwand-Kommentare bearbeiten]]></item>
 		<item name="wcf.acp.group.option.user.profileComment.canDeleteComment"><![CDATA[Kann eigene Pinnwand-Kommentare löschen]]></item>
 		<item name="wcf.acp.group.option.user.profileComment.canDeleteCommentInOwnProfile"><![CDATA[Kann Kommentare an der eigenen Pinnwand löschen]]></item>
+		
+		<!-- TODO -->
+        	<item name="wcf.acp.group.option.mod.article.canEditComment"><![CDATA[Kann Kommentare bearbeiten]]></item>
+		<item name="wcf.acp.group.option.mod.article.canDeleteComment"><![CDATA[Kann Kommentare löschen]]></item>
+		<item name="wcf.acp.group.option.mod.article.canModerateComment"><![CDATA[Kann Kommentare moderieren]]></item>
+        	<item name="wcf.acp.group.option.mod.pageComment.canEditComment"><![CDATA[Kann Kommentare bearbeiten]]></item>
+		<item name="wcf.acp.group.option.mod.pageComment.canDeleteComment"><![CDATA[Kann Kommentare löschen]]></item>
+		<item name="wcf.acp.group.option.mod.pageComment.canModerateComment"><![CDATA[Kann Kommentare moderieren]]></item>
+		
 		<item name="wcf.acp.group.option.mod.profileComment.canEditComment"><![CDATA[Kann Pinnwand-Kommentare bearbeiten]]></item>
 		<item name="wcf.acp.group.option.mod.profileComment.canDeleteComment"><![CDATA[Kann Pinnwand-Kommentare löschen]]></item>
 		<item name="wcf.acp.group.option.mod.profileComment.canModerateComment"><![CDATA[Kann Pinnwand-Kommentare moderieren]]></item>
+		
+		<!-- TODO -->
+        	<item name="wcf.acp.group.option.category.mod.article"><![CDATA[Artikel]]></item>
+        	<item name="wcf.acp.group.option.category.mod.pageComment"><![CDATA[Seiten-Kommentare]]></item>
+        	
 		<item name="wcf.acp.group.option.category.mod.profileComment"><![CDATA[Benutzerprofil-Pinnwand]]></item>
 		<item name="wcf.acp.group.option.admin.content.label.canManageLabel"><![CDATA[Kann Labels verwalten]]></item>
 		<item name="wcf.acp.group.option.category.admin.content.label"><![CDATA[Labels]]></item>
@@ -602,9 +642,15 @@
 	</category>
 	
 	<category name="wcf.acp.media">
+        	<item name="wcf.acp.media.add"><![CDATA[Datei hinzufügen]]></item>
 		<item name="wcf.acp.media.chooseImage"><![CDATA[Bild auswählen]]></item>
+		<item name="wcf.acp.media.edit"><![CDATA[Datei bearbeiten]]></item>
+        	<item name="wcf.acp.media.list"><![CDATA[Medien-Verwaltung]]></item>
+        	
+        	<!-- TODO: maybe more infos about media in stats: -->
+        	<item name="wcf.acp.media.stats"><![CDATA[<ul class="inlineList dotSeparated"><li>{#$stats.count} {if $stats.count == 1}Datei{else}Dateien{/if}</li><li>{@$stats.size|filesize}</li></ul>]]></item>
 	</category>
-		
+	
 	<category name="wcf.acp.menu">
 		<item name="wcf.acp.menu.link.management"><![CDATA[Verwaltung]]></item>
 		<item name="wcf.acp.menu.link.maintenance"><![CDATA[Wartung]]></item>
@@ -630,6 +676,7 @@
 		<item name="wcf.acp.menu.link.group.mail"><![CDATA[E-Mail an Gruppenmitglieder]]></item>
 		<item name="wcf.acp.menu.link.group.list"><![CDATA[Benutzergruppen]]></item>
 		<item name="wcf.acp.menu.link.customization"><![CDATA[Anpassung]]></item>
+		<item name="wcf.acp.menu.link.media.list"><![CDATA[Medien]]></item>
 		<item name="wcf.acp.menu.link.option"><![CDATA[Optionen]]></item>
 		<item name="wcf.acp.menu.link.package"><![CDATA[Pakete]]></item>
 		<item name="wcf.acp.menu.link.package.install"><![CDATA[Paket installieren]]></item>
@@ -779,6 +826,28 @@
 		<item name="wcf.acp.option.cache_source_type.disk"><![CDATA[Dateisystem (Standard)]]></item>
 		<item name="wcf.acp.option.cache_source_type.memcached"><![CDATA[Memcached]]></item>
 		<item name="wcf.acp.option.cache_source_type.redis"><![CDATA[Redis]]></item>
+        
+        	<!-- TODO: only a draft -->
+        	<item name="wcf.acp.option.category.cms"><![CDATA[Medien und Artikelsystem]]></item>
+        	<item name="wcf.acp.option.category.cms.article"><![CDATA[Artikelsystem]]></item>
+        	<item name="wcf.acp.option.article_show_about_author"><![CDATA["Über den Autor" unter Artikeln anzeigen]]></item>
+        	<item name="wcf.acp.option.article_enable_comments_default_value"><![CDATA[Kommentare aktivieren [Vorgabewert]]]></item>
+        	<item name="wcf.acp.option.article_enable_like"><![CDATA[Like-Funktion aktivieren [Vorgabewert]]]></item>
+        	<item name="wcf.acp.option.articles_per_page"><![CDATA[Artikel pro Seite]]></item>
+        	<item name="wcf.acp.option.article_related_articles"><![CDATA[Anzahl ähnlicher Artikel]]></item>
+        	<item name="wcf.acp.option.article_related_articles_match_threshold"><![CDATA[Mindest-Übereinstimmung ähnlicher Artikel]]></item>
+        	<item name="wcf.acp.option.category.cms.media"><![CDATA[Medien-Verwaltung]]></item>
+        	<item name="wcf.acp.option.category.cms.media.thumbnail"><![CDATA[Artikel-Bilder]]></item>
+        	<item name="wcf.acp.option.media_small_thumbnail_width"><![CDATA[Breite der kleinen Artikel-Bilder]]></item>
+        	<item name="wcf.acp.option.media_small_thumbnail_height"><![CDATA[Höhe der kleinen Artikel-Bilder]]></item>
+        	<item name="wcf.acp.option.media_small_thumbnail_retain_dimensions"><![CDATA[]]></item>
+        	<item name="wcf.acp.option.media_medium_thumbnail_width"><![CDATA[Breite der mittleren Artikel-Bilder]]></item>
+        	<item name="wcf.acp.option.media_medium_thumbnail_height"><![CDATA[Höhe der mittleren Artikel-Bilder]]></item>
+        	<item name="wcf.acp.option.media_medium_thumbnail_retain_dimensions"><![CDATA[]]></item>
+        	<item name="wcf.acp.option.media_large_thumbnail_width"><![CDATA[Breite der großen Artikel-Bilder]]></item>
+        	<item name="wcf.acp.option.media_large_thumbnail_height"><![CDATA[Höhe der großen Artikel-Bilder]]></item>
+        	<item name="wcf.acp.option.media_large_thumbnail_retain_dimensions"><![CDATA[]]></item>
+
 		<item name="wcf.acp.option.category.general"><![CDATA[Allgemein]]></item>
 		<item name="wcf.acp.option.category.general.cache"><![CDATA[Cache]]></item>
 		<item name="wcf.acp.option.category.general.cache.general"><![CDATA[Allgemein]]></item>
@@ -874,6 +943,7 @@
 		<item name="wcf.acp.option.mail_use_f_param.description"><![CDATA[Der „-f“-Parameter sorgt bei der PHP-Versandmethode dafür, dass der korrekte Absender gesetzt wird. Diese Einstellung wird möglicherweise nicht von jedem Server unterstützt. Probieren Sie in diesem Falle die Option zu deaktivieren.]]></item>
 		<item name="wcf.acp.option.meta_description"><![CDATA[Meta Description]]></item>
 		<item name="wcf.acp.option.meta_keywords"><![CDATA[Meta Keywords]]></item>
+        	<item name="wcf.acp.option.module_article"><![CDATA[Artikel-System]]></item>
 		<item name="wcf.acp.option.module_master_password"><![CDATA[Hauptkennwort aktivieren]]></item>
 		<item name="wcf.acp.option.module_master_password.description"><![CDATA[Aktiviert die zusätzliche Eingabe eines Kennworts beim Aufruf von sicherheitskritischen Bereichen.]]></item>
 		<item name="wcf.acp.option.page_description"><![CDATA[Seitenbeschreibung]]></item>
@@ -941,6 +1011,7 @@
 		<item name="wcf.acp.option.pre_parse_default_value"><![CDATA[URLs automatisch erkennen [Vorgabewert]]]></item>
 		<item name="wcf.acp.option.show_signature_default_value"><![CDATA[Signatur anzeigen [Vorgabewert]]]></item>
 		<item name="wcf.acp.option.enable_share_buttons"><![CDATA[Buttons zum Teilen von Inhalten anzeigen]]></item>
+        	<item name="wcf.acp.option.share_buttons_providers"><![CDATA[Erlaubte Anbieter]]></item>
 		<item name="wcf.acp.option.category.message.general.edit"><![CDATA[Bearbeitungen]]></item>
 		<item name="wcf.acp.option.module_edit_history"><![CDATA[Bearbeitungsverlauf aktivieren]]></item>
 		<item name="wcf.acp.option.module_edit_history.description"><![CDATA[Speichert die alten Versionen von Benutzerinhalten.]]></item>
@@ -1029,6 +1100,12 @@
 		<item name="wcf.acp.option.user_cleanup_activity_event_lifetime.description"><![CDATA[Zeitraum nach dem letzte Aktivitäten automatisch verworfen werden.]]></item>
 		<item name="wcf.acp.option.user_cleanup_profile_visitor_lifetime"><![CDATA[Profil-Besucher]]></item>
 		<item name="wcf.acp.option.user_cleanup_profile_visitor_lifetime.description"><![CDATA[Zeitraum nach dem Profil-Besucher automatisch verworfen werden.]]></item>
+        	
+        	<!-- TODO -->
+        	<item name="wcf.acp.option.category.message.general.image"><![CDATA[]]></item>
+        	<item name="wcf.acp.option.module_image_proxy"><![CDATA[]]></item>
+        	<item name="wcf.acp.option.image_proxy_expiration"><![CDATA[]]></item>
+        
 		<item name="wcf.acp.option.category.message.general.likes"><![CDATA[Like-System]]></item>
 		<item name="wcf.acp.option.module_like"><![CDATA[Like-System]]></item>
 		<item name="wcf.acp.option.like_allow_for_own_content"><![CDATA[Benutzer können eigene Inhalte liken]]></item>
@@ -1144,6 +1221,7 @@ GmbH=Gesellschaft mit beschränkter Haftung]]></item>
 		<item name="wcf.acp.option.google_maps_api_key.description"><![CDATA[Google stellt <a href="{@$__wcf->getPath()}acp/dereferrer.php?url={'https://developers.google.com/maps/documentation/javascript/get-api-key'|rawurlencode}" class="externalURL">hier</a> eine ausführliche Anleitung bereit, wie Sie einen API-Schlüssel erstellen können.]]></item>
 		<item name="wcf.acp.option.suffix.days"><![CDATA[Tage]]></item>
 		<item name="wcf.acp.option.suffix.minutes"><![CDATA[Minuten]]></item>
+        	<item name="wcf.acp.option.suffix.percent"><![CDATA[%]]></item>
 		<item name="wcf.acp.option.suffix.pixel"><![CDATA[Pixel]]></item>
 		<item name="wcf.acp.option.suffix.seconds"><![CDATA[Sekunden]]></item>
 		<item name="wcf.acp.option.suffix.years"><![CDATA[Jahre]]></item>
@@ -2011,6 +2089,7 @@ Fehler sind beispielsweise:
 		<item name="wcf.clipboard.item.com.woltlab.wcf.user.sendNewPassword"><![CDATA[Neues Kennwort senden ({#$count})]]></item>
 		<item name="wcf.clipboard.item.com.woltlab.wcf.user.sendNewPassword.confirmMessage"><![CDATA[Wollen Sie wirklich {if $count == 1}einem{else}{#$count}{/if} Benutzer ein neues Kennwort zusenden?]]></item>
 		
+        <item name="wcf.clipboard.label.com.woltlab.wcf.media.marked"><![CDATA[{if $count == 1}Eine Datei{else}{#$count} Dateien{/if}]]></item>
 		<item name="wcf.clipboard.label.com.woltlab.wcf.tag.marked"><![CDATA[{if $count == 1}Ein Tag{else}{#$count} Tags{/if}]]></item>
 		<item name="wcf.clipboard.label.com.woltlab.wcf.user.marked"><![CDATA[{if $count == 1}Ein{else}{#$count}{/if} Benutzer]]></item>
 	</category>
@@ -2490,6 +2569,23 @@ Fehler sind beispielsweise:
 		<item name="wcf.map.noLocationSuggestions"><![CDATA[Für den aktuellen Kartenausschnitt liegen keine Ortsvorschläge vor.]]></item>
 		<item name="wcf.map.showLocationSuggestions"><![CDATA[Orte vorschlagen]]></item>
 		<item name="wcf.map.useLocationSuggestion"><![CDATA[Ort verwenden]]></item>
+	</category>
+    
+    	<category name="wcf.media">
+        	<item name="wcf.media.altText"><![CDATA[Alternativer Text]]></item>
+        	<item name="wcf.media.caption"><![CDATA[Bildunterschrift]]></item>
+        	<item name="wcf.media.file"><![CDATA[Datei]]></item>
+        	<item name="wcf.media.filename"><![CDATA[Dateiname]]></item>
+        	<item name="wcf.media.filesize"><![CDATA[Dateigröße]]></item>
+        	<item name="wcf.media.isMultilingual"><![CDATA[Mehrsprachige Datei]]></item>
+        	<item name="wcf.media.languageID"><![CDATA[Sprache]]></item>
+        	<item name="wcf.media.search.filetype"><![CDATA[Dateityp]]></item>
+        	<item name="wcf.media.search.filetype.all"><![CDATA[Alle]]></item>
+		<item name="wcf.media.search.filetype.image"><![CDATA[Bilder]]></item>
+        	<item name="wcf.media.search.filetype.other"><![CDATA[Andere]]></item>
+        	<item name="wcf.media.search.filetype.pdf"><![CDATA[PDF]]></item>
+        	<item name="wcf.media.search.filetype.text"><![CDATA[Text]]></item>
+        	<item name="wcf.media.uploadTime"><![CDATA[Datum]]></item>
 	</category>
 	
 	<category name="wcf.message">
