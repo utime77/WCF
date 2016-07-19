@@ -77,7 +77,9 @@
 		<item name="wcf.acp.article.enableComments"><![CDATA[Enable comments]]></item>
 		<item name="wcf.acp.article.i18n"><![CDATA[Multilingualism]]></item>
 		<item name="wcf.acp.article.i18n.none"><![CDATA[Monolingual article]]></item>
+        	<item name="wcf.acp.article.i18n.none.description"><![CDATA[The content of the article is not tied to a specific language or there should be no translation.]]></item>
 		<item name="wcf.acp.article.i18n.i18n"><![CDATA[Multilingual article]]></item>
+        	<item name="wcf.acp.article.i18n.i18n.description"><![CDATA[Image, title and content will be provided for each language separately.]]></item>
 		<item name="wcf.acp.article.image"><![CDATA[Article Image]]></item>
 		<item name="wcf.acp.article.publicationDate"><![CDATA[Publication Date]]></item>
 		<item name="wcf.acp.article.publicationStatus"><![CDATA[Status]]></item>
@@ -325,6 +327,15 @@ Examples for medium ID detection:
 		<item name="wcf.acp.group.list"><![CDATA[User Groups]]></item>
 		<item name="wcf.acp.group.members"><![CDATA[Members]]></item>
 		<item name="wcf.acp.group.option.admin.content.cms.canManageMenu"><![CDATA[Can manage page menu]]></item>
+        
+        	<!-- TODO -->
+        	<item name="wcf.acp.group.option.admin.content.cms.canManagePage"><![CDATA[Can manage pages]]></item>
+        	<item name="wcf.acp.group.option.admin.content.cms.canManageBox"><![CDATA[Can manage boxes]]></item>
+        	<item name="wcf.acp.group.option.admin.content.cms.canManageMedia"><![CDATA[Can manage media]]></item>
+        	<item name="wcf.acp.group.option.admin.content.cms.canUseMedia"><![CDATA[Can use media]]></item>
+        	<item name="wcf.acp.group.option.admin.content.article.canManageArticle"><![CDATA[Can write articles]]></item>
+        	<item name="wcf.acp.group.option.admin.content.article.canManageCategory"><![CDATA[Can manage categories]]></item>
+
 		<item name="wcf.acp.group.option.admin.general.canUseAcp"><![CDATA[Can enter Administration Control Panel]]></item>
 		<item name="wcf.acp.group.option.admin.general.canUseAcp.description"><![CDATA[Users of this group may access the Administration Control Panel based upon their granted permissions. This option must be enabled if you wish to grant access to any administrative option.]]></item>
 		<item name="wcf.acp.group.option.admin.general.canViewPrivateUserOptions"><![CDATA[Can view private user options]]></item>
@@ -363,6 +374,7 @@ Examples for medium ID detection:
 		<item name="wcf.acp.group.option.category.admin.user.user"><![CDATA[Users]]></item>
 		<item name="wcf.acp.group.option.category.mod"><![CDATA[Moderator Permissions]]></item>
 		<item name="wcf.acp.group.option.category.user"><![CDATA[General Permissions]]></item>
+        	<item name="wcf.acp.group.option.category.user.article"><![CDATA[Articles]]></item>
 		<item name="wcf.acp.group.option.category.user.message"><![CDATA[Messages]]></item>
 		<item name="wcf.acp.group.option.category.user.message.comment"><![CDATA[Comments]]></item>
 		<item name="wcf.acp.group.option.error.cannotDropPrivileges"><![CDATA[There must be at least one user group with full access, therefore it is not possible to drop these privileges.]]></item>
@@ -382,6 +394,10 @@ Examples for medium ID detection:
 		<item name="wcf.acp.group.option.category.admin.user.option"><![CDATA[User Profile Fields]]></item>
 		<item name="wcf.acp.group.option.admin.user.canManageUserOption"><![CDATA[Can manage user profile fields]]></item>
 		<item name="wcf.acp.group.option.category.user.message.attachment"><![CDATA[Attachments]]></item>
+        	<item name="wcf.acp.group.option.user.article.canReadArticle"><![CDATA[Can read articles]]></item>
+        	<item name="wcf.acp.group.option.user.article.canAddComment"><![CDATA[Can create comments]]></item>
+        	<item name="wcf.acp.group.option.user.article.canEditComment"><![CDATA[Can edit own comments]]></item>
+        	<item name="wcf.acp.group.option.user.article.canDeleteComment"><![CDATA[Can delete own comments]]></item>
 		<item name="wcf.acp.group.option.user.attachment.maxSize"><![CDATA[Maximum Attachment File Size]]></item>
 		<item name="wcf.acp.group.option.user.attachment.allowedExtensions"><![CDATA[Allowed Attachment File Extensions]]></item>
 		<item name="wcf.acp.group.option.user.attachment.allowedExtensions.description"><![CDATA[Enter one extension per line.]]></item>
@@ -404,10 +420,20 @@ Examples for medium ID detection:
 		<item name="wcf.acp.group.option.admin.user.canEditActivityPoints"><![CDATA[Can manage activity points]]></item>
 		<item name="wcf.acp.group.option.admin.user.canViewInvisible"><![CDATA[Can see invisible users]]></item>
 		<item name="wcf.acp.group.option.admin.user.canViewIpAddress"><![CDATA[Can see IP addresses]]></item>
+        
+        	<!-- TODO -->
+        	<item name="wcf.acp.group.option.category.user.pageComment"><![CDATA[Pages]]></item>
+
 		<item name="wcf.acp.group.option.category.user.profile"><![CDATA[User Profiles]]></item>
 		<item name="wcf.acp.group.option.category.user.profile.avatar"><![CDATA[Avatars]]></item>
 		<item name="wcf.acp.group.option.category.admin.user.rank"><![CDATA[User Ranks]]></item>
 		<item name="wcf.acp.group.option.category.user.signature"><![CDATA[Signatures]]></item>
+        
+        	<!-- TODO -->
+        	<item name="wcf.acp.group.option.user.pageComment.canAddComment"><![CDATA[Can create comments]]></item>
+        	<item name="wcf.acp.group.option.user.pageComment.canEditComment"><![CDATA[Can edit own comments]]></item>
+        	<item name="wcf.acp.group.option.user.pageComment.canDeleteComment"><![CDATA[Can delete own comments]]></item>
+
 		<item name="wcf.acp.group.option.user.profile.avatar.allowedFileExtensions"><![CDATA[Allowed Image Extensions]]></item>
 		<item name="wcf.acp.group.option.user.profile.avatar.canSeeAvatars"><![CDATA[Can see avatars of other users]]></item>
 		<item name="wcf.acp.group.option.user.profile.avatar.canUploadAvatar"><![CDATA[Can upload their own avatar]]></item>
@@ -444,9 +470,23 @@ Examples for medium ID detection:
 		<item name="wcf.acp.group.option.user.profileComment.canEditComment"><![CDATA[Can edit their own comments]]></item>
 		<item name="wcf.acp.group.option.user.profileComment.canDeleteComment"><![CDATA[Can delete their own comments]]></item>
 		<item name="wcf.acp.group.option.user.profileComment.canDeleteCommentInOwnProfile"><![CDATA[Can delete others’ comments on their own wall]]></item>
+        
+        	<!-- TODO -->
+        	<item name="wcf.acp.group.option.mod.article.canEditComment"><![CDATA[Can edit comments]]></item>
+        	<item name="wcf.acp.group.option.mod.article.canDeleteComment"><![CDATA[Can delete comments]]></item>
+        	<item name="wcf.acp.group.option.mod.article.canModerateComment"><![CDATA[Can moderate comments]]></item>
+        	<item name="wcf.acp.group.option.mod.pageComment.canEditComment"><![CDATA[Can edit comments]]></item>
+        	<item name="wcf.acp.group.option.mod.pageComment.canDeleteComment"><![CDATA[Can delete comments]]></item>
+        	<item name="wcf.acp.group.option.mod.pageComment.canModerateComment"><![CDATA[Can moderate comments]]></item>
+
 		<item name="wcf.acp.group.option.mod.profileComment.canEditComment"><![CDATA[Can edit comments]]></item>
 		<item name="wcf.acp.group.option.mod.profileComment.canDeleteComment"><![CDATA[Can delete comments]]></item>
 		<item name="wcf.acp.group.option.mod.profileComment.canModerateComment"><![CDATA[Can moderate comments]]></item>
+        
+        	<!-- TODO -->
+        	<item name="wcf.acp.group.option.category.mod.article"><![CDATA[Articles]]></item>
+        	<item name="wcf.acp.group.option.category.mod.pageComment"><![CDATA[Page Comments]]></item>
+
 		<item name="wcf.acp.group.option.category.mod.profileComment"><![CDATA[User Profile Wall]]></item>
 		<item name="wcf.acp.group.option.admin.content.label.canManageLabel"><![CDATA[Can manage labels]]></item>
 		<item name="wcf.acp.group.option.category.admin.content.label"><![CDATA[Labels]]></item>
@@ -601,7 +641,13 @@ Examples for medium ID detection:
 	</category>
 	
 	<category name="wcf.acp.media">
+        	<item name="wcf.acp.media.add"><![CDATA[Add Media]]></item>
 		<item name="wcf.acp.media.chooseImage"><![CDATA[Select Image]]></item>
+        	<item name="wcf.acp.media.edit"><![CDATA[Edit Media]]></item>
+        	<item name="wcf.acp.media.list"><![CDATA[Media]]></item>
+        
+        	<!-- TODO: maybe more infos about media in stats: -->
+        	<item name="wcf.acp.media.stats"><![CDATA[<ul class="inlineList dotSeparated"><li>{#$stats.count} File{if $stats.count != 1}s{/if}</li><li>{@$stats.size|filesize}</li></ul>]]></item>
 	</category>
 	
 	<category name="wcf.acp.menu">
@@ -628,6 +674,7 @@ Examples for medium ID detection:
 		<item name="wcf.acp.menu.link.group.mail"><![CDATA[Email Users]]></item>
 		<item name="wcf.acp.menu.link.group.list"><![CDATA[User Groups]]></item>
 		<item name="wcf.acp.menu.link.customization"><![CDATA[Customization]]></item>
+        	<item name="wcf.acp.menu.link.media.list"><![CDATA[Media]]></item>
 		<item name="wcf.acp.menu.link.option"><![CDATA[Options]]></item>
 		<item name="wcf.acp.menu.link.package"><![CDATA[Packages]]></item>
 		<item name="wcf.acp.menu.link.package.install"><![CDATA[Install Package]]></item>
@@ -778,6 +825,28 @@ Examples for medium ID detection:
 		<item name="wcf.acp.option.cache_source_type.disk"><![CDATA[Use Filesystem (default)]]></item>
 		<item name="wcf.acp.option.cache_source_type.memcached"><![CDATA[Use Memcached]]></item>
 		<item name="wcf.acp.option.cache_source_type.redis"><![CDATA[Use Redis]]></item>
+        
+        	<!-- TODO: only a draft -->
+        	<item name="wcf.acp.option.category.cms"><![CDATA[Media and Article System]]></item>
+        	<item name="wcf.acp.option.category.cms.article"><![CDATA[Article System]]></item>
+        	<item name="wcf.acp.option.article_show_about_author"><![CDATA[Show "About the Author" under articles]]></item>
+        	<item name="wcf.acp.option.article_enable_comments_default_value"><![CDATA[Enable comments [default value]]]></item>
+        	<item name="wcf.acp.option.article_enable_like"><![CDATA[Enable likes [default value]]]></item>
+        	<item name="wcf.acp.option.articles_per_page"><![CDATA[Articles Per Page]]></item>
+        	<item name="wcf.acp.option.article_related_articles"><![CDATA[Number of Similar Threads]]></item>
+        	<item name="wcf.acp.option.article_related_articles_match_threshold"><![CDATA[Match value of Similar Threads]]></item>
+        	<item name="wcf.acp.option.category.cms.media"><![CDATA[Media System]]></item>
+        	<item name="wcf.acp.option.category.cms.media.thumbnail"><![CDATA[Article Image]]></item>
+        	<item name="wcf.acp.option.media_small_thumbnail_width"><![CDATA[Small Article Image Width]]></item>
+        	<item name="wcf.acp.option.media_small_thumbnail_height"><![CDATA[Small Article Image Height]]></item>
+        	<item name="wcf.acp.option.media_small_thumbnail_retain_dimensions"><![CDATA[retain dimensions]]></item>
+        	<item name="wcf.acp.option.media_medium_thumbnail_width"><![CDATA[Medium Article Image Width]]></item>
+        	<item name="wcf.acp.option.media_medium_thumbnail_height"><![CDATA[Medium Article Image Height]]></item>
+        	<item name="wcf.acp.option.media_medium_thumbnail_retain_dimensions"><![CDATA[retain dimensions]]></item>
+        	<item name="wcf.acp.option.media_large_thumbnail_width"><![CDATA[Large Article Image Width]]></item>
+        	<item name="wcf.acp.option.media_large_thumbnail_height"><![CDATA[Large Article Image Height]]></item>
+        	<item name="wcf.acp.option.media_large_thumbnail_retain_dimensions"><![CDATA[retain dimensions]]></item>
+        
 		<item name="wcf.acp.option.category.general"><![CDATA[General]]></item>
 		<item name="wcf.acp.option.category.general.cache"><![CDATA[Cache]]></item>
 		<item name="wcf.acp.option.category.general.cache.general"><![CDATA[General]]></item>
@@ -874,6 +943,7 @@ Examples for medium ID detection:
 		<item name="wcf.acp.option.mail_use_f_param.description"><![CDATA[The “-f” parameter sets the proper sender of the email if the PHP send method is used. This parameter may not be supported by every server. Try disabling it, if you have trouble sending emails.]]></item>
 		<item name="wcf.acp.option.meta_description"><![CDATA[Meta Description]]></item>
 		<item name="wcf.acp.option.meta_keywords"><![CDATA[Meta Keywords]]></item>
+        	<item name="wcf.acp.option.module_article"><![CDATA[Article System]]></item>
 		<item name="wcf.acp.option.module_master_password"><![CDATA[Enable master password]]></item>
 		<item name="wcf.acp.option.module_master_password.description"><![CDATA[Enables an additional password to protect both critical actions and sensitive data.]]></item>
 		<item name="wcf.acp.option.page_description"><![CDATA[Page Description]]></item>
@@ -944,6 +1014,10 @@ Examples for medium ID detection:
 		<item name="wcf.acp.option.pre_parse_default_value"><![CDATA[Detect URLs (default value)]]></item>
 		<item name="wcf.acp.option.show_signature_default_value"><![CDATA[Display signatures (default value)]]></item>
 		<item name="wcf.acp.option.enable_share_buttons"><![CDATA[Display content share button]]></item>
+        
+        	<!-- TODO -->
+        	<item name="wcf.acp.option.share_buttons_providers"><![CDATA[Allowed providers]]></item>
+        
 		<item name="wcf.acp.option.category.message.general.edit"><![CDATA[Edit History]]></item>
 		<item name="wcf.acp.option.module_edit_history"><![CDATA[Enable Edit History]]></item>
 		<item name="wcf.acp.option.module_edit_history.description"><![CDATA[Stores older versions of user-created content.]]></item>
@@ -1040,6 +1114,12 @@ Examples for medium ID detection:
 		<item name="wcf.acp.option.user_cleanup_activity_event_lifetime.description"><![CDATA[Recent Activities will be removed after the following days.]]></item>
 		<item name="wcf.acp.option.user_cleanup_profile_visitor_lifetime"><![CDATA[Profile Visitors]]></item>
 		<item name="wcf.acp.option.user_cleanup_profile_visitor_lifetime.description"><![CDATA[Profile Visitors will be removed after the following days.]]></item>
+        
+        	<!-- TODO -->
+        	<item name="wcf.acp.option.category.message.general.image"><![CDATA[]]></item>
+        	<item name="wcf.acp.option.module_image_proxy"><![CDATA[]]></item>
+        	<item name="wcf.acp.option.image_proxy_expiration"><![CDATA[]]></item>
+
 		<item name="wcf.acp.option.category.message.general.likes"><![CDATA[Likes System]]></item>
 		<item name="wcf.acp.option.module_like"><![CDATA[Likes System]]></item>
 		<item name="wcf.acp.option.like_allow_for_own_content"><![CDATA[Users can like their own content]]></item>
@@ -1157,6 +1237,7 @@ GmbH=Gesellschaft mit beschränkter Haftung]]></item>
 		<item name="wcf.acp.option.google_maps_api_key.description"><![CDATA[Google provides a detailed description on how to get an API key <a href="{@$__wcf->getPath()}acp/dereferrer.php?url={'https://developers.google.com/maps/documentation/javascript/get-api-key'|rawurlencode}" class="externalURL">here</a>.]]></item>
 		<item name="wcf.acp.option.suffix.days"><![CDATA[Days]]></item>
 		<item name="wcf.acp.option.suffix.minutes"><![CDATA[Minutes]]></item>
+        	<item name="wcf.acp.option.suffix.percent"><![CDATA[%]]></item>
 		<item name="wcf.acp.option.suffix.pixel"><![CDATA[Pixels]]></item>
 		<item name="wcf.acp.option.suffix.seconds"><![CDATA[Seconds]]></item>
 		<item name="wcf.acp.option.suffix.years"><![CDATA[Years]]></item>
@@ -2475,6 +2556,7 @@ Errors are:
 		<item name="wcf.media.button.insert"><![CDATA[Insert]]></item>
 		<item name="wcf.media.caption"><![CDATA[Caption]]></item>
 		<item name="wcf.media.edit"><![CDATA[Edit Media File]]></item>
+        	<item name="wcf.media.file"><![CDATA[File]]></item>
 		<item name="wcf.media.filename"><![CDATA[Filename]]></item>
 		<item name="wcf.media.filesize"><![CDATA[Filesize]]></item>
 		<item name="wcf.media.imageDimensions"><![CDATA[Dimensions]]></item>
@@ -2493,9 +2575,11 @@ Errors are:
 		<item name="wcf.media.search.filetype.all"><![CDATA[All File Types]]></item>
 		<item name="wcf.media.search.filetype.image"><![CDATA[Images]]></item>
 		<item name="wcf.media.search.filetype.other"><![CDATA[Other]]></item>
+        	<item name="wcf.media.search.filetype.pdf"><![CDATA[PDFs]]></item>
 		<item name="wcf.media.search.filetype.text"><![CDATA[Texts]]></item>
 		<item name="wcf.media.search.placeholder"><![CDATA[Search Files]]></item>
 		<item name="wcf.media.uploader"><![CDATA[Uploaded By]]></item>
+        	<item name="wcf.media.uploadTime"><![CDATA[Date]]></item>
 	</category>
 	
 	<category name="wcf.message">
